@@ -1,0 +1,130 @@
+/* GDG GITAM — shared behaviour */
+(function () {
+  'use strict';
+  const CFG = window.GDG_CONFIG || {};
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+
+  // ---------- storage (safe) ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('gdg:' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('gdg:' + k, JSON.stringify(v)); } catch { /* private mode */ } }
+  };
+
+  // ---------- toast ----------
+  let toastT;
+  function toast(msg) {
+    const t = $('#toast'); if (!t) return;
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  // ---------- modal ----------
+  let lastFocus = null;
+  function openModal(el) {
+    lastFocus = document.activeElement;
+    el.classList.add('open'); document.body.style.overflow = 'hidden';
+    const f = $('input:not([type=hidden]), select, textarea, button.modal-x', el); f && setTimeout(() => f.focus(), 30);
+  }
+  function closeModal(el) {
+    el.classList.remove('open'); document.body.style.overflow = '';
+    lastFocus && lastFocus.focus && lastFocus.focus();
+  }
+  document.addEventListener('click', (e) => {
+    const m = e.target.closest('.modal');
+    if (m && (e.target === m || e.target.closest('.modal-x'))) closeModal(m);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { $$('.modal.open').forEach(closeModal); closeDrawer(); }
+  });
+  function closeDrawer() { const d = $('.drawer.open'); if (d) { d.classList.remove('open'); $('.scrim')?.classList.remove('open'); } }
+
+  // ---------- submit (form endpoint or local fallback) ----------
+  async function submitData(kind, data) {
+    const payload = { kind, ...data, page: location.pathname, ts: new Date().toISOString() };
+    if (CFG.formEndpoint) {
+      const res = await fetch(CFG.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Request failed');
+    } else {
+      const all = store.get('submissions', []); all.push(payload); store.set('submissions', all);
+    }
+    return payload;
+  }
+
+  function handleForms() {
+    $$('form[data-form]').forEach((form) => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (form.dataset.busy) return;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const kind = form.dataset.form;
+        const fd = new FormData(form); const data = {};
+        for (const [k, v] of fd.entries()) data[k] = data[k] ? data[k] + ', ' + v : v;
+        if (form.honeypot?.value) return; // spam trap
+        const btn = $('button[type=submit]', form); const label = btn?.textContent;
+        form.dataset.busy = '1'; if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+        $('.form-error', form)?.remove();
+        try {
+          await submitData(kind, data);
+          const done = $('.form-done', form);
+          if (done) { done.hidden = false; }
+          form.dispatchEvent(new CustomEvent('gdg:submitted', { bubbles: true, detail: { kind, data } }));
+          if (form.dataset.reset !== 'no') form.reset();
+          toast(form.dataset.toast || 'Done! We\'ve got it.');
+        } catch (err) {
+          const p = document.createElement('p'); p.className = 'form-error';
+          p.textContent = 'Something went wrong. Please try again in a moment.'; form.appendChild(p);
+        } finally {
+          delete form.dataset.busy; if (btn) { btn.disabled = false; btn.textContent = label; }
+        }
+      });
+    });
+  }
+
+  // ---------- nav ----------
+  function nav() {
+    const btn = $('.menu-btn'), n = $('#nav'); if (!btn) return;
+    btn.addEventListener('click', () => {
+      const open = n.classList.toggle('open'); btn.setAttribute('aria-expanded', open);
+    });
+    $$('a', n).forEach(a => a.addEventListener('click', () => { n.classList.remove('open'); btn.setAttribute('aria-expanded', false); }));
+  }
+
+  // ---------- reveal ----------
+  function reveal() {
+    const els = $$('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+    const io = new IntersectionObserver((ents) => ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach((e, i) => { e.style.transitionDelay = (e.dataset.delay || ((i % 4) * 70)) + 'ms'; io.observe(e); });
+  }
+
+  // ---------- ICS calendar ----------
+  function icsFor(ev) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const [y, m, d] = ev.date.split('-'); const [h, mi] = (ev.time || '10:00').split(':');
+    const [eh, emi] = (ev.end || ev.time || '11:00').split(':');
+    const start = `${y}${m}${d}T${h}${mi}00`; let endDate = ev.date;
+    if (ev.end && ev.end === ev.time) { const dt = new Date(Date.UTC(+y, +m - 1, +d + 1)); endDate = `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`; }
+    const [ey, em, ed] = endDate.split('-');
+    const end = `${ey}${em}${ed}T${eh}${emi}00`;
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GDG GITAM//EN', 'BEGIN:VEVENT', `UID:${ev.id}@gdg-gitam`, `DTSTAMP:${start}`, `DTSTART;TZID=Asia/Kolkata:${start}`, `DTEND;TZID=Asia/Kolkata:${end}`, `SUMMARY:${ev.title}`, `LOCATION:${ev.venue}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  }
+  function downloadICS(ev) {
+    const blob = new Blob([icsFor(ev)], { type: 'text/calendar' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = ev.id + '.ics'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function init() {
+    document.documentElement.classList.remove('no-js');
+    $$('[data-year]').forEach(e => e.textContent = new Date().getFullYear());
+    nav(); reveal(); handleForms();
+    // Gallery lightbox
+    $$('[data-lightbox]').forEach((el) => el.addEventListener('click', () => {
+      const lb = $('#lightbox'); if (!lb) return;
+      $('.lb-body', lb).innerHTML = el.outerHTML; openModal(lb);
+    }));
+  }
+
+  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
