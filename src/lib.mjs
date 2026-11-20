@@ -48,6 +48,9 @@ export const speakerRow = (list = [], label = 'Speaker') => {
   return `<div class="ev-speakers"><span class="lbl">${esc(list.length > 1 && label === 'Speaker' ? 'Speakers' : label)}</span>${list.map(sp => `<div class="sp${sp.tba ? ' tba' : ''}">${sp.tba ? `<div class="avatar av-${sp.color || 'blue'}" aria-hidden="true"><span>?</span></div>` : avatar(sp.name, sp.color || 'blue', sp.photo)}<div><b>${esc(sp.name)}</b><small>${esc(sp.role)}</small></div></div>`).join('')}</div>`;
 };
 
+// Tiny speaker avatars that expand into a name pill on hover / focus (home page).
+export const speakerPills = (list = []) => list.length ? `<div class="sp-pills" aria-label="Speakers">${list.map(sp => `<div class="sp-pill${sp.tba ? ' tba' : ''}" tabindex="0" title="${esc(sp.name)}">${sp.tba ? '<span class="avatar av-blue" aria-hidden="true"><span>?</span></span>' : avatar(sp.name, sp.color || 'blue', sp.photo).replace(/alt="[^"]*" width/, 'alt="" width')}<em>${esc(sp.tba ? 'Speaker to be announced' : sp.name)}</em></div>`).join('')}</div>` : '';
+
 export const arrow = '<svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 export const squiggle = (color = '#FBBC04') => `<svg class="squig" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c14-9 24 7 38-1s24 7 38-1 24 7 38-1 24 7 38-1 24 7 44 0" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;

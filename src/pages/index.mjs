@@ -2,7 +2,7 @@ import { site, events, domains, achievements, gallery, team, roadmap, typeLabels
 import { legacyStory, milestoneStrip, legacyGallery, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { findSection } from '../sections/find.mjs';
-import { socialLinks, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
+import { speakerPills, socialLinks, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
 const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
 const marquee = domains.map((d, i) => `<span style="--c:var(--${['blue', 'red', 'yellow', 'green'][i % 4]})">${esc(d.name)}</span>`).join('');
@@ -79,6 +79,7 @@ const body = `
       <div>
         <div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${e.time} · ${esc(e.venue)}</span></div>
         <h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>
+        ${speakerPills(e.speakers)}
       </div>
       <div class="ev-act"><a class="btn btn-ink btn-sm" href="events.html#${e.id}">Register ${arrow}</a></div>
     </article>`; }).join('')}

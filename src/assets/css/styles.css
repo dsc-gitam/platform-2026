@@ -673,3 +673,15 @@ main, .site-footer { overflow-x: clip; }
 @media (max-width: 700px) { .rpt-head, .rpt-sec, .rpt-stats { padding-left: 20px; padding-right: 20px; } .rpt-type { position: static; display: inline-block; margin-bottom: 12px; } .rpt-meta { grid-template-columns: 1fr 1fr; } .rpt-quotes { grid-template-columns: 1fr; } .rpt-foot { padding: 14px 20px; flex-direction: column; } }
 @page { size: A4; margin: 0; }
 @media print { .no-print { display: none !important; } .report-body { background: #fff; } .rpt { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; } }
+
+/* ---- Home: speaker avatars that expand into name pills ---- */
+.sp-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.sp-pill { display: inline-flex; align-items: center; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); padding: 2px; cursor: default; transition: background .2s; outline-offset: 3px; }
+.sp-pill .avatar { width: 34px; height: 34px; margin: 0; flex: none; border-width: 2px; box-shadow: none; font-size: .85rem; border-radius: 50%; }
+.sp-pill .avatar span { line-height: 1; }
+.sp-pill em { font: 700 .85rem var(--body); font-style: normal; white-space: nowrap; max-width: 0; opacity: 0; overflow: hidden; transition: max-width .3s var(--ease), opacity .2s, padding .3s var(--ease); }
+.sp-pill:hover, .sp-pill:focus-visible { background: var(--yellow-100); }
+.sp-pill:hover em, .sp-pill:focus-visible em { max-width: 220px; opacity: 1; padding: 0 12px 0 8px; }
+.sp-pill.tba em { font-weight: 500; font-style: italic; }
+@media (hover: none) { .sp-pill:focus em { max-width: 220px; opacity: 1; padding: 0 12px 0 8px; } }
+@media (prefers-reduced-motion: reduce) { .sp-pill em { transition: none; } }
