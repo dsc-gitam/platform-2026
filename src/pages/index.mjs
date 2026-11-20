@@ -1,9 +1,10 @@
-import { site, events, domains, achievements, gallery, team, roadmap, typeLabels } from '../data/site.mjs';
+import { site, updates, events, domains, achievements, gallery, team, roadmap, typeLabels } from '../data/site.mjs';
 import { legacyStory, milestoneStrip, legacyGallery, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { findSection } from '../sections/find.mjs';
-import { speakerPills, socialLinks, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
+import { speakerPills, socialLinks, fmtDate, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
+const latest = [...updates].sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date)).slice(0, 3);
 const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
 const marquee = domains.map((d, i) => `<span style="--c:var(--${['blue', 'red', 'yellow', 'green'][i % 4]})">${esc(d.name)}</span>`).join('');
 
@@ -84,6 +85,23 @@ const body = `
       <div class="ev-act"><a class="btn btn-ink btn-sm" href="events.html#${e.id}" data-ticket-event="${e.id}" data-ticket-date="${e.date}">Register ${arrow}</a></div>
     </article>`; }).join('')}
     <p class="reveal"><a class="link" href="events.html">All upcoming events →</a></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="board-home">
+      <div class="section-head reveal" style="margin-bottom:0">
+        <p class="eyebrow"><i class="dot"></i>Noticeboard</p>
+        <h2>What's <span class="hl">new</span> at the club.</h2>
+        <p>The latest announcements, applications and opportunities. Pinned notes stay on top.</p>
+        <p style="margin-top:22px"><a class="btn btn-ghost" href="community.html">View all ${arrow}</a></p>
+      </div>
+      <div class="card board-card reveal">
+        ${latest.map(u => `<div class="update"><div class="d">${fmtDate(u.date).slice(5, 11)}</div><div><span class="chip ${u.color}">${esc(u.tag)}</span> ${u.pinned ? '<span class="pin">📌 pinned</span>' : ''}<h4>${esc(u.title)}</h4><p>${esc(u.body)}</p></div></div>`).join('')}
+        <p class="board-more"><a class="link" href="community.html">View all announcements →</a></p>
+      </div>
+    </div>
   </div>
 </section>
 

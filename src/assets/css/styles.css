@@ -791,3 +791,9 @@ main, .site-footer { overflow-x: clip; }
 @media (max-width: 1240px) { .acct-label { display: none; } .acct-btn { padding: 0; width: 44px; } .nav a:not(.btn) { padding: 8px 9px; font-size: .93rem; } }
 
 .welcome-note, .signin-bar { grid-column: 1 / -1; }
+
+/* ---- Home: noticeboard ---- */
+.board-home { display: grid; grid-template-columns: 1fr 1.35fr; gap: clamp(28px, 5vw, 64px); align-items: start; }
+.board-card { padding: 8px 26px; } .board-card .update:first-child { padding-top: 20px; }
+.board-more { margin: 0; padding: 14px 0 18px; border-top: 2px dashed rgba(29, 27, 38, .25); }
+@media (max-width: 900px) { .board-home { grid-template-columns: 1fr; } }
