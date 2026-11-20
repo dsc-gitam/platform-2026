@@ -518,7 +518,9 @@ a.bt:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink);
 .bt-event .bt-date { grid-row: 2 / 4; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--white); border: 2px solid var(--ink); border-radius: 16px; padding: 10px 18px; font-family: var(--display); line-height: 1; }
 .bt-date b { font-size: 2.6rem; font-weight: 800; } .bt-date span { font: 500 .8rem var(--mono); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
 .bt-find { background: var(--red); color: #fff; } .bt-atlas { background: var(--green); color: #fff; }
-.bt-find, .bt-atlas { background-image: radial-gradient(rgba(255,255,255,.28) 1.4px, transparent 1.5px); background-size: 20px 20px; }
+.bt-atlas { background-image: radial-gradient(rgba(255,255,255,.28) 1.4px, transparent 1.5px); background-size: 20px 20px; }
+.bt-find .bt-go, .bt-atlas .bt-go { align-self: flex-start; margin-top: auto; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font-size: .92rem; }
+.bt-find .bt-go, .bt-atlas .bt-go { box-shadow: 2px 2px 0 var(--ink); }
 .bt-atlas .bt-label, .bt-find .bt-label { opacity: .85; }
 @media (max-width: 900px) {
   .bento { grid-template-columns: 1fr 1fr; }
