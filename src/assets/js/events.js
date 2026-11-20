@@ -29,7 +29,7 @@
   paintSeats();
   async function loadSeats() {
     if (!auth || !auth.enabled) return;
-    const r = await auth.api('GET', '/seats'); if (r.ok) { taken = r.data; paintSeats(); }
+    const r = await auth.api('GET', '/seats', undefined, { quiet: true }); if (r.ok) { taken = r.data; paintSeats(); }
   }
 
   // After a registration (made in the dialog) refresh the meter

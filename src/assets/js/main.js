@@ -53,6 +53,35 @@
   // The auth module (auth.js) resolves this once it knows whether anyone is signed in.
   let authResolve; const authReady = new Promise(r => { authResolve = r; });
 
+  // ---------- busy feedback: a slim top bar while the site talks to the server, a spinner on the button that was pressed ----------
+  const busy = (() => {
+    let inflight = 0, bar = null, pressed = null, pressedAt = 0, clearT; const marked = new Set();
+    const bar_ = () => bar || (bar = Object.assign(document.createElement('div'), { className: 'topbar', role: 'progressbar', ariaLabel: 'Loading' }), document.body.appendChild(bar), bar);
+    const btnOf = (t) => t && t.closest && t.closest('button, a.btn, [role="button"]');
+    document.addEventListener('click', (e) => { const b = btnOf(e.target); if (b) { pressed = b; pressedAt = Date.now(); } }, true);
+    document.addEventListener('submit', (e) => { if (e.submitter) { pressed = e.submitter; pressedAt = Date.now(); } }, true);
+    function start() {
+      inflight++; clearTimeout(clearT); bar_().classList.add('on');
+      // the button that triggered this work (pressed a moment ago) shows a spinner until everything has finished
+      if (!marked.size && pressed && pressed.isConnected && Date.now() - pressedAt < 600) { pressed.classList.add('is-loading'); pressed.setAttribute('aria-busy', 'true'); marked.add(pressed); }
+    }
+    function end() {
+      inflight = Math.max(0, inflight - 1);
+      if (inflight) return;
+      clearTimeout(clearT);
+      clearT = setTimeout(() => { if (inflight) return; bar_().classList.remove('on'); marked.forEach((b) => { b.classList.remove('is-loading'); b.removeAttribute('aria-busy'); }); marked.clear(); }, 250);
+    }
+    // full-screen "please wait" card for things that take a while (signing in)
+    function overlay(text) {
+      const o = document.createElement('div'); o.className = 'busy-overlay'; o.setAttribute('role', 'status'); o.setAttribute('aria-live', 'polite');
+      o.innerHTML = '<div class="busy-card"><i class="spin" aria-hidden="true"></i><span></span></div>'; $('span', o).textContent = text; document.body.appendChild(o);
+      return { set(t) { $('span', o).textContent = t; }, close() { o.remove(); } };
+    }
+    // wrap any promise-returning job: bar + (optional) button spinner
+    async function wrap(job, btn) { start(); if (btn) { btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); } try { return await job(); } finally { if (btn) { btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); } end(); } }
+    return { start, end, overlay, wrap };
+  })();
+
   // ---------- photos: crop to a square, resize and return a small JPEG data URL (<= ~240 KB) ----------
   async function resizePhoto(file, size = 480) {
     const bmp = await createImageBitmap(file); const side = Math.min(bmp.width, bmp.height);
@@ -161,6 +190,6 @@
     }));
   }
 
-  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, resizePhoto, _authResolve: authResolve };
+  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, resizePhoto, busy, _authResolve: authResolve };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

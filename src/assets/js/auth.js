@@ -37,19 +37,23 @@ async function token() {
 }
 
 // ---------- API client ----------
-auth.api = async function api(method, path, body) {
-  const headers = { 'content-type': 'application/json' };
-  const t = await token();
-  if (t) headers.authorization = 'Bearer ' + t;
-  else if (CFG.devAuth && store.get('devuser')) headers['x-dev-user'] = store.get('devuser');
+auth.api = async function api(method, path, body, opts = {}) {
+  const loud = !opts.quiet; // background calls (seat counts, syncing picks) stay silent
+  if (loud) G.busy.start();
   try {
-    const res = await fetch(API + '/api' + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
-    const text = await res.text();
-    let data = null; try { data = text ? JSON.parse(text) : null; } catch { data = { error: text }; }
-    return { ok: res.ok, status: res.status, data };
-  } catch (e) {
-    return { ok: false, status: 0, data: { error: 'Could not reach the server' } };
-  }
+    const headers = { 'content-type': 'application/json' };
+    const t = await token();
+    if (t) headers.authorization = 'Bearer ' + t;
+    else if (CFG.devAuth && store.get('devuser')) headers['x-dev-user'] = store.get('devuser');
+    try {
+      const res = await fetch(API + '/api' + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+      const text = await res.text();
+      let data = null; try { data = text ? JSON.parse(text) : null; } catch { data = { error: text }; }
+      return { ok: res.ok, status: res.status, data };
+    } catch (e) {
+      return { ok: false, status: 0, data: { error: 'Could not reach the server' } };
+    }
+  } finally { if (loud) G.busy.end(); }
 };
 
 // Fetch an image that needs sign-in (e.g. a private story photo) and return an object URL for <img src>.
@@ -59,8 +63,8 @@ auth.blobUrl = async function blobUrl(path) {
   try { const res = await fetch(API + '/api' + path, { headers }); return res.ok ? URL.createObjectURL(await res.blob()) : ''; } catch { return ''; }
 };
 
-auth.refresh = async function refresh() {
-  const r = await auth.api('GET', '/me');
+auth.refresh = async function refresh(quiet) {
+  const r = await auth.api('GET', '/me', undefined, { quiet: !!quiet });
   auth.me = r.ok ? r.data : null;
   if (!r.ok && r.status === 401) store.set('devuser', null);
   paintBadge(); emit();
@@ -73,7 +77,8 @@ auth.signIn = async function signIn() {
     const provider = new fbMod.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     await fbMod.signInWithPopup(fa, provider);
-    await auth.refresh();
+    const ov = G.busy.overlay('Signing you in…'); // the popup is done; fetching the profile can take a moment
+    try { await auth.refresh(); } finally { ov.close(); }
   }
   return auth.me;
 };
@@ -110,6 +115,7 @@ async function completeEmailLink() {
   if (!email) email = (window.prompt('Please confirm the email you used to request the link') || '').trim().toLowerCase();
   if (!email) return;
   const href = location.href;
+  const ov = G.busy.overlay('Signing you in…');
   try {
     const cur = fa.currentUser;
     if (cur && cur.isAnonymous) {
@@ -124,7 +130,7 @@ async function completeEmailLink() {
   } catch (e) {
     console.warn('Email link sign-in failed', e);
     G.toast('That sign-in link has expired or was already used. Request a new one.');
-  }
+  } finally { ov.close(); }
 }
 
 // ---------- Sign-in dialog ----------
@@ -147,14 +153,16 @@ function ensureModal() {
   m.addEventListener('click', async (e) => {
     if (!e.target.closest('[data-google]')) return;
     err('');
-    try { await auth.signIn(); G.closeModal(m); afterSignIn(true); }
+    const gbtn = e.target.closest('[data-google]');
+    try { await G.busy.wrap(() => auth.signIn(), gbtn); G.closeModal(m); afterSignIn(true); }
     catch (x) { if (x && x.code !== 'auth/popup-closed-by-user' && x.code !== 'auth/cancelled-popup-request') err('Sign-in failed. Please try again.'); }
   });
   const dev = $('#dev-signin', m);
   if (dev) dev.addEventListener('submit', async (e) => {
     e.preventDefault();
     store.set('devuser', `${$('#dev-email', m).value.trim().toLowerCase()}|${$('#dev-name', m).value.trim()}`);
-    await auth.refresh(); G.closeModal(m); afterSignIn(true);
+    const ov = G.busy.overlay('Signing you in…'); try { await auth.refresh(); } finally { ov.close(); }
+    G.closeModal(m); afterSignIn(true);
   });
   return m;
 }
@@ -179,6 +187,7 @@ function paintBadge() {
   box.hidden = !(enabled || PREVIEW);
   const btn = $('.acct-btn', box), menu = $('.acct-menu', box);
   const u = auth.me && auth.me.user;
+  if (!auth.settled && enabled) { btn.innerHTML = '<i class="spin" aria-hidden="true"></i>'; btn.setAttribute('aria-label', 'Checking your sign-in'); return; }
   if (!u) {
     btn.innerHTML = window.GDG_ICON('user', 20);
     btn.setAttribute('aria-label', 'Sign in'); btn.classList.remove('has-user'); menu.hidden = true; return;
@@ -248,7 +257,7 @@ function syncExploration() {
     return;
   }
   clearTimeout(syncT);
-  syncT = setTimeout(async () => { const r = await auth.api('PUT', '/me/exploration', l); if (r.ok && auth.me) auth.me.exploration = r.data.exploration; }, 1200);
+  syncT = setTimeout(async () => { const r = await auth.api('PUT', '/me/exploration', l, { quiet: true }); if (r.ok && auth.me) auth.me.exploration = r.data.exploration; }, 1200);
 }
 document.addEventListener('gdg:store', (e) => { if (['atlas-saved', 'atlas-state', 'place', 'place-second'].includes(e.detail.key)) syncExploration(); });
 
@@ -273,7 +282,7 @@ const push = {
 };
 async function pushSaveToken() {
   const t = store.get('fcm', ''); if (!t || !auth.me) return;
-  await auth.api('POST', '/me/fcm-token', { token: t });
+  await auth.api('POST', '/me/fcm-token', { token: t }, { quiet: true });
 }
 auth.push = push;
 
@@ -281,7 +290,7 @@ auth.push = push;
 G.auth = auth;
 function boot() {
   initBadge();
-  if (!enabled) { G._authResolve(auth); return; }
+  if (!enabled) { auth.settled = true; G._authResolve(auth); return; }
   const done = async () => {
     prefillForms(); formGate();
     if (auth.me) { syncExploration(); pushSaveToken(); }
@@ -291,14 +300,15 @@ function boot() {
     try {
       await initFirebase();
       if (fa) {
-        await new Promise((resolve) => { const off = fbMod.onAuthStateChanged(fa, async (u) => { if (u) await auth.refresh(); else { auth.me = null; paintBadge(); emit(); } off(); resolve(); }); });
+        await new Promise((resolve) => { const off = fbMod.onAuthStateChanged(fa, async (u) => { if (u) await auth.refresh(true); else { auth.me = null; paintBadge(); emit(); } off(); resolve(); }); });
         // keep in step with later sign-ins / sign-outs (other tabs)
         fbMod.onAuthStateChanged(fa, async (u) => { if (u && !auth.me) await auth.refresh(); if (!u && auth.me) { auth.me = null; paintBadge(); emit(); } });
-      } else if (store.get('devuser')) await auth.refresh();
+      } else if (store.get('devuser')) await auth.refresh(true);
       else { paintBadge(); }
     } catch (e) { console.error('Auth init failed', e); paintBadge(); }
     await completeEmailLink();
     await done();
+    auth.settled = true; paintBadge();
     G._authResolve(auth);
   })();
 }

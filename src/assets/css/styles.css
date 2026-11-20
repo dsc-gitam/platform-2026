@@ -968,3 +968,21 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 .photo-prev { flex: none; width: 72px; height: 72px; border-radius: 50%; border: 2px dashed var(--ink); background: var(--white) center / cover no-repeat; }
 .photo-pick input[type="file"] { padding: 10px; }
 .a-photo { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ink); object-fit: cover; }
+
+/* ================= Loading feedback ================= */
+.topbar { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 600; pointer-events: none; opacity: 0; transition: opacity .25s; overflow: hidden; }
+.topbar.on { opacity: 1; }
+.topbar::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 38%; border-radius: 0 4px 4px 0; background: linear-gradient(90deg, var(--blue) 0 25%, var(--red) 25% 50%, var(--yellow) 50% 75%, var(--green) 75% 100%); animation: topbar 1.05s ease-in-out infinite; }
+@keyframes topbar { 0% { transform: translateX(-100%); } 100% { transform: translateX(270%); } }
+.spin { display: inline-block; width: 1em; height: 1em; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -.16em; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* a pressed button shows a spinner and ignores further taps until the work is done */
+.is-loading { pointer-events: none; cursor: progress; opacity: .88; }
+.is-loading::before { content: ''; flex: none; width: 1em; height: 1em; margin-right: 8px; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+.acct-btn.is-loading::before, .modal-x.is-loading::before, .chip.is-loading::before { margin-right: 6px; }
+.loading-row { display: flex; align-items: center; gap: 12px; padding: 18px 20px; color: var(--ink-2); font-weight: 500; }
+.busy-overlay { position: fixed; inset: 0; z-index: 550; display: grid; place-items: center; background: rgba(255, 255, 255, .72); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: fade .2s; }
+.busy-card { display: flex; align-items: center; gap: 16px; padding: 20px 26px; background: var(--white); border: 2px solid var(--ink); border-radius: var(--r); box-shadow: var(--shadow); font: 700 1.1rem var(--body); }
+.busy-card .spin { width: 28px; height: 28px; border-width: 3.5px; color: var(--blue); }
+.acct-btn .spin { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) { .topbar::before { animation-duration: 2.4s; } .spin, .is-loading::before { animation-duration: 1.6s; } }

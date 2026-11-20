@@ -15,7 +15,7 @@ const body = `
 
 <section class="section">
   <div class="container">
-    <div id="p-loading" class="card" style="text-align:center">Loading your profile…</div>
+    <div id="p-loading" class="card loading-row" style="justify-content:center"><i class="spin"></i> Loading your profile…</div>
     <div id="p-off" class="card c-yellow" hidden><h3>Accounts aren't switched on yet</h3><p>Once the backend is connected you'll be able to sign in here.</p></div>
     <div id="p-out" class="card c-blue signin-card" hidden>
       <h3>Sign in to see your profile</h3>

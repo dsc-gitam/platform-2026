@@ -49,7 +49,7 @@
 
   // ---------- Overview ----------
   async function overview(el) {
-    el.innerHTML = '<h2>Overview</h2><p>Loading…</p>';
+    el.innerHTML = '<h2>Overview</h2><p class="loading-row"><i class="spin"></i> Loading…</p>';
     const r = await api('GET', '/stats'); if (!r.ok) return;
     const { totals: t, events, signups, applications } = r.data;
     const max = Math.max(1, ...signups.map((s) => s.n));
@@ -67,7 +67,7 @@
 
   // ---------- Events ----------
   async function events(el) {
-    el.innerHTML = '<h2>Events</h2><p>Loading…</p>';
+    el.innerHTML = '<h2>Events</h2><p class="loading-row"><i class="spin"></i> Loading…</p>';
     const r = await api('GET', '/events'); if (!r.ok) return;
     const list = r.data.events;
     el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h2>Events</h2>${can('events:write') ? `<button class="btn btn-blue btn-sm" id="ev-new">${ICON('plus')} New event</button>` : ''}</div>
@@ -241,7 +241,7 @@
   let reqType = 'STORY', reqStatus = 'PENDING';
   async function requests(el) {
     el.innerHTML = `<h2>Requests</h2><div class="a-tabs">${Object.entries(TYPES).map(([k, v]) => `<button class="chip ${k === reqType ? 'on' : ''}" data-type="${k}" aria-pressed="${k === reqType}">${v}</button>`).join('')}</div>
-      <div class="a-tabs">${['PENDING', 'APPROVED', 'REJECTED', ''].map((s) => `<button class="chip ${s === reqStatus ? 'on' : ''}" data-status="${s}" aria-pressed="${s === reqStatus}">${s ? s.toLowerCase() : 'all'}</button>`).join('')}</div><div id="req-list"><p>Loading…</p></div>`;
+      <div class="a-tabs">${['PENDING', 'APPROVED', 'REJECTED', ''].map((s) => `<button class="chip ${s === reqStatus ? 'on' : ''}" data-status="${s}" aria-pressed="${s === reqStatus}">${s ? s.toLowerCase() : 'all'}</button>`).join('')}</div><div id="req-list"><p class="loading-row"><i class="spin"></i> Loading…</p></div>`;
     $$('[data-type]', el).forEach((b) => b.addEventListener('click', () => { reqType = b.dataset.type; requests(el); }));
     $$('[data-status]', el).forEach((b) => b.addEventListener('click', () => { reqStatus = b.dataset.status; requests(el); }));
     const r = await api('GET', `/applications?type=${reqType}${reqStatus ? '&status=' + reqStatus : ''}`); if (!r.ok) return;
@@ -291,7 +291,7 @@
 
   // ---------- Users & roles ----------
   async function users(el) {
-    el.innerHTML = `<h2>Users & roles</h2><form id="u-search" style="display:flex;gap:8px;margin-bottom:14px"><input id="u-q" placeholder="Search name or email" style="flex:1"><button class="btn btn-ghost btn-sm">Search</button></form><div id="u-list"><p>Loading…</p></div>`;
+    el.innerHTML = `<h2>Users & roles</h2><form id="u-search" style="display:flex;gap:8px;margin-bottom:14px"><input id="u-q" placeholder="Search name or email" style="flex:1"><button class="btn btn-ghost btn-sm">Search</button></form><div id="u-list"><p class="loading-row"><i class="spin"></i> Loading…</p></div>`;
     $('#u-search', el).addEventListener('submit', (e) => { e.preventDefault(); load($('#u-q', el).value); });
     const load = async (q = '') => {
       const r = await api('GET', '/users?q=' + encodeURIComponent(q)); if (!r.ok) return;
@@ -317,7 +317,7 @@
 
   // ---------- Publishing ----------
   async function publish(el) {
-    el.innerHTML = '<h2>Publishing</h2><p>Loading…</p>';
+    el.innerHTML = '<h2>Publishing</h2><p class="loading-row"><i class="spin"></i> Loading…</p>';
     const r = await api('GET', '/sync-log'); if (!r.ok) return;
     el.innerHTML = `<h2>Publishing</h2><p class="p-note">Approved stories, team changes, events and profile updates are committed to GitHub automatically, which triggers the site deploy. Use this if you need to force one.</p>
       <p><button class="btn btn-blue" id="sync-now">${ICON('refresh-cw')} Publish now</button></p>
