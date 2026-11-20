@@ -155,15 +155,19 @@ ${legacyStory(false)}
 ${legacyGallery(true)}
 ${legacyStories(false)}
 
-<section class="section">
+<section class="section crew">
   <div class="container">
     <div class="section-head reveal">
       <p class="eyebrow"><i class="dot"></i>The crew</p>
       <h2>Students running it. A mentor <span class="hl">backing</span> them.</h2>
     </div>
-    <div class="team-grid team-grid-3">
-      ${[...team.organizers, team.mentor, ...team.core].map(p => `<article class="card person reveal">${avatar(p.name, p.color, p.photo)}<h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div></article>`).join('')}
+  </div>
+  <div class="crew-marquee" role="region" aria-label="The GDG GITAM team">
+    <div class="crew-track">
+      ${[0, 1].map(copy => [...team.organizers, team.mentor, ...team.core].map(p => `<article class="crew-card"${copy ? ' aria-hidden="true"' : ''}>${avatar(p.name, p.color, p.photo)}<div><h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div></div></article>`).join('')).join('')}
     </div>
+  </div>
+  <div class="container">
     <p style="margin-top:28px" class="reveal"><a class="link" href="about.html#team">Meet the team, and the roles that need you →</a></p>
   </div>
 </section>
