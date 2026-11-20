@@ -18,7 +18,9 @@ export const sample = (label = 'Sample') => site.showPlaceholderTags ? `<span cl
 export const logoMark = (size = 40) => `<img class="mark" src="assets/gdg-logo.png" width="${size}" height="${Math.round(size * 330 / 575)}" alt="" aria-hidden="true">`;
 
 // Photo placeholder tile
-export const photo = (label, color = 'blue', cls = '') => `<figure class="ph ph-${color} ${cls}" role="img" aria-label="${esc(label)} (placeholder photo)">
+export const photo = (label, color = 'blue', cls = '', src = '') => src
+  ? `<figure class="ph ph-${color} ${cls} has-img"><img src="${esc(src)}" alt="${esc(label)}" loading="lazy"><figcaption>${esc(label)}</figcaption></figure>`
+  : `<figure class="ph ph-${color} ${cls}" role="img" aria-label="${esc(label)} (placeholder photo)">
   <svg viewBox="0 0 120 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="30" cy="26" r="9"/><path d="M0 80 40 38l24 26 18-16 38 32z"/></svg>
   <figcaption>${esc(label)}</figcaption></figure>`;
 
@@ -37,6 +39,7 @@ export const socialLinks = (p) => {
 };
 
 // Detail-page URL for a past event.
+export const eventReportPage = (e) => `event-${e.id.replace(/^past-/, '')}-report.html`;
 export const eventPage = (e) => `event-${e.id.replace(/^past-/, '')}.html`;
 
 // Compact "who's speaking" row for event cards.
@@ -59,6 +62,24 @@ export const NAV = [
 ];
 
 export const layout = (page, body) => {
+  if (page.bare) return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(page.title)}</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/gdg-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="report-body">
+${body}
+${(page.scripts || []).map(x => `<script src="assets/js/${x}" defer></script>`).join('\n')}
+</body>
+</html>`;
   const url = `${site.url}/${page.path === 'index.html' ? '' : page.path}`;
   const title = page.path === 'index.html' ? `${site.name} — ${site.tagline}` : `${page.title} · ${site.short}`;
   const desc = page.description;

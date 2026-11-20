@@ -2,10 +2,11 @@
 import { events, typeLabels, site } from '../data/site.mjs';
 import { lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
-import { esc, fmtDate, photo, ctaBand, eventPage, sample, arrow } from '../lib.mjs';
+import { esc, fmtDate, photo, ctaBand, eventPage, eventReportPage, sample, arrow } from '../lib.mjs';
+import { reportPage } from '../sections/report.mjs';
 import { avatar } from '../lib.mjs';
 
-const past = events.filter(e => e.status === 'past');
+const past = events.filter(e => e.status === 'past' && e.ready);
 const kindIcon = { slides: 'file-text', code: 'external-link', link: 'external-link' };
 
 const resource = (r) => r.url
@@ -16,20 +17,14 @@ const video = (e) => e.recording.youtubeId
   ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(e.recording.youtubeId)}" title="${esc(e.title)} recording" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`
   : `<div class="video placeholder c-${e.color}"><div class="play">${icon('play', 34)}</div><p>${esc(e.recording.note)}</p></div>`;
 
-const report = (e) => e.report && e.report.url
-  ? `<div class="report">
-      <object class="pdf" data="${esc(e.report.url)}#toolbar=0&navpanes=0" type="application/pdf" aria-label="${esc(e.title)} event report">
-        <p>Your browser can't show PDFs inline. <a class="link" href="${esc(e.report.url)}">Open the report</a>.</p>
-      </object>
-      <div class="report-act">
-        <a class="btn btn-ink" href="${esc(e.report.url)}" target="_blank" rel="noopener">${icon('external-link', 18)} Open full report</a>
-        <a class="btn btn-ghost" href="${esc(e.report.url)}" download>${icon('download', 18)} Download PDF</a>
-      </div>
-    </div>`
-  : `<div class="card report-soon c-${e.color}">${icon('file-text', 30)}<div><h3>Report coming soon</h3><p>Our Documentation &amp; Reports team will publish the official event report here as a PDF.</p></div></div>`;
+const report = (e) => `<div class="card report-card c-${e.color}">
+  <div class="badge">${icon('file-text', 24)}</div>
+  <div><h3>Get the event report</h3><p>A tidy, shareable PDF built from this event's details: summary, speakers, takeaways and more. It opens a print-ready page, so choose <b>Save as PDF</b> in the print dialog.</p></div>
+  <a class="btn btn-ink" href="${eventReportPage(e)}?print=1">${icon('download', 18)} Download report (PDF)</a>
+</div>`;
 
 const page = (e, i) => {
-  const next = past[(i + 1) % past.length];
+  const others = past.filter(x => x !== e); const next = others[i % Math.max(others.length, 1)];
   const real = e.speakers.filter(x => !x.tba);
   const sections = [['about', 'About'], ['speakers', 'Speakers'], ['takeaways', 'Takeaways'], ['resources', 'Resources'], ['recording', 'Recording'], ['photos', 'Photos'], ['report', 'Report']];
   const body = `
@@ -92,7 +87,7 @@ const page = (e, i) => {
 <section class="section tint" id="photos">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow"><i class="dot"></i>Photos ${sample('Photos coming')}</p><h2>Moments from the <span class="hl">day</span>.</h2><p>Click any photo to enlarge.</p></div>
-    <div class="gallery reveal">${e.photos.map(g => photo(g.label, g.color, g.size).replace('<figure', '<figure data-lightbox tabindex="0"')).join('')}</div>
+    <div class="gallery reveal">${e.photos.map(g => photo(g.label, g.color, g.size, g.src).replace('<figure', '<figure data-lightbox tabindex="0"')).join('')}</div>
   </div>
 </section>
 
@@ -103,7 +98,7 @@ const page = (e, i) => {
   </div>
 </section>
 
-${ctaBand({ title: 'Come to the next one.', text: 'Every event has a beginner track. See what is coming up and save your seat.', primary: ['events.html', 'Upcoming events'], secondary: [eventPage(next), 'Next: ' + next.title] })}
+${ctaBand({ title: 'Come to the next one.', text: 'Every event has a beginner track. See what is coming up and save your seat.', primary: ['events.html', 'Upcoming events'], secondary: next ? [eventPage(next), 'Also: ' + next.title] : undefined })}
 ${lightbox}
 `;
   return {
@@ -120,4 +115,4 @@ ${lightbox}
   };
 };
 
-export default past.map(page);
+export default [...past.map(page), ...past.map(reportPage)];

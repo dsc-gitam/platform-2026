@@ -88,7 +88,15 @@ export const events = [
     resources: [{ label: 'Slide decks (all talks)', url: '', kind: 'slides' }, { label: 'Starter repo for the live demos', url: '', kind: 'code' }, { label: 'Google Developers learning paths', url: 'https://developers.google.com/learn', kind: 'link' }],
     recording: { youtubeId: '', note: 'The full recording will be published here.' },
     photos: [{ label: 'Keynote on the main stage', color: 'blue', size: 'wide' }, { label: 'Full house in the auditorium', color: 'yellow', size: 'sq' }, { label: 'Demo booths', color: 'green', size: 'sq' }, { label: 'Speaker panel', color: 'red', size: 'tall' }, { label: 'Hallway conversations', color: 'blue', size: 'sq' }, { label: 'Volunteers at registration', color: 'yellow', size: 'wide' }],
-    report: { url: 'assets/reports/sample-event-report.pdf', size: 'Sample PDF' }
+    // Post-event details. The Documentation team fills these in; anything left empty is simply left out of the report.
+    ready: true,
+    report: {
+      stats: [{ label: 'Registrations', value: '520' }, { label: 'Attended', value: '400+' }, { label: 'Speakers', value: '3' }, { label: 'Feedback score', value: '4.6 / 5' }],
+      highlights: ['Three parallel tracks ran on time, with a beginner warm-up before each talk.', 'Three student projects were demoed live on the main stage.', 'The volunteer cohort handled registration for 400+ guests with no queue longer than ten minutes.'],
+      feedback: [{ quote: 'The first conference where I understood every talk.', by: 'Placeholder attendee, 2nd year' }, { quote: 'I left with a project idea and three new friends.', by: 'Placeholder attendee, 1st year' }],
+      thanks: 'Thank you to the faculty advisor, the volunteer cohort, our speakers and GITAM for hosting us.',
+      preparedBy: 'Documentation & Reports team'
+    }
   },
   {
     id: 'past-cloud-jam', status: 'past', type: 'studyjam', color: 'green', title: 'Cloud Study Jam', date: '2025-09-20', time: '14:00', end: '17:00', venue: 'CS Lab', attendees: '120',
@@ -99,7 +107,8 @@ export const events = [
     resources: [{ label: 'Codelab links used in the session', url: '', kind: 'link' }, { label: 'Cloud cheat sheet (1 page)', url: '', kind: 'slides' }],
     recording: { youtubeId: '', note: 'The session recording will be published here.' },
     photos: [{ label: 'Crews working through codelabs', color: 'green', size: 'wide' }, { label: 'Mentor helping a crew', color: 'blue', size: 'sq' }, { label: 'Deploy day success', color: 'yellow', size: 'sq' }, { label: 'Lab wide shot', color: 'red', size: 'wide' }],
-    report: { url: '', size: '' }
+    ready: false,
+    report: {}
   },
   {
     id: 'past-hack', status: 'past', type: 'hackathon', color: 'yellow', title: 'Solution Challenge Sprint', date: '2025-03-08', time: '09:00', end: '21:00', venue: 'Innovation Lab', attendees: '90',
@@ -110,7 +119,8 @@ export const events = [
     resources: [{ label: 'Solution Challenge guide', url: 'https://developers.google.com/community/gdsc-solution-challenge', kind: 'link' }, { label: 'Demo templates', url: '', kind: 'slides' }],
     recording: { youtubeId: '', note: 'Demo recordings will be published here.' },
     photos: [{ label: 'Teams planning', color: 'yellow', size: 'sq' }, { label: 'Late-afternoon build', color: 'blue', size: 'wide' }, { label: 'Demo to the panel', color: 'red', size: 'sq' }, { label: 'Winning team', color: 'green', size: 'tall' }],
-    report: { url: '', size: '' }
+    ready: false,
+    report: {}
   }
 ];
 

@@ -23,7 +23,7 @@ const card = (e) => { const d = dateParts(e.date); return `
 const pastCard = (e) => { const d = dateParts(e.date); return `
 <article class="card event is-past c-${e.color} reveal">
   <div class="date-block"><b>${d.d}</b><span>${d.mon} ${d.y}</span></div>
-  <div><div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${esc(e.venue)}</span><span>${esc(e.attendees)} attended</span></div><h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>${speakerRow(e.speakers)}<p style="margin:14px 0 0"><a class="btn btn-ghost btn-sm" href="${eventPage(e)}">Explore this event ${arrow}</a></p></div>
+  <div><div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${esc(e.venue)}</span><span>${esc(e.attendees)} attended</span></div><h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>${speakerRow(e.speakers)}<p style="margin:14px 0 0">${e.ready ? `<a class="btn btn-ghost btn-sm" href="${eventPage(e)}">Explore this event ${arrow}</a>` : `<span class="btn btn-ghost btn-sm is-disabled" role="link" aria-disabled="true" tabindex="0" data-tip="Will be available within 12 hours" title="Will be available within 12 hours">Explore this event ${arrow}</span>`}</p></div>
 </article>`; };
 
 const ld = upcoming.map(e => ({
