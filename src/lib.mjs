@@ -14,10 +14,7 @@ export const fmtDate = (iso) => { const p = dateParts(iso); return `${p.dow}, ${
 export const sample = (label = 'Sample') => site.showPlaceholderTags ? `<span class="sample-tag" title="Placeholder content — will be replaced">${esc(label)}</span>` : '';
 
 // Brand mark: our own take on the "< • >" brackets idea, in the four Google colours.
-export const logoMark = (size = 40) => `<svg class="mark" width="${size}" height="${Math.round(size * 0.62)}" viewBox="0 0 64 40" fill="none" aria-hidden="true">
-  <path d="M20 4 6 20l14 16" stroke="#4285F4" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M44 4l14 16-14 16" stroke="#EA4335" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="27" cy="20" r="4" fill="#FBBC04"/><circle cx="37" cy="20" r="4" fill="#34A853"/></svg>`;
+export const logoMark = (size = 40) => `<img class="mark" src="assets/gdg-logo.png" width="${size}" height="${Math.round(size * 330 / 575)}" alt="" aria-hidden="true">`;
 
 // Photo placeholder tile
 export const photo = (label, color = 'blue', cls = '') => `<figure class="ph ph-${color} ${cls}" role="img" aria-label="${esc(label)} (placeholder photo)">
@@ -49,7 +46,7 @@ export const layout = (page, body) => {
   const ogImage = `${site.url}/assets/og-image.svg`;
   const orgLd = {
     '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url,
-    logo: `${site.url}/assets/favicon.svg`, email: site.email,
+    logo: `${site.url}/assets/gdg-logo.png`, email: site.email,
     description: 'A student community at GITAM for learning, building and shipping with Google technologies.',
     parentOrganization: { '@type': 'CollegeOrUniversity', name: 'GITAM (Deemed to be University)' },
     sameAs: Object.values(site.social).filter(v => v && v !== '#')
@@ -72,7 +69,7 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${ogImage}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/gdg-logo.png" type="image/png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

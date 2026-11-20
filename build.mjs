@@ -40,7 +40,7 @@ await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${s
 await writeFile(join(dist, 'manifest.webmanifest'), JSON.stringify({
   name: site.name, short_name: site.short, start_url: '/', display: 'standalone',
   background_color: '#FFFBF3', theme_color: '#FFFBF3',
-  icons: [{ src: 'assets/favicon.svg', sizes: 'any', type: 'image/svg+xml' }]
+  icons: [{ src: 'assets/gdg-logo.png', sizes: '575x330', type: 'image/png' }]
 }, null, 2));
 
 console.log(`\nDone: ${pages.length + 1} pages → dist/`);

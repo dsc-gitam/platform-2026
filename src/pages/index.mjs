@@ -1,4 +1,5 @@
 import { site, events, domains, achievements, gallery, team, roadmap, typeLabels } from '../data/site.mjs';
+import { legacyStory, legacyGallery, legacyAchievements, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
 const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
@@ -131,15 +132,14 @@ const body = `
       <p class="eyebrow"><i class="dot"></i>Legacy &amp; wins ${sample()}</p>
       <h2>This club has done it <span class="hl">before</span>. Let's do it again.</h2>
     </div>
-    <div class="grid g4" style="margin-bottom:46px">
-      ${achievements.map(a => `<div class="stat c-${a.color} reveal"><b>${esc(a.n)}</b><span>${esc(a.label)}</span></div>`).join('')}
-    </div>
-    <div class="gallery-strip reveal">
-      ${gallery.slice(0, 5).map(g => photo(g.label, g.color)).join('')}
-    </div>
-    <p style="margin-top:34px" class="reveal"><a class="link" href="legacy.html">Relive the legacy, meet the members it changed →</a></p>
+    <p style="margin-top:34px" class="reveal"><a class="link" href="legacy.html">Open the full legacy page →</a></p>
   </div>
 </section>
+
+${legacyStory(false)}
+${legacyGallery(true)}
+${legacyAchievements(false)}
+${legacyStories(true)}
 
 <section class="section">
   <div class="container">
@@ -155,6 +155,7 @@ const body = `
 </section>
 
 ${ctaBand({ title: 'Join us. It really is that simple.', text: 'Become a member, get notified about events, and bring a friend. The only requirement is curiosity.', primary: ['join.html', 'Join the club'], secondary: ['community.html', 'Visit the community board'] })}
+${lightbox}
 `;
 
 export default {
