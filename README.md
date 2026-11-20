@@ -17,7 +17,7 @@ npm run build    # just build into dist/
 | Announcements, forum seed posts | `updates`, `forumSeed` |
 | Domains, timeline, achievements, stories, gallery, roadmap, FAQs | same file |
 | Tech Atlas roles, interests | `src/data/roles.mjs` |
-| Find-your-place paths | `src/pages/find-your-place.mjs` (`paths`) and scoring in `src/assets/js/quiz.js` |
+| Find-your-place paths | `src/sections/find.mjs` (`paths`, shown on the home page) and scoring in `src/assets/js/quiz.js` |
 | Colours, type, components | `src/assets/css/styles.css` (`:root` tokens) |
 
 ## Before launch checklist

@@ -1,4 +1,5 @@
 import { domains } from '../data/site.mjs';
+import { icon } from '../icons.mjs';
 import { esc, pageHero, ctaBand, arrow } from '../lib.mjs';
 
 const body = `
@@ -11,7 +12,7 @@ ${pageHero({ eyebrow: 'Domains', title: 'Pick a lane. <span class="hl">Switch an
     </div>
     ${domains.map(d => `
     <article class="card dom-detail c-${d.color} reveal" id="${d.id}">
-      <div class="dom-glyph" aria-hidden="true">${esc(d.glyph)}</div>
+      <div class="dom-glyph" aria-hidden="true">${icon(d.glyph, 64)}</div>
       <div>
         <h2 style="font-size:2rem;margin-bottom:.3em">${esc(d.name)}</h2>
         <p style="font-size:1.1rem">${esc(d.what)}</p>
@@ -31,7 +32,7 @@ ${pageHero({ eyebrow: 'Domains', title: 'Pick a lane. <span class="hl">Switch an
   </div>
 </section>
 
-${ctaBand({ title: 'Want a domain we don\'t have yet?', text: 'Game dev, robotics, AR, anything. If three people want it, we\'ll start a squad.', primary: ['join.html#suggest', 'Suggest a domain'], secondary: ['find-your-place.html', 'Find your place'] })}
+${ctaBand({ title: 'Want a domain we don\'t have yet?', text: 'Game dev, robotics, AR, anything. If three people want it, we\'ll start a squad.', primary: ['join.html#suggest', 'Suggest a domain'], secondary: ['index.html#find-your-place', 'Find your place'] })}
 `;
 
 export default {

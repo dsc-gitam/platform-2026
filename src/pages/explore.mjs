@@ -26,7 +26,7 @@ ${pageHero({ eyebrow: 'Tech Atlas', title: 'Lost in tech? <span class="hl">Wande
       <p class="sr">JavaScript is needed for the interactive map. A plain list of roles is available below.</p>
     </div>
 
-    <div class="tray" id="tray" hidden><b>Your shortlist:</b><span id="tray-items" style="display:contents"></span><a class="btn btn-ink btn-sm" href="find-your-place.html" style="margin-left:auto">Plan with GDG ${arrow}</a></div>
+    <div class="tray" id="tray" hidden><b>Your shortlist:</b><span id="tray-items" style="display:contents"></span><a class="btn btn-ink btn-sm" href="index.html#find-your-place" style="margin-left:auto">Plan with GDG ${arrow}</a></div>
   </div>
 </section>
 

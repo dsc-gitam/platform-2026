@@ -522,3 +522,14 @@ a.bt:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink);
   .bt-event { grid-column: 1 / -1; }
 }
 @media (max-width: 560px) { .bento { grid-template-columns: 1fr; } .bt-event { grid-template-columns: 1fr; } .bt-event .bt-date { grid-row: auto; flex-direction: row; gap: 8px; width: max-content; margin-bottom: 12px; } }
+
+/* ---- Icons ---- */
+.ico { flex: none; display: block; }
+.badge .ico { stroke-width: 2.2; }
+.dom-tile .g { line-height: 0; margin-bottom: 4px; }
+.dom-glyph .ico { width: 56%; height: 56%; stroke-width: 1.8; }
+.orb .og { line-height: 0; display: grid; place-items: center; }
+.orb .og .ico { stroke-width: 2; }
+.drawer-head .og .ico { stroke-width: 1.8; }
+.result-top .big-glyph { font-size: 0; line-height: 0; opacity: .22; }
+.result-top .big-glyph .ico { stroke-width: 1.4; }

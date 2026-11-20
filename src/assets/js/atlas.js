@@ -33,7 +33,7 @@
       ${data.roles.filter(r => r.cluster === c.id).map((r, i) => {
         const sc = scored[r.id]; const size = guided && selected.size ? (0.8 + sc / 100 * 0.55).toFixed(2) : 1;
         const cls = ['orb', c.color, saved.has(r.id) ? 'saved' : '', guided && selected.size && !topIds.has(r.id) && sc < 40 ? 'dim' : '', topIds.has(r.id) ? 'top' : ''].join(' ');
-        return `<button class="${cls}" data-role="${r.id}" style="--s:${size};--d:${(i * 0.7).toFixed(1)}s" aria-label="${esc(r.name)}${guided && selected.size ? ', ' + sc + '% match' : ''}"><span class="og">${esc(r.glyph)}</span><span class="on">${esc(r.name.replace(' Developer', ' Dev').replace(' Engineer', ' Eng.'))}</span><span class="pct">${sc}%</span></button>`;
+        return `<button class="${cls}" data-role="${r.id}" style="--s:${size};--d:${(i * 0.7).toFixed(1)}s" aria-label="${esc(r.name)}${guided && selected.size ? ', ' + sc + '% match' : ''}"><span class="og">${GDG_ICON(r.glyph, 30)}</span><span class="on">${esc(r.name.replace(' Developer', ' Dev').replace(' Engineer', ' Eng.'))}</span><span class="pct">${sc}%</span></button>`;
       }).join('')}
       </div></div>`).join('');
     const tl = $('#top-list');
@@ -54,7 +54,7 @@
     drawer.setAttribute('aria-hidden', 'false');
     drawer.innerHTML = `
       <div class="drawer-head"><button class="modal-x" data-close aria-label="Close">×</button>
-        <div class="og">${esc(r.glyph)}</div><h2>${esc(r.name)}</h2><p style="margin:0">${esc(r.tagline)}</p>
+        <div class="og">${GDG_ICON(r.glyph, 44)}</div><h2>${esc(r.name)}</h2><p style="margin:0">${esc(r.tagline)}</p>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><span class="chip ${c.color}">${esc(c.name)}</span>${guided && selected.size ? `<span class="chip">${sc}% match for you</span>` : ''}</div>
       </div>
       <div class="drawer-body">
@@ -68,7 +68,7 @@
       </div>
       <div class="drawer-actions">
         <button class="btn ${saved.has(id) ? 'btn-yellow' : 'btn-ink'} btn-sm" data-save="${id}">${saved.has(id) ? '★ Saved' : '☆ Save to shortlist'}</button>
-        <a class="btn btn-ghost btn-sm" href="find-your-place.html">Plan with GDG</a>
+        <a class="btn btn-ghost btn-sm" href="index.html#find-your-place">Plan with GDG</a>
         <a class="btn btn-ghost btn-sm" href="events.html">Find an event</a>
       </div>`;
     scrim.classList.add('open'); history.replaceState(null, '', '#' + id);

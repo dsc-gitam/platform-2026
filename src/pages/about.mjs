@@ -78,7 +78,7 @@ ${pageHero({ eyebrow: 'About', title: 'A club built <span class="hl">with</span>
   </div>
 </section>
 
-${ctaBand({ title: 'Be part of the rebuild.', text: 'Join as a member, or raise your hand for a role. Either way, we are glad you are here.', primary: ['join.html', 'Join the club'], secondary: ['find-your-place.html', 'Find your place'] })}
+${ctaBand({ title: 'Be part of the rebuild.', text: 'Join as a member, or raise your hand for a role. Either way, we are glad you are here.', primary: ['join.html', 'Join the club'], secondary: ['index.html#find-your-place', 'Find your place'] })}
 `;
 
 export default {

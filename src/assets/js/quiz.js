@@ -66,7 +66,7 @@
     store.set('place', topId);
     root.innerHTML = `
     <div class="result reveal in">
-      <div class="result-top c-${p.color}"><span class="big-glyph" aria-hidden="true">${esc(p.glyph)}</span>
+      <div class="result-top c-${p.color}"><span class="big-glyph" aria-hidden="true">${GDG_ICON(p.glyph, 190)}</span>
         <p class="eyebrow"><i class="dot"></i>Your place</p>
         <h2>${esc(p.name)}</h2><p class="lead" style="max-width:52ch">${esc(p.line)}</p>
         <p style="max-width:56ch">${esc(p.why)}</p>
@@ -93,6 +93,6 @@
   function sharedResult(id) {
     // Build a minimal view without scores
     picks = []; const p = P[id];
-    root.innerHTML = `<div class="result"><div class="result-top c-${p.color}"><span class="big-glyph" aria-hidden="true">${esc(p.glyph)}</span><p class="eyebrow"><i class="dot"></i>A friend found their place</p><h2>${esc(p.name)}</h2><p class="lead" style="max-width:52ch">${esc(p.line)}</p><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn btn-ink" data-restart>Find mine →</button><a class="btn btn-ghost" href="join.html#${p.tab}">${esc(p.cta)}</a></div></div></div>`;
+    root.innerHTML = `<div class="result"><div class="result-top c-${p.color}"><span class="big-glyph" aria-hidden="true">${GDG_ICON(p.glyph, 190)}</span><p class="eyebrow"><i class="dot"></i>A friend found their place</p><h2>${esc(p.name)}</h2><p class="lead" style="max-width:52ch">${esc(p.line)}</p><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn btn-ink" data-restart>Find mine →</button><a class="btn btn-ghost" href="join.html#${p.tab}">${esc(p.cta)}</a></div></div></div>`;
   }
 })();

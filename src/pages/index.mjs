@@ -1,5 +1,7 @@
 import { site, events, domains, achievements, gallery, team, roadmap, typeLabels } from '../data/site.mjs';
-import { legacyStory, legacyGallery, legacyAchievements, legacyStories, lightbox } from '../sections/legacy.mjs';
+import { legacyStory, milestoneStrip, legacyGallery, legacyAchievements, legacyStories, lightbox } from '../sections/legacy.mjs';
+import { icon } from '../icons.mjs';
+import { findSection } from '../sections/find.mjs';
 import { arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
 const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
@@ -34,7 +36,7 @@ const body = `
         <p>${esc(up[0].venue)} · <span data-countdown="${up[0].date}">coming soon</span></p>
         <span class="bt-go">Save your seat ${arrow}</span>
       </a>
-      <a class="bt bt-find" href="find-your-place.html">
+      <a class="bt bt-find" href="#find-your-place">
         <span class="bt-label">2-minute quiz</span>
         <h3>Not sure where you fit?</h3>
         <span class="bt-go">Find your place ${arrow}</span>
@@ -58,9 +60,9 @@ const body = `
       <p>We are starting over, which means we get to do it right. Fewer slides, more shipping. Fewer sign-ups, more people who actually grew.</p>
     </div>
     <div class="grid g3">
-      <article class="card pillar reveal"><div class="badge">L</div><h3>Learn without fear</h3><p>Every event has a path for total beginners. Ask the "silly" question. Someone else was wondering too.</p></article>
-      <article class="card pillar reveal"><div class="badge">B</div><h3>Build real things</h3><p>Project squads, hackathons and demo days, so your portfolio is stuff you made, not stuff you watched.</p></article>
-      <article class="card pillar reveal"><div class="badge">+</div><h3>Belong somewhere</h3><p>Find your people: mentors, teammates, friends who push you. This is what makes a campus feel like yours.</p></article>
+      <article class="card pillar reveal"><div class="badge">${icon('graduation-cap', 26)}</div><h3>Learn without fear</h3><p>Every event has a path for total beginners. Ask the "silly" question. Someone else was wondering too.</p></article>
+      <article class="card pillar reveal"><div class="badge">${icon('hammer', 26)}</div><h3>Build real things</h3><p>Project squads, hackathons and demo days, so your portfolio is stuff you made, not stuff you watched.</p></article>
+      <article class="card pillar reveal"><div class="badge">${icon('users', 26)}</div><h3>Belong somewhere</h3><p>Find your people: mentors, teammates, friends who push you. This is what makes a campus feel like yours.</p></article>
     </div>
   </div>
 </section>
@@ -84,14 +86,7 @@ const body = `
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="cta-band reveal" style="background:var(--blue);color:#fff">
-      <div><h2>Not sure where you fit?</h2><p style="color:#fff;opacity:.9">Answer four quick questions and we'll point you to the right first step: attending, learning, building, leading or speaking.</p></div>
-      <div class="cta-actions"><a class="btn btn-yellow" href="find-your-place.html">Find your place ${arrow}</a><a class="btn btn-ghost" style="color:#fff;border-color:#fff" href="explore.html">Or explore the Tech Atlas</a></div>
-    </div>
-  </div>
-</section>
+${findSection}
 
 <section class="section">
   <div class="container">
@@ -100,7 +95,7 @@ const body = `
       <h2>Eight ways to get your hands <span class="hl">dirty</span>.</h2>
     </div>
     <div class="grid g4">
-      ${domains.map(d => `<a class="dom-tile reveal c-${d.color}" href="domains.html#${d.id}"><span class="g">${esc(d.glyph)}</span><b>${esc(d.name)}</b><small>${esc(d.tools.slice(0, 2).join(' · '))}</small></a>`).join('')}
+      ${domains.map(d => `<a class="dom-tile reveal c-${d.color}" href="domains.html#${d.id}"><span class="g">${icon(d.glyph, 28)}</span><b>${esc(d.name)}</b><small>${esc(d.tools.slice(0, 2).join(' · '))}</small></a>`).join('')}
     </div>
   </div>
 </section>
@@ -151,9 +146,7 @@ const body = `
     <div class="grid g4" style="margin-bottom:46px">
       ${achievements.map(a => `<div class="stat c-${a.color} reveal"><b>${esc(a.n)}</b><span>${esc(a.label)}</span></div>`).join('')}
     </div>
-    <div class="gallery-strip reveal">
-      ${gallery.slice(0, 5).map(g => photo(g.label, g.color)).join('')}
-    </div>
+    ${milestoneStrip()}
     <p style="margin-top:34px" class="reveal"><a class="link" href="legacy.html">Relive the legacy, meet the members it changed →</a></p>
   </div>
 </section>
@@ -183,7 +176,7 @@ ${lightbox}
 export default {
   path: 'index.html', nav: 'home', title: 'Home',
   description: 'GDG on Campus GITAM is a student-run tech community for learning, building and shipping with Google technologies. Free events, workshops, hackathons and mentors — beginners welcome.',
-  scripts: ['home.js'],
+  scripts: ['home.js', 'quiz.js'],
   body,
   jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url + '/' }]
 };

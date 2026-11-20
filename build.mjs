@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { layout } from './src/lib.mjs';
 import { site } from './src/data/site.mjs';
+import { ICONS } from './src/icons.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const dist = join(root, 'dist');
@@ -24,10 +25,16 @@ for (const f of files) {
 await writeFile(join(dist, '404.html'), layout({
   path: '404.html', nav: '', title: 'Page not found', description: 'This page wandered off.', noindex: true,
   body: ''
-}, `<section class="page-hero ph-red"><div class="container"><p class="eyebrow"><i class="dot"></i>Error 404</p><h1>This page wandered off.</h1><p class="lead">It's probably debugging itself. Let's get you back to somewhere useful.</p><p><a class="btn btn-ink" href="index.html">Back home</a> <a class="btn btn-ghost" href="find-your-place.html">Find your place</a></p></div></section>`));
+}, `<section class="page-hero ph-red"><div class="container"><p class="eyebrow"><i class="dot"></i>Error 404</p><h1>This page wandered off.</h1><p class="lead">It's probably debugging itself. Let's get you back to somewhere useful.</p><p><a class="btn btn-ink" href="index.html">Back home</a> <a class="btn btn-ghost" href="index.html#find-your-place">Find your place</a></p></div></section>`));
+
+// Old /find-your-place.html now lives on the home page: keep the URL working with a redirect.
+await writeFile(join(dist, 'find-your-place.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Find your place · ${site.short}</title><meta name="robots" content="noindex"><link rel="canonical" href="${site.url}/#find-your-place"><meta http-equiv="refresh" content="0; url=index.html#find-your-place"></head><body><p>Moving to <a href="index.html#find-your-place">the home page</a>…</p></body></html>`);
 
 // Static assets
 await cp(join(root, 'src/assets'), join(dist, 'assets'), { recursive: true });
+
+// Client-side icon helper (same Lucide set as the server-rendered pages)
+await writeFile(join(dist, 'assets/js/icons.js'), `window.GDG_ICON=(function(I){return function(n,s){s=s||24;return '<svg class="ico" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(I[n]||'')+'</svg>';};})(${JSON.stringify(ICONS)});\n`);
 
 // SEO files
 const today = new Date().toISOString().slice(0, 10);

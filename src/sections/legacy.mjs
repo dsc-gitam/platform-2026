@@ -1,5 +1,5 @@
 // Legacy sections, shared by the Legacy page and the Home page.
-import { timeline, achievements, stories, gallery } from '../data/site.mjs';
+import { timeline, achievements, stories, gallery, milestones } from '../data/site.mjs';
 import { esc, photo, avatar, sample } from '../lib.mjs';
 
 export const legacyStory = (tint = false) => `
@@ -17,13 +17,27 @@ export const legacyStory = (tint = false) => `
   </div>
 </section>`;
 
+export const milestoneStrip = () => `<div class="gallery-strip milestones reveal">${milestones.map(m => photo(m.year + ' · ' + m.label, m.color).replace('<figure', '<figure data-lightbox tabindex="0"')).join('')}</div>`;
+
+export const legacyMilestones = (tint = false) => `
+<section class="section${tint ? ' tint' : ''}" id="milestones">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow"><i class="dot"></i>Milestones ${sample('Photos coming')}</p>
+      <h2>The moments that <span class="hl">mattered</span>.</h2>
+      <p>The firsts, the wins and the nights people still talk about. Click a photo to enlarge.</p>
+    </div>
+    ${milestoneStrip()}
+  </div>
+</section>`;
+
 export const legacyGallery = (tint = true) => `
 <section class="section${tint ? ' tint' : ''}" id="gallery">
   <div class="container">
     <div class="section-head reveal">
       <p class="eyebrow"><i class="dot"></i>Gallery ${sample('Photos coming')}</p>
-      <h2>How it looked when it <span class="hl">worked</span>.</h2>
-      <p>Click any photo to enlarge. We'll replace these with real moments from past events.</p>
+      <h2>Everything else, <span class="hl">in frames</span>.</h2>
+      <p>The workshops, late nights and in-between moments. Click any photo to enlarge. We'll replace these with real shots from past events.</p>
     </div>
     <div class="gallery reveal">
       ${gallery.map(g => photo(g.label, g.color, g.size).replace('<figure', '<figure data-lightbox tabindex="0"')).join('')}

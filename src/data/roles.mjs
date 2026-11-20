@@ -20,7 +20,7 @@ export const clusters = [
 
 export const roles = [
   {
-    id: 'frontend', name: 'Frontend Developer', cluster: 'build', glyph: '</>', domain: 'web',
+    id: 'frontend', name: 'Frontend Developer', cluster: 'build', glyph: 'code-xml', domain: 'web',
     tagline: 'Turns designs into the websites and web apps you click every day.',
     traits: { visual: 3, logic: 2, apps: 2, people: 1 }, social: 1,
     day: ['Pick up a design from the team and translate it into responsive pages', 'Fix a bug that only shows up on one phone', 'Make a page 40% faster and accessible with a keyboard', 'Demo a feature and gather feedback'],
@@ -31,7 +31,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Alum', line: 'Batch of 20XX · Frontend Engineer', quote: 'I began by breaking my own portfolio page, again and again, until it stuck.' }]
   },
   {
-    id: 'backend', name: 'Backend Developer', cluster: 'build', glyph: '{ }', domain: 'cloud',
+    id: 'backend', name: 'Backend Developer', cluster: 'build', glyph: 'server', domain: 'cloud',
     tagline: 'Builds the engine room: APIs, databases and logic that power apps.',
     traits: { logic: 3, data: 2, security: 1, apps: 1 }, social: 1,
     day: ['Design an API for a new feature', 'Debug a slow database query', 'Review a teammate\'s code', 'Add tests so nothing breaks tomorrow'],
@@ -42,7 +42,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Alum', line: 'Batch of 20XX · Backend Engineer', quote: 'Backend clicked when I built something my friends actually logged into.' }]
   },
   {
-    id: 'mobile', name: 'Mobile App Developer', cluster: 'build', glyph: '▢', domain: 'mobile',
+    id: 'mobile', name: 'Mobile App Developer', cluster: 'build', glyph: 'smartphone', domain: 'mobile',
     tagline: 'Creates the apps in people\'s pockets for Android, iOS or both.',
     traits: { apps: 3, visual: 2, logic: 2 }, social: 1,
     day: ['Build a new screen with Jetpack Compose or Flutter', 'Handle weird screen sizes and slow networks', 'Test on a real phone', 'Ship an update to users'],
@@ -53,7 +53,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · Android Developer', quote: 'Seeing my own app icon on my phone for the first time was addictive.' }]
   },
   {
-    id: 'game', name: 'Game Developer', cluster: 'build', glyph: '◆', domain: 'dsa',
+    id: 'game', name: 'Game Developer', cluster: 'build', glyph: 'gamepad-2', domain: 'dsa',
     tagline: 'Makes worlds, rules and fun using code, maths and art.',
     traits: { visual: 2, logic: 3, apps: 2 }, social: 2,
     day: ['Tune how jumping feels', 'Fix a physics bug that sends the hero to space', 'Playtest with friends and rewrite level 2', 'Optimise to hit 60 fps'],
@@ -64,7 +64,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · Indie game dev', quote: 'My first game was awful, and I was proud of it. That feeling never gets old.' }]
   },
   {
-    id: 'iot', name: 'IoT & Embedded Engineer', cluster: 'build', glyph: '⌁', domain: 'dsa',
+    id: 'iot', name: 'IoT & Embedded Engineer', cluster: 'build', glyph: 'cpu', domain: 'dsa',
     tagline: 'Gives software a body: sensors, boards and smart devices.',
     traits: { hardware: 3, logic: 2, apps: 1 }, social: 0,
     day: ['Wire a sensor to a microcontroller', 'Read and debug signals on an oscilloscope', 'Make a device talk to the cloud', 'Shrink code to fit tiny memory'],
@@ -75,7 +75,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · Embedded Engineer', quote: 'The first time a sensor answered back, I was hooked.' }]
   },
   {
-    id: 'ml', name: 'AI / ML Engineer', cluster: 'data', glyph: '✦', domain: 'ai',
+    id: 'ml', name: 'AI / ML Engineer', cluster: 'data', glyph: 'brain', domain: 'ai',
     tagline: 'Teaches computers to learn from data, and builds products around it.',
     traits: { data: 3, logic: 3, apps: 1 }, social: 1,
     day: ['Clean a messy dataset', 'Train and compare two models', 'Wrap a model in an API', 'Explain to a teammate why the model was wrong'],
@@ -86,7 +86,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · ML Research Assistant', quote: 'I was scared of the maths. Projects first, theory right after worked for me.' }]
   },
   {
-    id: 'analyst', name: 'Data Analyst', cluster: 'data', glyph: '▤', domain: 'data',
+    id: 'analyst', name: 'Data Analyst', cluster: 'data', glyph: 'chart-column', domain: 'data',
     tagline: 'Finds answers hiding in numbers and tells the story clearly.',
     traits: { data: 3, explain: 2, strategy: 2, logic: 2 }, social: 2,
     day: ['Pull data with SQL', 'Build a dashboard for a manager', 'Spot an odd spike and chase it down', 'Present three insights in plain language'],
@@ -97,7 +97,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Alum', line: 'Batch of 20XX · Analyst', quote: 'Being the person who can explain the numbers made me useful on day one.' }]
   },
   {
-    id: 'cloud', name: 'Cloud & DevOps Engineer', cluster: 'infra', glyph: '☁', domain: 'cloud',
+    id: 'cloud', name: 'Cloud & DevOps Engineer', cluster: 'infra', glyph: 'cloud', domain: 'cloud',
     tagline: 'Keeps software running, scaling and shipping smoothly.',
     traits: { logic: 2, apps: 1, security: 1, strategy: 1 }, social: 1,
     day: ['Automate a deploy so nobody has to do it manually', 'Investigate why a service is slow', 'Reduce the cloud bill', 'Write a runbook for the next on-call'],
@@ -108,7 +108,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Alum', line: 'Batch of 20XX · DevOps Engineer', quote: 'I like being the reason nothing breaks at 2 a.m.' }]
   },
   {
-    id: 'security', name: 'Cybersecurity Analyst', cluster: 'infra', glyph: '⛨', domain: 'security',
+    id: 'security', name: 'Cybersecurity Analyst', cluster: 'infra', glyph: 'shield-check', domain: 'security',
     tagline: 'Thinks like an attacker to keep systems and people safe.',
     traits: { security: 3, logic: 3, people: 1 }, social: 0,
     day: ['Review an app for vulnerabilities', 'Investigate a suspicious login', 'Run a capture-the-flag challenge', 'Write a clear report for non-experts'],
@@ -119,7 +119,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · Security Intern', quote: 'CTFs taught me more than any lecture because I had to get unstuck myself.' }]
   },
   {
-    id: 'design', name: 'UI/UX Designer', cluster: 'people', glyph: '◐', domain: 'design',
+    id: 'design', name: 'UI/UX Designer', cluster: 'people', glyph: 'palette', domain: 'design',
     tagline: 'Makes products clear, usable and a little delightful.',
     traits: { visual: 3, people: 3, apps: 2, strategy: 1 }, social: 2,
     day: ['Interview a user and find what actually confuses them', 'Sketch three layouts, pick one', 'Prototype in Figma and test it', 'Hand off to developers with clear specs'],
@@ -130,7 +130,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Member', line: 'Batch of 20XX · Design Intern', quote: 'Design is mostly listening. I just didn\'t know that before.' }]
   },
   {
-    id: 'pm', name: 'Product Manager', cluster: 'people', glyph: '◎', domain: 'design',
+    id: 'pm', name: 'Product Manager', cluster: 'people', glyph: 'compass', domain: 'design',
     tagline: 'Decides what to build and why, and rallies a team around it.',
     traits: { strategy: 3, people: 3, explain: 2, data: 1 }, social: 3,
     day: ['Talk to users and teammates', 'Prioritise what ships this sprint', 'Write a one-page spec', 'Check the numbers after launch'],
@@ -141,7 +141,7 @@ export const roles = [
     voices: [{ name: 'Placeholder Alum', line: 'Batch of 20XX · Associate PM', quote: 'Organising club events was my first product management job, I just didn\'t call it that.' }]
   },
   {
-    id: 'devrel', name: 'Developer Advocate / Tech Writer', cluster: 'people', glyph: '✎', domain: 'web',
+    id: 'devrel', name: 'Developer Advocate / Tech Writer', cluster: 'people', glyph: 'pen-line', domain: 'web',
     tagline: 'Helps developers learn: talks, tutorials, docs and community.',
     traits: { explain: 3, people: 3, apps: 1, visual: 1 }, social: 3,
     day: ['Write a tutorial with working code', 'Give a talk or livestream', 'Collect feedback and send it to the product team', 'Answer questions from the community'],

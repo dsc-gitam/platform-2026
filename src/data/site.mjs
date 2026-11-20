@@ -85,14 +85,14 @@ export const forumSeed = [
 ];
 
 export const domains = [
-  { id: 'mobile', name: 'Mobile & Apps', color: 'green', glyph: '▢', tools: ['Kotlin', 'Jetpack Compose', 'Flutter', 'Dart'], what: 'Apps that live in pockets. Android with Kotlin and Compose, or cross-platform with Flutter.', first: 'Build a tip-calculator app and run it on your own phone.', outcome: 'Publish-ready apps, a Play Store-quality portfolio.' },
-  { id: 'web', name: 'Web & Chrome', color: 'blue', glyph: '</>', tools: ['HTML/CSS/JS', 'Angular', 'Firebase', 'Chrome DevTools'], what: 'The open web: fast, accessible, beautiful sites and web apps used by everyone.', first: 'Ship a personal page on Firebase Hosting in an afternoon.', outcome: 'Deployed projects and a site you are proud to share.' },
-  { id: 'ai', name: 'AI & Gemini', color: 'red', glyph: '✦', tools: ['Gemini API', 'Python', 'TensorFlow', 'Colab'], what: 'Use and build with modern AI: prompts, APIs, small models and real products.', first: 'Make a tiny Gemini-powered study helper in Colab.', outcome: 'AI-enabled projects and a clear mental model of how it all works.' },
-  { id: 'cloud', name: 'Cloud & DevOps', color: 'yellow', glyph: '☁', tools: ['Google Cloud', 'Cloud Run', 'Docker', 'GitHub Actions'], what: 'Where software actually runs. Deploy, scale and keep things healthy.', first: 'Containerise a small app and deploy it to Cloud Run.', outcome: 'Cloud-ready skills and industry-recognised badges.' },
-  { id: 'data', name: 'Data & Analytics', color: 'green', glyph: '▤', tools: ['SQL', 'Python', 'BigQuery', 'Looker Studio'], what: 'Turn messy numbers into answers: queries, dashboards and stories with data.', first: 'Analyse a public dataset and publish a one-page dashboard.', outcome: 'A portfolio of insights, not just charts.' },
-  { id: 'design', name: 'Design (UI/UX)', color: 'red', glyph: '◐', tools: ['Figma', 'Material Design', 'Prototyping', 'User research'], what: 'Make products people love to use, from sketches to tested prototypes.', first: 'Redesign one screen of an app you hate using.', outcome: 'Case studies that show your thinking.' },
-  { id: 'security', name: 'Security', color: 'blue', glyph: '⌁', tools: ['CTFs', 'Web security', 'Linux', 'OWASP'], what: 'Think like an attacker so you can build like a defender. Capture-the-flag friendly.', first: 'Solve three beginner CTF challenges together.', outcome: 'Safer habits and a start on security careers.' },
-  { id: 'dsa', name: 'DSA & Open Source', color: 'yellow', glyph: '{ }', tools: ['Data structures', 'Algorithms', 'Git', 'Open source'], what: 'The fundamentals that interviews love and the open-source habits that get you noticed.', first: 'Make your first pull request to a friendly project.', outcome: 'Strong problem-solving and a visible GitHub.' }
+  { id: 'mobile', name: 'Mobile & Apps', color: 'green', glyph: 'smartphone', tools: ['Kotlin', 'Jetpack Compose', 'Flutter', 'Dart'], what: 'Apps that live in pockets. Android with Kotlin and Compose, or cross-platform with Flutter.', first: 'Build a tip-calculator app and run it on your own phone.', outcome: 'Publish-ready apps, a Play Store-quality portfolio.' },
+  { id: 'web', name: 'Web & Chrome', color: 'blue', glyph: 'globe', tools: ['HTML/CSS/JS', 'Angular', 'Firebase', 'Chrome DevTools'], what: 'The open web: fast, accessible, beautiful sites and web apps used by everyone.', first: 'Ship a personal page on Firebase Hosting in an afternoon.', outcome: 'Deployed projects and a site you are proud to share.' },
+  { id: 'ai', name: 'AI & Gemini', color: 'red', glyph: 'sparkles', tools: ['Gemini API', 'Python', 'TensorFlow', 'Colab'], what: 'Use and build with modern AI: prompts, APIs, small models and real products.', first: 'Make a tiny Gemini-powered study helper in Colab.', outcome: 'AI-enabled projects and a clear mental model of how it all works.' },
+  { id: 'cloud', name: 'Cloud & DevOps', color: 'yellow', glyph: 'cloud', tools: ['Google Cloud', 'Cloud Run', 'Docker', 'GitHub Actions'], what: 'Where software actually runs. Deploy, scale and keep things healthy.', first: 'Containerise a small app and deploy it to Cloud Run.', outcome: 'Cloud-ready skills and industry-recognised badges.' },
+  { id: 'data', name: 'Data & Analytics', color: 'green', glyph: 'chart-column', tools: ['SQL', 'Python', 'BigQuery', 'Looker Studio'], what: 'Turn messy numbers into answers: queries, dashboards and stories with data.', first: 'Analyse a public dataset and publish a one-page dashboard.', outcome: 'A portfolio of insights, not just charts.' },
+  { id: 'design', name: 'Design (UI/UX)', color: 'red', glyph: 'palette', tools: ['Figma', 'Material Design', 'Prototyping', 'User research'], what: 'Make products people love to use, from sketches to tested prototypes.', first: 'Redesign one screen of an app you hate using.', outcome: 'Case studies that show your thinking.' },
+  { id: 'security', name: 'Security', color: 'blue', glyph: 'shield-check', tools: ['CTFs', 'Web security', 'Linux', 'OWASP'], what: 'Think like an attacker so you can build like a defender. Capture-the-flag friendly.', first: 'Solve three beginner CTF challenges together.', outcome: 'Safer habits and a start on security careers.' },
+  { id: 'dsa', name: 'DSA & Open Source', color: 'yellow', glyph: 'braces', tools: ['Data structures', 'Algorithms', 'Git', 'Open source'], what: 'The fundamentals that interviews love and the open-source habits that get you noticed.', first: 'Make your first pull request to a friendly project.', outcome: 'Strong problem-solving and a visible GitHub.' }
 ];
 
 export const timeline = [
@@ -116,15 +116,29 @@ export const stories = [
   { name: 'Placeholder Member', batch: 'Batch of 20XX', color: 'green', now: 'ML Research Assistant', before: 'Curious about AI, scared of the math.', after: 'Joined a Study Jam, finished the learning path, and gave their first ever talk.', quote: 'Teaching it once made me understand it for good.' }
 ];
 
+// Key moments & milestones — shown in the Legacy sections.
+export const milestones = [
+  { id: 'm1', year: '2022', color: 'yellow', label: 'First meetup: 12 students, one projector', size: 'sq' },
+  { id: 'm2', year: '2023', color: 'green', label: 'First hackathon winners', size: 'sq' },
+  { id: 'm3', year: '2024', color: 'red', label: 'Google Cloud Study Jam cohort', size: 'sq' },
+  { id: 'm4', year: '2025', color: 'blue', label: 'DevFest GITAM main stage', size: 'sq' },
+  { id: 'm5', year: '2025', color: 'yellow', label: 'Demo day: 20 projects shipped', size: 'sq' }
+];
+
+// Everyday moments — shown in the Gallery (different from the milestones above).
 export const gallery = [
-  { id: 'g1', color: 'blue', label: 'DevFest main stage', size: 'tall' },
+  { id: 'g1', color: 'red', label: 'Android workshop', size: 'tall' },
   { id: 'g2', color: 'yellow', label: 'Hackathon at 3 a.m.', size: 'wide' },
-  { id: 'g3', color: 'red', label: 'Android workshop', size: 'sq' },
-  { id: 'g4', color: 'green', label: 'Team photo', size: 'sq' },
-  { id: 'g5', color: 'blue', label: 'Demo day', size: 'wide' },
-  { id: 'g6', color: 'red', label: 'Study jam crew', size: 'tall' },
-  { id: 'g7', color: 'yellow', label: 'Speaker session', size: 'sq' },
-  { id: 'g8', color: 'green', label: 'Swag & stickers', size: 'sq' }
+  { id: 'g3', color: 'green', label: 'Pair programming in the lab', size: 'sq' },
+  { id: 'g4', color: 'blue', label: 'Pizza break', size: 'sq' },
+  { id: 'g5', color: 'red', label: 'Whiteboard brainstorm', size: 'wide' },
+  { id: 'g6', color: 'green', label: 'Study jam crew', size: 'tall' },
+  { id: 'g7', color: 'yellow', label: 'Speaker Q&A', size: 'sq' },
+  { id: 'g8', color: 'blue', label: 'Swag & stickers', size: 'sq' },
+  { id: 'g9', color: 'green', label: 'Volunteer crew', size: 'sq' },
+  { id: 'g10', color: 'red', label: 'Quiz night', size: 'wide' },
+  { id: 'g11', color: 'blue', label: 'Debugging together', size: 'sq' },
+  { id: 'g12', color: 'yellow', label: 'Team photo', size: 'sq' }
 ];
 
 export const roadmap = [
