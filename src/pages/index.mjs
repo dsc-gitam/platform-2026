@@ -7,7 +7,7 @@ const marquee = domains.map((d, i) => `<span style="--c:var(--${['blue', 'red', 
 
 const body = `
 <section class="hero">
-  <div class="container hero-grid">
+  <div class="container"><div class="hero-card hero-grid">
     <div>
       <p class="eyebrow"><i class="dot"></i>GDG on Campus · GITAM</p>
       <h1><span class="w1">Learn</span> it.<br><span class="w2">Build</span> it.<br><span class="u-wrap"><span class="w4">Ship</span> it —<svg class="squig" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c14-9 24 7 38-1s24 7 38-1 24 7 38-1 24 7 38-1 24 7 44 0" stroke="#FBBC04" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span><br>together.</h1>
@@ -29,7 +29,7 @@ const body = `
       </div>
       <span class="sticker s-a">&lt; hello, you /&gt;</span>
     </div>
-  </div>
+  </div></div>
 </section>
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track">${marquee}${marquee}</div></div>
