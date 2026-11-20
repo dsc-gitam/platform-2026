@@ -71,10 +71,10 @@
     const r = await api('GET', '/events'); if (!r.ok) return;
     const list = r.data.events;
     el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h2>Events</h2>${can('events:write') ? `<button class="btn btn-blue btn-sm" id="ev-new">${ICON('plus')} New event</button>` : ''}</div>
-      <div class="a-table-wrap"><table class="a-table"><tr><th>Event</th><th>Date</th><th>Registered</th><th>Status</th><th></th></tr>
-      ${list.map((e) => `<tr><td><b>${esc(e.title)}</b><br><small>${esc(e.type)} · ${esc(e.venue)}</small></td><td>${esc(e.date)}<br><small>${esc(e.time)}</small></td><td>${e.registered}/${e.seats}</td>
-        <td>${e.published ? '' : '<span class="chip">unpublished</span> '}<span class="chip ${e.status === 'PAST' ? '' : 'green'}">${e.status.toLowerCase()}</span> ${e.status === 'PAST' ? `<span class="chip ${e.ready ? 'blue' : 'yellow'}">${e.ready ? 'report live' : 'no report'}</span>` : ''}</td>
-        <td><div class="a-actions"><button class="btn btn-ghost btn-sm" data-regs="${e.id}">Registrations</button>${can('events:write') ? `<button class="btn btn-ghost btn-sm" data-edit="${e.id}">Edit</button>` : ''}${can('postevent:write') ? `<button class="btn btn-ghost btn-sm" data-post="${e.id}">Post-event data</button>` : ''}</div></td></tr>`).join('')}</table></div>`;
+      <div class="a-table-wrap"><table class="a-table a-stack"><tr><th>Event</th><th>Date</th><th>Registered</th><th>Status</th><th></th></tr>
+      ${list.map((e) => `<tr><td class="st-title"><b>${esc(e.title)}</b><br><small>${esc(e.type)} · ${esc(e.venue)}</small></td><td data-label="Date">${esc(e.date)} <small>${esc(e.time)}</small></td><td data-label="Registered">${e.registered}/${e.seats}</td>
+        <td data-label="Status">${e.published ? '' : '<span class="chip">unpublished</span> '}<span class="chip ${e.status === 'PAST' ? '' : 'green'}">${e.status.toLowerCase()}</span> ${e.status === 'PAST' ? `<span class="chip ${e.ready ? 'blue' : 'yellow'}">${e.ready ? 'report live' : 'no report'}</span>` : ''}</td>
+        <td class="st-act"><div class="a-actions"><button class="btn btn-ghost btn-sm" data-regs="${e.id}">Registrations</button>${can('events:write') ? `<button class="btn btn-ghost btn-sm" data-edit="${e.id}">Edit</button>` : ''}${can('postevent:write') ? `<button class="btn btn-ghost btn-sm" data-post="${e.id}">Post-event data</button>` : ''}</div></td></tr>`).join('')}</table></div>`;
     const byId = Object.fromEntries(list.map((e) => [e.id, e]));
     const nw = $('#ev-new', el); if (nw) nw.addEventListener('click', () => eventForm(null));
     $$('[data-edit]', el).forEach((b) => b.addEventListener('click', () => eventForm(byId[b.dataset.edit])));
@@ -285,8 +285,8 @@
     $('#u-search', el).addEventListener('submit', (e) => { e.preventDefault(); load($('#u-q', el).value); });
     const load = async (q = '') => {
       const r = await api('GET', '/users?q=' + encodeURIComponent(q)); if (!r.ok) return;
-      $('#u-list', el).innerHTML = `<div class="a-table-wrap"><table class="a-table"><tr><th>Person</th><th>Joined</th><th>Team</th><th>Role</th></tr>${r.data.users.map((u) => `<tr><td><b>${esc(u.name)}</b><br><small>${esc(u.email)}</small></td><td>${esc(fmt(u.createdAt))}<br><small>${u.onboarded ? 'member' : 'not onboarded'} · ${u._count.registrations} regs</small></td><td>${u.teamKind ? `${esc(u.teamKind.toLowerCase())}${u.showOnSite ? ' · on site' : ''}` : ''}</td>
-        <td>${can('roles:write') ? `<select data-role="${u.id}">${['MEMBER', 'CORE', 'DOCS', 'ORGANIZER', 'ADMIN'].map((r) => `<option${r === u.role ? ' selected' : ''}>${r}</option>`).join('')}</select>` : esc(u.role)}</td></tr>`).join('')}</table></div>
+      $('#u-list', el).innerHTML = `<div class="a-table-wrap"><table class="a-table a-stack"><tr><th>Person</th><th>Joined</th><th>Team</th><th>Role</th></tr>${r.data.users.map((u) => `<tr><td class="st-title"><b>${esc(u.name)}</b><br><small>${esc(u.email)}</small></td><td data-label="Joined">${esc(fmt(u.createdAt))} <small>${u.onboarded ? 'member' : 'not onboarded'} · ${u._count.registrations} regs</small></td><td data-label="Team">${u.teamKind ? `${esc(u.teamKind.toLowerCase())}${u.showOnSite ? ' · on site' : ''}` : '–'}</td>
+        <td data-label="Role">${can('roles:write') ? `<select data-role="${u.id}">${['MEMBER', 'CORE', 'DOCS', 'ORGANIZER', 'ADMIN'].map((r) => `<option${r === u.role ? ' selected' : ''}>${r}</option>`).join('')}</select>` : esc(u.role)}</td></tr>`).join('')}</table></div>
         <p class="p-note" style="margin-top:12px"><b>Roles:</b> MEMBER (no admin access) · CORE (scan tickets, award points) · DOCS (post-event data, analytics) · ORGANIZER (events, requests, notifications, analytics, users) · ADMIN (everything, incl. roles).</p>`;
       $$('[data-role]', el).forEach((s) => s.addEventListener('change', async () => { const r2 = await api('PATCH', `/users/${s.dataset.role}/role`, { role: s.value }); if (r2.ok) toast('Role updated' + (r2.data.claimSynced ? '' : ' (Firebase claim not synced; the database role is authoritative)')); else load($('#u-q', el).value); }));
     };

@@ -43,7 +43,9 @@
       <h2 class="q-title">${q.t}</h2>
       <div class="q-opts">${q.o.map((o, i) => `<button class="q-opt" data-i="${i}" style="--c:var(--${COLORS[i % 4]})"><span class="k" ${COLORS[i % 4] === 'yellow' ? 'style="color:var(--ink)"' : ''}>${'ABCDE'[i]}</span><span><b>${esc(o[0])}</b><small>${esc(o[1])}</small></span></button>`).join('')}</div>
       <div class="q-nav">${step ? '<button class="btn btn-ghost btn-sm" data-back>← Back</button>' : '<span></span>'}<a class="link" href="explore.html">Rather explore freely? Try the Tech Atlas</a></div>`;
-    $('.q-opt', root).focus({ preventScroll: true });
+    // Move focus to the new question's title (announced by screen readers) instead of the first option,
+    // so no answer looks pre-selected on touch screens.
+    const title = $('.q-title', root); title.setAttribute('tabindex', '-1'); title.focus({ preventScroll: true });
   }
 
   root.addEventListener('click', (e) => {

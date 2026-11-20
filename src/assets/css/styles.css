@@ -898,3 +898,47 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 .a-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; } .a-toolbar input { flex: 1 1 220px; } .a-toolbar select { flex: 0 1 220px; width: auto; }
 @media (max-width: 760px) { .an-grid { grid-template-columns: 1fr; } .bar-row { grid-template-columns: minmax(60px, 90px) minmax(0, 1fr) auto; } .donut svg { width: 130px; } }
 @media (max-width: 760px) { .an-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .an-tiles .a-tile:last-child:nth-child(odd) { grid-column: 1 / -1; } .timeline .ax { font-size: 13px; } }
+
+/* ================= Mobile fixes ================= */
+/* grid tracks must be allowed to shrink below their content, otherwise long text pushes the page wider */
+.play > *, .split > *, .hero-grid > *, .a-main { min-width: 0; }
+@media (max-width: 900px) {
+  .hero-grid, .split, .play { grid-template-columns: minmax(0, 1fr); }
+  .a-shell { grid-template-columns: minmax(0, 1fr); }
+}
+.code-q { overflow-wrap: anywhere; } .opt { white-space: normal; overflow-wrap: anywhere; }
+.opts, .opt, .play-card { min-width: 0; max-width: 100%; }
+
+/* Events: date card sits at the top of the card on phones, next to the title */
+@media (max-width: 900px) { .event { align-items: start; } }
+
+/* Tech Atlas drawer: reveal with a clip instead of sliding in from off-screen, so the page never gets wider while it opens */
+.drawer { transform: none; clip-path: inset(0 0 0 100%); transition: clip-path .4s var(--ease), visibility 0s .4s, box-shadow .4s; }
+.drawer.open { clip-path: inset(0 0 0 0); transition: clip-path .4s var(--ease), visibility 0s, box-shadow .4s; }
+
+/* Touch screens keep :hover after a tap, so only apply hover effects where a real pointer exists */
+.q-opt:hover { transform: none; box-shadow: var(--shadow-sm); background: var(--white); }
+.opt:hover:not([disabled]) { transform: none; background: var(--white); }
+.choice label:hover { transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  .q-opt:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); background: var(--yellow-100); }
+  .opt:hover:not([disabled]) { transform: translateX(4px); background: var(--yellow-100); }
+  .choice label:hover { transform: translateY(-2px); }
+}
+.q-opt:active { background: var(--yellow-100); }
+.opt.right:hover, .opt.right { background: var(--green); } .opt.wrong:hover, .opt.wrong { background: var(--red); }
+
+/* Admin tables become cards on phones */
+@media (max-width: 760px) {
+  .a-stack, .a-stack tbody { display: block; }
+  .a-stack tr:has(> th) { display: none; }
+  .a-stack tr { display: block; padding: 14px; border-bottom: 2px solid var(--ink); }
+  .a-stack tr:last-child { border-bottom: 0; }
+  .a-stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 5px 0; border: 0; text-align: right; }
+  .a-stack td[data-label]::before { content: attr(data-label); font: 500 .72rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); text-align: left; flex: none; }
+  .a-stack td.st-title { display: block; text-align: left; font-size: 1.02rem; padding-bottom: 8px; }
+  .a-stack td.st-act { display: block; padding-top: 10px; text-align: left; }
+  .a-stack .a-actions { gap: 8px; }
+  .a-stack select { width: auto; min-width: 140px; }
+}
+.q-title:focus { outline: none; }
