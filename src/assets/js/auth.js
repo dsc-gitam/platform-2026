@@ -12,7 +12,7 @@ const { $, $$, store, esc } = G;
 const onJoin = /\/join\.html$/.test(location.pathname);
 const onAdmin = /\/admin\.html$/.test(location.pathname);
 // Staff can reach the admin panel without filling in the membership form first.
-const needsMemberForm = () => !!auth.me && !auth.me.user.onboarded && !(onAdmin && auth.me.user.perms.length);
+const needsMemberForm = () => !!auth.me && !auth.me.user.guest && !auth.me.user.onboarded && !auth.me.registrations.length && !(onAdmin && auth.me.user.perms.length);
 
 // While previewing locally the badge is always visible, so the design can be reviewed before the backend is connected.
 const PREVIEW = ['localhost', '127.0.0.1', ''].includes(location.hostname);
@@ -80,6 +80,49 @@ auth.signOut = async function signOut() {
   if (/\/(profile|admin)\.html$/.test(location.pathname)) location.href = 'index.html';
 };
 
+// ---------- Guests: anonymous session + "access my ticket" email link ----------
+// Registering without an account creates a Firebase anonymous user. Its tickets are reachable on another device by
+// signing in with the same email through a passwordless email link; the API then merges the guest into that account.
+auth.ensureGuest = async function ensureGuest() {
+  if (auth.me) return auth.me;
+  if (fa) { await fbMod.signInAnonymously(fa); }
+  else if (CFG.devAuth) store.set('devuser', 'anon:' + Math.random().toString(36).slice(2, 8) + '|Guest');
+  return auth.refresh();
+};
+
+auth.sendTicketLink = async function sendTicketLink(email) {
+  email = String(email || '').trim().toLowerCase();
+  if (CFG.devAuth && !fa) { store.set('devuser', email); await auth.refresh(); return { dev: true }; }
+  if (!fa) throw new Error('Sign-in is not configured');
+  await fbMod.sendSignInLinkToEmail(fa, email, { url: new URL('profile.html', location.href).href, handleCodeInApp: true });
+  store.set('email-for-signin', email);
+  return { sent: true };
+};
+
+// Runs on every page load: finishes a sign-in when the visitor arrives through the emailed link.
+async function completeEmailLink() {
+  if (!fa || !fbMod.isSignInWithEmailLink(fa, location.href)) return;
+  let email = store.get('email-for-signin', '');
+  if (!email) email = (window.prompt('Please confirm the email you used to request the link') || '').trim().toLowerCase();
+  if (!email) return;
+  const href = location.href;
+  try {
+    const cur = fa.currentUser;
+    if (cur && cur.isAnonymous) {
+      try { await fbMod.linkWithCredential(cur, fbMod.EmailAuthProvider.credentialWithLink(email, href)); await cur.getIdToken(true); }
+      catch { await fbMod.signInWithEmailLink(fa, email, href); } // email already belongs to another account: sign in to that one
+    } else await fbMod.signInWithEmailLink(fa, email, href);
+    store.set('email-for-signin', '');
+    history.replaceState(null, '', location.pathname + '#tickets');
+    await auth.refresh();
+    G.toast('You are in. Your tickets are here.');
+    if (!/\/profile\.html$/.test(location.pathname)) location.href = 'profile.html#tickets';
+  } catch (e) {
+    console.warn('Email link sign-in failed', e);
+    G.toast('That sign-in link has expired or was already used. Request a new one.');
+  }
+}
+
 // ---------- Sign-in dialog ----------
 const GOOGLE_G = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.5-4.1 7-10.2 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';
 auth.googleButton = (label = 'Continue with Google') => `<button type="button" class="btn-google" data-google>${GOOGLE_G}<span>${esc(label)}</span></button>`;
@@ -144,8 +187,8 @@ function paintBadge() {
   btn.classList.add('has-user'); btn.setAttribute('aria-label', 'Account menu for ' + u.name);
   btn.innerHTML = u.photoUrl ? `<img src="${esc(u.photoUrl)}" alt="" referrerpolicy="no-referrer" width="36" height="36">` : `<span class="acct-initials">${esc(initials(u.name))}</span>`;
   const staff = u.perms.length > 0;
-  menu.innerHTML = `<div class="acct-head"><b>${esc(u.name)}</b><small>${esc(u.email)}</small>${u.role !== 'MEMBER' ? `<span class="chip blue">${esc(u.role.toLowerCase())}</span>` : ''}</div>
-    <a href="profile.html">${window.GDG_ICON('user', 18)} My profile</a>
+  menu.innerHTML = `<div class="acct-head"><b>${esc(u.name)}</b><small>${esc(u.email || 'Guest on this device')}</small>${u.guest ? '<span class="chip yellow">guest</span>' : u.role !== 'MEMBER' ? `<span class="chip blue">${esc(u.role.toLowerCase())}</span>` : ''}</div>
+    ${u.guest ? '' : `<a href="profile.html">${window.GDG_ICON('user', 18)} My profile</a>`}
     <a href="profile.html#tickets">${window.GDG_ICON('ticket', 18)} My tickets</a>
     ${staff ? `<a href="admin.html">${window.GDG_ICON('shield-check', 18)} Admin panel</a>` : ''}
     <button type="button" data-signout>${window.GDG_ICON('log-out', 18)} Sign out</button>`;
@@ -165,7 +208,7 @@ function initBadge() {
 
 // ---------- Membership gate on the join page ----------
 function joinPageGate() {
-  if (!onJoin || !auth.me || auth.me.user.onboarded) return;
+  if (!onJoin || !auth.me || auth.me.user.guest || auth.me.user.onboarded) return;
   $$('[data-tab]').forEach((t) => { if (t.dataset.tab !== 'member') t.hidden = true; });
   const panel = $('#panel-member');
   if (panel && !$('#welcome-note')) {
@@ -176,7 +219,7 @@ function joinPageGate() {
   if (location.hash && location.hash !== '#member') history.replaceState(null, '', '#member');
 }
 function prefillForms() {
-  if (!auth.me) return;
+  if (!auth.me || auth.me.user.guest) return;
   const u = auth.me.user;
   $$('form[data-form]').forEach((f) => {
     const map = { name: u.name, email: u.email, phone: u.phone, reg_no: u.regNo, branch: u.branch, year: u.year };
@@ -196,7 +239,7 @@ function formGate() {
   if (!onJoin) return;
   $$('.tabpanel').forEach((panel) => {
     let bar = $('.signin-bar', panel);
-    if (auth.me) { if (bar) bar.remove(); return; }
+    if (auth.me && !auth.me.user.guest) { if (bar) bar.remove(); return; }
     if (bar) return;
     bar = document.createElement('div'); bar.className = 'signin-bar';
     bar.innerHTML = `<div><b>Sign in to send this</b><small>Your answers are linked to your member profile, so we can reply and track your progress.</small></div>${auth.googleButton()}`;
@@ -275,6 +318,7 @@ function boot() {
       } else if (store.get('devuser')) await auth.refresh();
       else { paintBadge(); }
     } catch (e) { console.error('Auth init failed', e); paintBadge(); }
+    await completeEmailLink();
     await done();
     G._authResolve(auth);
   })();

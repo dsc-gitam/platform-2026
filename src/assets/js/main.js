@@ -58,7 +58,7 @@
     if (CFG.apiBase) {
       const auth = await authReady;
       if (auth && auth.enabled) {
-        if (!auth.me) { auth.openSignIn('Sign in with Google to send this'); throw new Error('Sign in required'); }
+        if (!auth.me || auth.me.user.guest) { auth.openSignIn('Sign in with Google to send this'); throw new Error('Sign in required'); }
         const r = await auth.api('POST', '/applications', { type: kind, data });
         if (!r.ok) throw new Error((r.data && r.data.error) || 'Request failed');
         if (kind === 'member') await auth.refresh();
@@ -78,6 +78,7 @@
   function handleForms() {
     $$('form[data-form]').forEach((form) => {
       form.addEventListener('submit', async (e) => {
+        if (form.dataset.manual) return; // the page handles this form itself (e.g. guest registration)
         e.preventDefault();
         if (form.dataset.busy) return;
         if (!form.checkValidity()) { form.reportValidity(); return; }

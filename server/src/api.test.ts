@@ -16,7 +16,8 @@ const ADMIN = 'admin@test.dev|Ada Admin', CORE = 'core@test.dev|Cora Core', ANN 
 
 Deno.test('end to end', async (t) => {
   // clean slate for test users
-  await db.user.deleteMany({ where: { email: { endsWith: '@test.dev' } } });
+  await db.pointAward.deleteMany({ where: { OR: [{ user: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }] } }, { awardedBy: { email: { endsWith: '@test.dev' } } }] } });
+  await db.user.deleteMany({ where: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }, { id: 'dev_up@test.dev' }] } });
   await db.application.deleteMany({ where: { email: { endsWith: '@test.dev' } } });
   const ev = await db.event.findFirstOrThrow({ where: { status: 'UPCOMING' }, orderBy: { date: 'asc' } });
 
@@ -120,6 +121,36 @@ Deno.test('end to end', async (t) => {
     const up = await call('PUT', `/admin/events/${mk.json.event.id}/details`, ADMIN, { ready: true, details: { attendees: '40', about: ['It happened.'], takeaways: ['Ship it'], report: { stats: [{ label: 'Score', value: '4.8' }] } } });
     assertEquals(up.status, 200); assertEquals(up.json.event.ready, true);
     assertEquals((await call('DELETE', `/admin/events/${mk.json.event.id}`, ADMIN)).status, 200);
+  });
+
+  await t.step('guests register without an account, then claim the ticket by signing in with the same email', async () => {
+    const G1 = 'anon:g1|Guest', other = (await db.event.findFirstOrThrow({ where: { status: 'UPCOMING', id: { not: ev.id } } })).id;
+    // details are required for guests
+    assertEquals((await call('POST', `/me/events/${ev.id}/register`, G1, { answers: { level: 'Total beginner' } })).status, 400);
+    const reg = await call('POST', `/me/events/${ev.id}/register`, G1, { profile: { name: 'Gina Guest', email: 'Gina@test.dev', phone: '9000000001', branch: 'ECE', year: '2nd' }, answers: { level: 'Total beginner' } });
+    assertEquals(reg.status, 201); const code2 = reg.json.ticketCode;
+    const me = await call('GET', '/me', G1);
+    assertEquals(me.json.user.guest, true); assertEquals(me.json.user.email, 'gina@test.dev'); assertEquals(me.json.registrations.length, 1);
+    // guests can't send membership forms and never appear on the leaderboard
+    assertEquals((await call('POST', '/applications', G1, { type: 'member', data: {} })).status, 401);
+    await call('POST', '/admin/points', CORE, { code: code2, points: 90, reason: 'big win' });
+    assert(!(await call('GET', '/me', ANN)).json.leaderboard.some((l: { name: string }) => l.name === 'Gina Guest'));
+    // admin sees the typed email, not the placeholder
+    const regs = await call('GET', `/admin/events/${ev.id}/registrations`, ADMIN);
+    assert(regs.json.registrations.some((r: { user: { email: string } }) => r.user.email === 'gina@test.dev'));
+    // another device: sign in with the same (verified) email -> the guest's ticket and points move over
+    const gina = await call('GET', '/me', 'gina@test.dev|Gina Real');
+    assertEquals(gina.json.registrations.length, 1); assertEquals(gina.json.registrations[0].ticketCode, code2); assertEquals(gina.json.points, 90); assertEquals(gina.json.user.guest, false);
+    assertEquals(await db.user.count({ where: { id: 'dev_anon_g1' } }), 0);
+    // she was also registered on the real account for another event: no duplicate tickets
+    assertEquals((await call('GET', '/me', 'gina@test.dev|Gina Real')).json.registrations.length, 1);
+    void other;
+  });
+
+  await t.step('a guest that links an email on the same device becomes a normal account', async () => {
+    await db.user.create({ data: { id: 'dev_up@test.dev', email: 'anon-up@guest.invalid', name: 'Uma', isAnonymous: true, guestEmail: 'up@test.dev' } });
+    const r = await call('GET', '/me', 'up@test.dev|Uma Up');
+    assertEquals(r.json.user.guest, false); assertEquals(r.json.user.email, 'up@test.dev');
   });
 
   await t.step('content build produces site JSON', async () => {

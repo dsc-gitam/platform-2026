@@ -157,7 +157,7 @@ ${body}
       <div class="foot-cols">
         <div><h4>Explore</h4><a href="events.html">Events</a><a href="domains.html">Domains</a><a href="legacy.html">Legacy</a><a href="about.html">About &amp; team</a></div>
         <div><h4>Get involved</h4><a href="index.html#find-your-place">Find your place</a><a href="join.html">Join the club</a><a href="join.html#core">Apply for a role</a><a href="join.html#speaker">Become a speaker</a></div>
-        <div><h4>Hang out</h4><a href="community.html">Community board</a><a href="explore.html">Tech Atlas</a><a href="${site.social.discord}">Discord</a><a href="${site.social.instagram}">Instagram</a><a href="${site.social.linkedin}">LinkedIn</a></div>
+        <div><h4>Hang out</h4><a href="community.html">Community board</a><a href="explore.html">Tech Atlas</a><a href="docs.html">Docs</a><a href="${site.social.discord}">Discord</a><a href="${site.social.instagram}">Instagram</a><a href="${site.social.linkedin}">LinkedIn</a></div>
       </div>
     </div>
     <div class="foot-bottom">

@@ -36,13 +36,13 @@ pub.post('/applications', optionalAuth, async (c) => {
   const type = TYPES[str(b.type, 30)];
   if (!type) return c.json({ error: 'Unknown form type' }, 400);
   if (b.data?.honeypot) return c.json({ ok: true });
-  if (!user && type !== 'SESSION') return c.json({ error: 'Sign in to send this', code: 'SIGN_IN' }, 401);
+  if ((!user || user.isAnonymous) && type !== 'SESSION') return c.json({ error: 'Sign in to send this', code: 'SIGN_IN' }, 401);
 
   // Keep only short string fields from the form.
   const data: Record<string, string> = {};
   for (const [k, v] of Object.entries(b.data ?? {})) if (typeof v === 'string' || typeof v === 'number') data[str(k, 40)] = str(String(v), 4000);
-  const name = user?.name || str(data.name, 80) || 'Anonymous';
-  const email = user?.email || str(data.email, 120).toLowerCase();
+  const name = (user && !user.isAnonymous ? user.name : '') || str(data.name, 80) || 'Anonymous';
+  const email = (user && !user.isAnonymous ? user.email : '') || str(data.email, 120).toLowerCase();
   if (!user && !email) return c.json({ error: 'Please include your email so we can reply' }, 400);
 
   if (type === 'MEMBER' && user) {

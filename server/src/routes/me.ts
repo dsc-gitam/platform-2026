@@ -9,7 +9,7 @@ export const me = new Hono();
 me.use('*', requireAuth);
 
 const publicUser = (u: Awaited<ReturnType<typeof userOf>>) => ({
-  id: u.id, email: u.email, name: u.name, photoUrl: u.photoUrl, role: u.role, perms: permsOf(u.role), onboarded: u.onboarded,
+  id: u.id, email: u.isAnonymous ? (u.guestEmail ?? '') : u.email, guest: u.isAnonymous, name: u.name, photoUrl: u.photoUrl, role: u.role, perms: permsOf(u.role), onboarded: u.onboarded,
   phone: u.phone, regNo: u.regNo, branch: u.branch, year: u.year, bio: u.bio, linkedin: u.linkedin, github: u.github, interests: u.interests,
   teamKind: u.teamKind, showOnSite: u.showOnSite, createdAt: u.createdAt,
 });
@@ -20,16 +20,21 @@ export async function pointsFor(userId: string) {
 }
 
 export async function leaderboard(limit = 10) {
-  const rows = await db.pointAward.groupBy({ by: ['userId'], _sum: { points: true }, orderBy: { _sum: { points: 'desc' } }, take: limit });
-  const users = await db.user.findMany({ where: { id: { in: rows.map((r) => r.userId) } }, select: { id: true, name: true, photoUrl: true } });
-  const byId = new Map(users.map((u) => [u.id, u]));
-  return rows.map((r, i) => ({ rank: i + 1, userId: r.userId, name: byId.get(r.userId)?.name ?? 'Member', photoUrl: byId.get(r.userId)?.photoUrl ?? null, points: r._sum.points ?? 0 }));
+  const rows = await db.$queryRaw<{ userId: string; name: string; photoUrl: string | null; points: number }[]>`
+    select a."userId", u."name", u."photoUrl", sum(a."points")::int as points
+    from "PointAward" a join "User" u on u."id" = a."userId"
+    where u."isAnonymous" = false group by a."userId", u."name", u."photoUrl"
+    having sum(a."points") > 0 order by points desc, u."name" asc limit ${limit}`;
+  return rows.map((r, i) => ({ rank: i + 1, userId: r.userId, name: r.name, photoUrl: r.photoUrl, points: r.points }));
 }
 
 async function rankOf(userId: string, points: number) {
   if (points <= 0) return null;
-  const higher = await db.pointAward.groupBy({ by: ['userId'], _sum: { points: true }, having: { points: { _sum: { gt: points } } } });
-  return higher.length + 1;
+  const [r] = await db.$queryRaw<{ n: number }[]>`
+    select count(*)::int as n from (
+      select a."userId" from "PointAward" a join "User" u on u."id" = a."userId"
+      where u."isAnonymous" = false group by a."userId" having sum(a."points") > ${points}) t`;
+  return (r?.n ?? 0) + 1;
 }
 
 me.get('/', async (c) => {
@@ -101,11 +106,20 @@ type Q = { id: string; label?: string; required?: boolean };
 
 me.post('/events/:id/register', async (c) => {
   const u = userOf(c);
-  if (!u.onboarded) return c.json({ error: 'Finish the membership form first', code: 'NOT_ONBOARDED' }, 409);
+  if (!u.onboarded && !u.isAnonymous) return c.json({ error: 'Finish the membership form first', code: 'NOT_ONBOARDED' }, 409);
   const ev = await db.event.findUnique({ where: { id: c.req.param('id') } });
   if (!ev || !ev.published) return c.json({ error: 'Event not found' }, 404);
   if (ev.status === 'PAST' || ev.date < todayIST()) return c.json({ error: 'This event has already happened' }, 410);
   const body = await c.req.json().catch(() => ({}));
+  if (u.isAnonymous) {
+    // Guests give their details once, in the registration form; later registrations reuse them.
+    const g = body.profile as Record<string, unknown> | undefined;
+    if (g) {
+      const email = str(g.email, 120).toLowerCase(), name = str(g.name, 80);
+      if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return c.json({ error: 'Please enter your name and a valid email' }, 400);
+      await db.user.update({ where: { id: u.id }, data: { name, guestEmail: email, phone: optStr(g.phone, 20), regNo: optStr(g.reg_no ?? g.regNo, 30), branch: optStr(g.branch, 60), year: optStr(g.year, 20) } });
+    } else if (!u.guestEmail) return c.json({ error: 'Please enter your name and a valid email' }, 400);
+  }
   const questions = (Array.isArray(ev.questions) ? ev.questions : []) as Q[];
   const answers: Record<string, string> = {};
   for (const q of questions) {

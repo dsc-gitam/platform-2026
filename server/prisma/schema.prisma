@@ -68,6 +68,11 @@ model User {
   interests   String[]
   fcmTokens   String[]
 
+  // Guests register without an account: Firebase anonymous sign-in + the email they typed in the form.
+  // Signing in later with that email (email link) merges the guest's tickets into the real account.
+  isAnonymous Boolean  @default(false)
+  guestEmail  String?
+
   // Public team presence (published to the static site through GitHub)
   teamKind    TeamKind?
   teamTitle   String?
@@ -84,6 +89,8 @@ model User {
   awarded       PointAward[]   @relation("awarder")
   applications  Application[]
   exploration   Exploration?
+
+  @@index([guestEmail])
 }
 
 model Event {

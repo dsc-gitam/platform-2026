@@ -70,6 +70,15 @@ ${ctaBand({ title: 'Have an idea for a session?', text: 'Want to learn (or teach
       <p class="eyebrow" style="margin-bottom:8px"><i class="dot"></i>Register</p>
       <h3 id="reg-title">Event</h3>
       <p id="reg-sub" style="color:var(--ink-2)"></p>
+      <div id="reg-have" class="reg-have" hidden>
+        <p>Already have a ticket? <button type="button" class="link-btn" id="reg-access">Access it here</button></p>
+        <form id="reg-access-form" hidden novalidate>
+          <label class="sr" for="reg-access-email">The email you registered with</label>
+          <input id="reg-access-email" type="email" required placeholder="The email you registered with" autocomplete="email">
+          <button class="btn btn-ink btn-sm" type="submit">Email me a sign-in link</button>
+          <p class="reg-access-msg" id="reg-access-msg" role="status" hidden></p>
+        </form>
+      </div>
       <div id="reg-gate" hidden>
         ${googleButton('Continue with Google')}
         <p class="or"><span>or register with the form below</span></p>
@@ -97,9 +106,9 @@ ${ctaBand({ title: 'Have an idea for a session?', text: 'Want to learn (or teach
           <div class="field"><label for="r-year">Year</label><select id="r-year" name="year" required><option value="">Select…</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option><option>Other</option></select></div>
         </div>
         <div class="field"><label for="r-branch">Branch / department</label><input id="r-branch" name="branch" placeholder="e.g. CSE, ECE, B.Des, MBA"></div>
-        <div class="field"><label for="r-level">Your experience with this topic</label><div class="choice"><input type="radio" id="lv1" name="level" value="beginner" checked><label for="lv1">Total beginner</label><input type="radio" id="lv2" name="level" value="some"><label for="lv2">Tried a bit</label><input type="radio" id="lv3" name="level" value="comfortable"><label for="lv3">Comfortable</label></div></div>
-        <div class="field"><label for="r-note">Anything we should know? <small>(optional)</small></label><textarea id="r-note" name="note" style="min-height:70px"></textarea></div>
+        <div id="reg-guest-q"></div>
         <input type="text" name="honeypot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <p class="form-error" id="reg-guest-error" role="alert" hidden></p>
         <button class="btn btn-blue" type="submit">Confirm my spot ${arrow}</button>
         <p class="form-done" role="status" hidden>You're in! 🎉</p>
       </form>

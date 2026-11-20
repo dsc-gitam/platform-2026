@@ -15,7 +15,7 @@ const RANK: Record<Role, number> = { MEMBER: 0, CORE: 1, DOCS: 1, ORGANIZER: 2, 
 // ---------------- Analytics ----------------
 admin.get('/stats', requirePerm('analytics:read'), async (c) => {
   const [users, onboarded, regs, checkins, apps, perEvent, signups, points] = await Promise.all([
-    db.user.count(), db.user.count({ where: { onboarded: true } }),
+    db.user.count({ where: { isAnonymous: false } }), db.user.count({ where: { onboarded: true } }),
     db.registration.count({ where: { status: 'REGISTERED' } }), db.registration.count({ where: { checkedInAt: { not: null } } }),
     db.application.groupBy({ by: ['type', 'status'], _count: { _all: true } }),
     db.event.findMany({ select: { id: true, title: true, date: true, seats: true, status: true, _count: { select: { registrations: { where: { status: 'REGISTERED' } } } } }, orderBy: { date: 'desc' }, take: 12 }),
@@ -99,9 +99,9 @@ admin.put('/events/:id/details', requirePerm('postevent:write'), async (c) => {
 admin.get('/events/:id/registrations', requirePerm('registrations:read'), async (c) => {
   const regs = await db.registration.findMany({
     where: { eventId: c.req.param('id'), status: 'REGISTERED' }, orderBy: { createdAt: 'asc' },
-    include: { user: { select: { id: true, name: true, email: true, phone: true, regNo: true, branch: true, year: true, photoUrl: true } } },
+    include: { user: { select: { id: true, name: true, email: true, guestEmail: true, isAnonymous: true, phone: true, regNo: true, branch: true, year: true, photoUrl: true } } },
   });
-  return c.json({ registrations: regs.map((r) => ({ id: r.id, ticketCode: r.ticketCode, checkedInAt: r.checkedInAt, answers: r.answers, registeredAt: r.createdAt, user: r.user })) });
+  return c.json({ registrations: regs.map((r) => ({ id: r.id, ticketCode: r.ticketCode, checkedInAt: r.checkedInAt, answers: r.answers, registeredAt: r.createdAt, user: { ...r.user, email: r.user.isAnonymous ? (r.user.guestEmail ?? '') : r.user.email, guest: r.user.isAnonymous } })) });
 });
 
 async function regByCode(code: string) {
@@ -204,9 +204,9 @@ admin.patch('/applications/:id', requirePerm('requests:review'), async (c) => {
 admin.get('/users', requirePerm('users:read'), async (c) => {
   const q = str(c.req.query('q'), 60);
   const users = await db.user.findMany({
-    where: q ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { email: { contains: q, mode: 'insensitive' } }] } : {},
+    where: { isAnonymous: false, ...(q ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { email: { contains: q, mode: 'insensitive' } }] } : {}) },
     orderBy: { createdAt: 'desc' }, take: 100,
-    select: { id: true, name: true, email: true, photoUrl: true, role: true, onboarded: true, teamKind: true, teamTitle: true, showOnSite: true, createdAt: true, _count: { select: { registrations: true } } },
+    select: { id: true, name: true, email: true, isAnonymous: true, photoUrl: true, role: true, onboarded: true, teamKind: true, teamTitle: true, showOnSite: true, createdAt: true, _count: { select: { registrations: true } } },
   });
   return c.json({ users });
 });
