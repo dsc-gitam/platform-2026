@@ -14,5 +14,5 @@ const body = `
 export default {
   path: 'admin.html', nav: 'admin', title: 'Admin', noindex: true,
   description: 'GDG on Campus GITAM admin panel.',
-  scripts: ['admin.js'], body
+  scripts: ['admin-analytics.js', 'admin.js'], body
 };

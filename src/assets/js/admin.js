@@ -123,14 +123,31 @@
   async function registrations(ev) {
     const r = await api('GET', `/events/${ev.id}/registrations`); if (!r.ok) return;
     const regs = r.data.registrations;
-    dialog(`<h3>${esc(ev.title)}: registrations</h3><p>${regs.length} registered · ${regs.filter((x) => x.checkedInAt).length} checked in</p>
-      <p><button class="btn btn-ghost btn-sm" id="csv">${ICON('send')} Export CSV</button></p>
-      <div class="a-table-wrap"><table class="a-table"><tr><th>Name</th><th>Reg. no.</th><th>Branch / year</th><th>Contact</th><th>Answers</th><th>Status</th></tr>
-      ${regs.map((g) => `<tr><td><b>${esc(g.user.name)}</b></td><td>${esc(g.user.regNo || '')}</td><td>${esc(g.user.branch || '')} ${esc(g.user.year || '')}</td><td>${esc(g.user.email)}<br>${esc(g.user.phone || '')}</td><td><small>${esc(Object.values(g.answers || {}).join(' · '))}</small></td><td>${g.checkedInAt ? '<span class="chip green">in</span>' : '<span class="chip">registered</span>'}</td></tr>`).join('')}</table></div>`, (m) => {
+    const checked = regs.filter((x) => x.checkedInAt).length;
+    const row = (g) => `<tr><td><b>${esc(g.user.name)}</b>${g.user.guest ? ' <span class="chip">guest</span>' : ''}</td><td>${esc(g.user.regNo || '')}</td><td>${esc(g.user.branch || '')} ${esc(g.user.year || '')}</td><td>${esc(g.user.email)}<br><small>${esc(g.user.phone || '')}</small></td><td><small>${esc(Object.values(g.answers || {}).join(' · '))}</small></td><td>${g.checkedInAt ? '<span class="chip green">in</span>' : '<span class="chip">registered</span>'}</td></tr>`;
+    dialog(`<h3>${esc(ev.title)}</h3><p class="p-note" style="margin-top:-6px">${esc(ev.date)} · ${esc(ev.venue)}</p>
+      <div class="a-tabs" role="tablist"><button class="chip on" role="tab" aria-pressed="true" data-v="an">Analytics</button><button class="chip" role="tab" aria-pressed="false" data-v="list">Attendees (${regs.length})</button></div>
+      <div id="v-an">${window.GDGCharts.render(ev, regs)}</div>
+      <div id="v-list" hidden>
+        <div class="a-toolbar"><input id="at-q" type="search" placeholder="Search name, email, reg. no." autocomplete="off"><select id="at-f" aria-label="Filter"><option value="">All (${regs.length})</option><option value="in">Checked in (${checked})</option><option value="out">Not checked in (${regs.length - checked})</option></select><button class="btn btn-ghost btn-sm" id="csv">${ICON('send')} Export CSV</button></div>
+        <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Reg. no.</th><th>Branch / year</th><th>Contact</th><th>Answers</th><th>Status</th></tr></thead><tbody id="at-body"></tbody></table></div>
+        <p class="p-note" id="at-count"></p>
+      </div>`, (m) => {
+      const paint = () => {
+        const q = $('#at-q', m).value.trim().toLowerCase(), f = $('#at-f', m).value;
+        const list = regs.filter((g) => (!f || (f === 'in') === !!g.checkedInAt) && (!q || [g.user.name, g.user.email, g.user.regNo, g.user.branch].some((v) => String(v || '').toLowerCase().includes(q))));
+        $('#at-body', m).innerHTML = list.map(row).join('') || '<tr><td colspan="6">No one matches.</td></tr>';
+        $('#at-count', m).textContent = `${list.length} of ${regs.length} shown`;
+      };
+      $$('[data-v]', m).forEach((b) => b.addEventListener('click', () => {
+        $$('[data-v]', m).forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+        $('#v-an', m).hidden = b.dataset.v !== 'an'; $('#v-list', m).hidden = b.dataset.v !== 'list';
+      }));
+      $('#at-q', m).addEventListener('input', paint); $('#at-f', m).addEventListener('change', paint); paint();
       $('#csv', m).onclick = () => {
-        const head = ['name', 'email', 'phone', 'reg_no', 'branch', 'year', 'ticket', 'checked_in', 'answers'];
+        const head = ['name', 'email', 'phone', 'reg_no', 'branch', 'year', 'type', 'ticket', 'registered_at', 'checked_in_at', 'answers'];
         const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-        const csv = [head.join(','), ...regs.map((g) => [g.user.name, g.user.email, g.user.phone, g.user.regNo, g.user.branch, g.user.year, g.ticketCode, g.checkedInAt ? 'yes' : 'no', JSON.stringify(g.answers)].map(q).join(','))].join('\n');
+        const csv = [head.join(','), ...regs.map((g) => [g.user.name, g.user.email, g.user.phone, g.user.regNo, g.user.branch, g.user.year, g.user.guest ? 'guest' : 'member', g.ticketCode, g.registeredAt, g.checkedInAt || '', JSON.stringify(g.answers)].map(q).join(','))].join('\n');
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = ev.id + '-registrations.csv'; a.click();
       };
     });
