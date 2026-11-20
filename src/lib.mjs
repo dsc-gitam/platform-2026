@@ -71,7 +71,7 @@ export const layout = (page, body) => {
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${url}">
 ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
-<meta name="theme-color" content="#FFFBF3">
+<meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(site.name)}">
 <meta property="og:title" content="${esc(title)}">

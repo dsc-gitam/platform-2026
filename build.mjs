@@ -46,7 +46,7 @@ await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
 await writeFile(join(dist, 'manifest.webmanifest'), JSON.stringify({
   name: site.name, short_name: site.short, start_url: '/', display: 'standalone',
-  background_color: '#FFFBF3', theme_color: '#FFFBF3',
+  background_color: '#FFFFFF', theme_color: '#FFFFFF',
   icons: [{ src: 'assets/gdg-logo.png', sizes: '575x330', type: 'image/png' }]
 }, null, 2));
 

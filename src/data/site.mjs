@@ -37,7 +37,7 @@ export const team = {
     { name: 'Chaitanya Sameer', photo: 'assets/team/chaitanya.jpg', role: 'Co-Organizer', color: 'red', blurb: 'Placeholder — a line about Chaitanya, what they care about and what they are building.', links: { linkedin: '', github: '' } },
     { name: 'Satwika Rejeti', photo: 'assets/team/satwika.jpg', role: 'Co-Organizer', color: 'green', blurb: 'Placeholder — a line about Satwika, what they care about and what they are building.', links: { linkedin: '', github: '' } }
   ],
-  mentor: { name: 'Manas Malla', photo: 'assets/team/manasmalla.jpg', role: 'Faculty Advisor & Chapter Mentor', color: 'yellow', blurb: 'Placeholder — a line about Manas, the chapter\'s mentor and faculty advisor.', links: { linkedin: '', github: '' } },
+  mentor: { name: 'Manas Malla', photo: 'assets/team/manasmalla.jpg', role: 'Faculty Advisor & Chapter Mentor', color: 'yellow', blurb: 'Placeholder — a line about Manas, the chapter\'s mentor and faculty advisor.', links: { linkedin: 'https://linkedin.com/in/manasmalla', github: 'https://github.com/ManasMalla' } },
   core: [
     { name: 'Pavan Kumar', role: 'Core Team · Technical', color: 'blue', blurb: 'Placeholder — a line about Pavan, their track and what they are building.', links: { linkedin: '', github: '' } },
     { name: 'Jaswanth Kumar', role: 'Core Team · Technical', color: 'red', blurb: 'Placeholder — a line about Jaswanth, their track and what they are building.', links: { linkedin: '', github: '' } }

@@ -3,7 +3,7 @@
   --blue: #4285F4; --red: #EA4335; --yellow: #FBBC04; --green: #34A853;
   --blue-100: #DCE8FD; --red-100: #FCDDD9; --yellow-100: #FEF0C0; --green-100: #D3EDDB;
   --ink: #1D1B26; --ink-2: #4A4757; --ink-3: #7A7688;
-  --paper: #FFFBF3; --paper-2: #F6EFE2; --white: #fff;
+  --paper: #FFFFFF; --paper-2: #F4F6FA; --white: #fff;
   --r: 18px; --r-sm: 12px;
   --shadow: 5px 5px 0 var(--ink);
   --shadow-sm: 3px 3px 0 var(--ink);
