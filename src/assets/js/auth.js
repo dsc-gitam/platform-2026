@@ -138,7 +138,7 @@ function paintBadge() {
   const btn = $('.acct-btn', box), menu = $('.acct-menu', box);
   const u = auth.me && auth.me.user;
   if (!u) {
-    btn.innerHTML = `${window.GDG_ICON('user', 20)}<span class="acct-label">Sign in</span>`;
+    btn.innerHTML = window.GDG_ICON('user', 20);
     btn.setAttribute('aria-label', 'Sign in'); btn.classList.remove('has-user'); menu.hidden = true; return;
   }
   btn.classList.add('has-user'); btn.setAttribute('aria-label', 'Account menu for ' + u.name);

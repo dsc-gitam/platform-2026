@@ -689,7 +689,7 @@ main, .site-footer { overflow-x: clip; }
 /* ================= Accounts ================= */
 .acct { position: relative; margin-left: 6px; }
 .acct[hidden] { display: none; }
-.acct-btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; min-width: 44px; justify-content: center; padding: 0 14px; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font: 700 .92rem var(--body); cursor: pointer; box-shadow: var(--shadow-sm); transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.acct-btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; width: 44px; justify-content: center; padding: 0; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font: 700 .92rem var(--body); cursor: pointer; box-shadow: var(--shadow-sm); transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
 .acct-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
 .acct-btn.has-user { padding: 0; width: 44px; overflow: hidden; }
 .acct-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
