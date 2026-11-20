@@ -57,23 +57,61 @@ export const team = {
 
 team.openRoles = team.structure.filter(r => r.filled < r.headcount).map(r => ({ id: r.id, title: r.title, color: r.color, desc: r.does, open: r.headcount - r.filled }));
 
+// Placeholder speaker until one is confirmed.
+const tba = (role) => [{ name: 'Speaker to be announced', role, tba: true, color: 'blue' }];
+
 export const events = [
-  { id: 'reboot-kickoff', status: 'upcoming', type: 'meetup', color: 'blue', title: 'Reboot: GDG GITAM Kickoff', date: '2026-12-05', time: '10:00', end: '13:00', venue: 'Seminar Hall (placeholder)', seats: 200, free: true,
+  { id: 'reboot-kickoff', status: 'upcoming', speakerLabel: 'Hosted by', speakers: [...team.organizers.map(o => ({ name: o.name, role: o.role, photo: o.photo, color: o.color })), { name: team.mentor.name, role: 'Faculty Advisor', photo: team.mentor.photo, color: team.mentor.color }], type: 'meetup', color: 'blue', title: 'Reboot: GDG GITAM Kickoff', date: '2026-12-05', time: '10:00', end: '13:00', venue: 'Seminar Hall (placeholder)', seats: 200, free: true,
     blurb: 'The relaunch. Meet the team, see the plan for the next 12 months, try live demos and pick your first path.', tags: ['Beginner friendly', 'Free snacks'] },
-  { id: 'android-101', status: 'upcoming', type: 'workshop', color: 'green', title: 'Android 101: Your first app in Kotlin', date: '2026-12-12', time: '14:00', end: '17:00', venue: 'CS Lab 3 (placeholder)', seats: 60, free: true,
+  { id: 'android-101', status: 'upcoming', speakers: tba('Android / Kotlin trainer'), type: 'workshop', color: 'green', title: 'Android 101: Your first app in Kotlin', date: '2026-12-12', time: '14:00', end: '17:00', venue: 'CS Lab 3 (placeholder)', seats: 60, free: true,
     blurb: 'Bring a laptop. Leave with a real app on your phone. No prior experience needed.', tags: ['Hands-on', 'Laptop needed'] },
-  { id: 'gemini-study-jam', status: 'upcoming', type: 'studyjam', color: 'red', title: 'Study Jam: Build with the Gemini API', date: '2027-01-09', time: '11:00', end: '14:00', venue: 'Innovation Lab (placeholder)', seats: 80, free: true,
+  { id: 'gemini-study-jam', status: 'upcoming', speakers: tba('Gemini API mentor'), type: 'studyjam', color: 'red', title: 'Study Jam: Build with the Gemini API', date: '2027-01-09', time: '11:00', end: '14:00', venue: 'Innovation Lab (placeholder)', seats: 80, free: true,
     blurb: 'Guided codelabs in small groups. Go from "what is a prompt" to a tiny AI-powered tool.', tags: ['AI', 'Guided'] },
-  { id: 'web-jam-24', status: 'upcoming', type: 'hackathon', color: 'yellow', title: 'Web Jam: 24-hour mini hackathon', date: '2027-01-23', time: '09:00', end: '09:00', venue: 'Main Block (placeholder)', seats: 120, free: true,
+  { id: 'web-jam-24', status: 'upcoming', speakers: tba('Mentors & judges'), type: 'hackathon', color: 'yellow', title: 'Web Jam: 24-hour mini hackathon', date: '2027-01-23', time: '09:00', end: '09:00', venue: 'Main Block (placeholder)', seats: 120, free: true,
     blurb: 'Teams of 3–4, one theme, one night. Mentors on call, snacks on tap, demos at sunrise.', tags: ['Teams', 'Prizes'] },
-  { id: 'campus-to-company', status: 'upcoming', type: 'talk', color: 'blue', title: 'Talk: From campus to Google (guest speaker)', date: '2027-02-06', time: '16:00', end: '17:30', venue: 'Auditorium (placeholder)', seats: 300, free: true,
+  { id: 'campus-to-company', status: 'upcoming', speakers: tba('GITAM alum · guest speaker'), type: 'talk', color: 'blue', title: 'Talk: From campus to Google (guest speaker)', date: '2027-02-06', time: '16:00', end: '17:30', venue: 'Auditorium (placeholder)', seats: 300, free: true,
     blurb: 'A graduate\'s honest story — the rejections, the projects that mattered, and what they would do again.', tags: ['Career', 'Q&A'] },
-  { id: 'design-sprint', status: 'upcoming', type: 'workshop', color: 'red', title: 'Design Sprint: Idea to clickable prototype', date: '2027-02-20', time: '10:00', end: '16:00', venue: 'Design Studio (placeholder)', seats: 50, free: true,
+  { id: 'design-sprint', status: 'upcoming', speakers: tba('Product design mentor'), type: 'workshop', color: 'red', title: 'Design Sprint: Idea to clickable prototype', date: '2027-02-20', time: '10:00', end: '16:00', venue: 'Design Studio (placeholder)', seats: 50, free: true,
     blurb: 'Pick a real campus problem, sketch it, prototype it in Figma, and test it with strangers by lunch.', tags: ['Design', 'Hands-on'] },
   // Past
-  { id: 'past-devfest', status: 'past', type: 'talk', color: 'blue', title: 'DevFest GITAM (placeholder year)', date: '2025-11-15', venue: 'Main Auditorium', attendees: '400+', blurb: 'A full-day community conference with talks and demos.' },
-  { id: 'past-cloud-jam', status: 'past', type: 'studyjam', color: 'green', title: 'Cloud Study Jam', date: '2025-09-20', venue: 'CS Lab', attendees: '120', blurb: 'Hands-on Google Cloud skills, completed in small crews.' },
-  { id: 'past-hack', status: 'past', type: 'hackathon', color: 'yellow', title: 'Solution Challenge Sprint', date: '2025-03-08', venue: 'Innovation Lab', attendees: '90', blurb: 'Teams built for UN goals using Google tech.' }
+  {
+    id: 'past-devfest', status: 'past', type: 'talk', color: 'blue', title: 'DevFest GITAM (placeholder year)', date: '2025-11-15', time: '09:30', end: '17:00', venue: 'Main Auditorium', attendees: '400+',
+    blurb: 'A full-day community conference with talks and demos.',
+    speakers: [
+      { name: 'Placeholder Speaker', role: 'Google Developer Expert · Keynote', color: 'blue' },
+      { name: 'Placeholder Speaker', role: 'Android Engineer · Talk', color: 'green' },
+      { name: 'Placeholder Speaker', role: 'AI Researcher · Talk', color: 'red' }
+    ],
+    about: ['DevFest GITAM brought the campus together for a full day of talks, live demos and hallway conversations. Students from every branch sat in the same room as engineers who ship Google-scale products.',
+      'The day ran in three tracks: Web & Cloud, Mobile, and AI. Every talk had a beginner-friendly warm-up so nobody was lost in the first five minutes.'],
+    takeaways: ['Modern web and mobile stacks are far more approachable than they look from outside.', 'You do not need permission to start: three students demoed projects they built in a weekend.', 'The best career advice of the day: build in public and ask for feedback early.', 'AI tools help most when you already understand the fundamentals.'],
+    resources: [{ label: 'Slide decks (all talks)', url: '', kind: 'slides' }, { label: 'Starter repo for the live demos', url: '', kind: 'code' }, { label: 'Google Developers learning paths', url: 'https://developers.google.com/learn', kind: 'link' }],
+    recording: { youtubeId: '', note: 'The full recording will be published here.' },
+    photos: [{ label: 'Keynote on the main stage', color: 'blue', size: 'wide' }, { label: 'Full house in the auditorium', color: 'yellow', size: 'sq' }, { label: 'Demo booths', color: 'green', size: 'sq' }, { label: 'Speaker panel', color: 'red', size: 'tall' }, { label: 'Hallway conversations', color: 'blue', size: 'sq' }, { label: 'Volunteers at registration', color: 'yellow', size: 'wide' }],
+    report: { url: 'assets/reports/sample-event-report.pdf', size: 'Sample PDF' }
+  },
+  {
+    id: 'past-cloud-jam', status: 'past', type: 'studyjam', color: 'green', title: 'Cloud Study Jam', date: '2025-09-20', time: '14:00', end: '17:00', venue: 'CS Lab', attendees: '120',
+    blurb: 'Hands-on Google Cloud skills, completed in small crews.',
+    speakers: [{ name: 'Placeholder Mentor', role: 'Cloud Engineer · Lead facilitator', color: 'green' }],
+    about: ['A guided, hands-on afternoon where small crews worked through Google Cloud codelabs together, with mentors walking between tables.', 'No slides marathon: a short intro, then everyone deployed something real.'],
+    takeaways: ['Deploying a first app to the cloud takes an afternoon, not a semester.', 'Working in crews of three kept everyone unstuck.', 'Skill badges are a great, free way to show progress.'],
+    resources: [{ label: 'Codelab links used in the session', url: '', kind: 'link' }, { label: 'Cloud cheat sheet (1 page)', url: '', kind: 'slides' }],
+    recording: { youtubeId: '', note: 'The session recording will be published here.' },
+    photos: [{ label: 'Crews working through codelabs', color: 'green', size: 'wide' }, { label: 'Mentor helping a crew', color: 'blue', size: 'sq' }, { label: 'Deploy day success', color: 'yellow', size: 'sq' }, { label: 'Lab wide shot', color: 'red', size: 'wide' }],
+    report: { url: '', size: '' }
+  },
+  {
+    id: 'past-hack', status: 'past', type: 'hackathon', color: 'yellow', title: 'Solution Challenge Sprint', date: '2025-03-08', time: '09:00', end: '21:00', venue: 'Innovation Lab', attendees: '90',
+    blurb: 'Teams built for UN goals using Google tech.',
+    speakers: [{ name: 'Placeholder Mentor', role: 'Solution Challenge mentor', color: 'yellow' }, { name: 'Placeholder Judge', role: 'Industry judge', color: 'red' }],
+    about: ['A one-day sprint where teams picked a UN Sustainable Development Goal and built a working prototype with Google technologies.', 'Mentors were on call all day and every team demoed to a small panel at the end.'],
+    takeaways: ['Scope small: the strongest demos did one thing well.', 'Pick a real problem you can describe in one sentence.', 'Design and storytelling mattered as much as code in the final demos.'],
+    resources: [{ label: 'Solution Challenge guide', url: 'https://developers.google.com/community/gdsc-solution-challenge', kind: 'link' }, { label: 'Demo templates', url: '', kind: 'slides' }],
+    recording: { youtubeId: '', note: 'Demo recordings will be published here.' },
+    photos: [{ label: 'Teams planning', color: 'yellow', size: 'sq' }, { label: 'Late-afternoon build', color: 'blue', size: 'wide' }, { label: 'Demo to the panel', color: 'red', size: 'sq' }, { label: 'Winning team', color: 'green', size: 'tall' }],
+    report: { url: '', size: '' }
+  }
 ];
 
 export const typeLabels = { meetup: 'Meetup', workshop: 'Workshop', studyjam: 'Study Jam', hackathon: 'Hackathon', talk: 'Talk' };

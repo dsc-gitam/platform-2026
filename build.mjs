@@ -15,10 +15,11 @@ const files = (await readdir(join(root, 'src/pages'))).filter(f => f.endsWith('.
 const pages = [];
 for (const f of files) {
   const mod = await import(pathToFileURL(join(root, 'src/pages', f)).href);
-  const page = mod.default;
-  await writeFile(join(dist, page.path), layout(page, page.body));
-  pages.push(page);
-  console.log('  built', page.path);
+  for (const page of [].concat(mod.default)) {
+    await writeFile(join(dist, page.path), layout(page, page.body));
+    pages.push(page);
+    console.log('  built', page.path);
+  }
 }
 
 // 404

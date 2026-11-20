@@ -1,5 +1,5 @@
 import { events, typeLabels, site } from '../data/site.mjs';
-import { esc, dateParts, fmtDate, pageHero, ctaBand, arrow, sample } from '../lib.mjs';
+import { speakerRow, eventPage, esc, dateParts, fmtDate, pageHero, ctaBand, arrow, sample } from '../lib.mjs';
 
 const upcoming = events.filter(e => e.status === 'upcoming');
 const past = events.filter(e => e.status === 'past');
@@ -11,6 +11,7 @@ const card = (e) => { const d = dateParts(e.date); return `
     <div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${fmtDate(e.date)}</span><span>${e.time}${e.end && e.end !== e.time ? '–' + e.end : ' → next day'}</span><span>${esc(e.venue)}</span></div>
     <h3>${esc(e.title)}</h3>
     <p>${esc(e.blurb)}</p>
+    ${speakerRow(e.speakers, e.speakerLabel)}
     <div class="ev-tags">${e.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}${e.free ? '<span class="chip green">Free</span>' : ''}</div>
   </div>
   <div class="ev-act">
@@ -22,7 +23,7 @@ const card = (e) => { const d = dateParts(e.date); return `
 const pastCard = (e) => { const d = dateParts(e.date); return `
 <article class="card event is-past c-${e.color} reveal">
   <div class="date-block"><b>${d.d}</b><span>${d.mon} ${d.y}</span></div>
-  <div><div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${esc(e.venue)}</span><span>${esc(e.attendees)} attended</span></div><h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p></div>
+  <div><div class="ev-meta"><span class="chip ${e.color}">${typeLabels[e.type]}</span><span>${esc(e.venue)}</span><span>${esc(e.attendees)} attended</span></div><h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>${speakerRow(e.speakers)}<p style="margin:14px 0 0"><a class="btn btn-ghost btn-sm" href="${eventPage(e)}">Explore this event ${arrow}</a></p></div>
 </article>`; };
 
 const ld = upcoming.map(e => ({
@@ -30,6 +31,7 @@ const ld = upcoming.map(e => ({
   startDate: `${e.date}T${e.time}:00+05:30`, eventStatus: 'https://schema.org/EventScheduled', eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: { '@type': 'Place', name: e.venue, address: site.location },
   organizer: { '@type': 'Organization', name: site.name, url: site.url },
+  ...(e.speakers && e.speakers.some(x => !x.tba) ? { performer: e.speakers.filter(x => !x.tba).map(x => ({ '@type': 'Person', name: x.name })) } : {}),
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR', availability: 'https://schema.org/InStock', url: `${site.url}/events.html#${e.id}` },
   isAccessibleForFree: true
 }));
@@ -52,7 +54,7 @@ ${pageHero({ eyebrow: 'Events', title: 'Show up once. <span class="hl">See what 
   </div>
 </section>
 
-<section class="section tint">
+<section class="section tint" id="past">
   <div class="container">
     <div class="section-head reveal"><p class="eyebrow"><i class="dot"></i>Past events ${sample()}</p><h2>What we have <span class="hl">already</span> done.</h2></div>
     ${past.map(pastCard).join('')}
