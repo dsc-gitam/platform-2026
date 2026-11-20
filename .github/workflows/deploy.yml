@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      HAS_DEPLOY_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,6 +31,8 @@ jobs:
           FIREBASE_WEB_CONFIG: ${{ vars.FIREBASE_WEB_CONFIG }}
           SITE_URL: ${{ vars.SITE_URL }}
       - name: Deploy to Firebase Hosting
+        # Skipped (not failed) until the FIREBASE_SERVICE_ACCOUNT secret has been added.
+        if: env.HAS_DEPLOY_KEY == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
