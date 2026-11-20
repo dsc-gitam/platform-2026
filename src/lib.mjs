@@ -81,7 +81,7 @@ ${ld}
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="container bar">
-    <a class="brand" href="index.html" aria-label="${esc(site.name)} — home">${logoMark(44)}<span class="brand-text"><b>GDG</b> on Campus<small>GITAM</small></span></a>
+    <a class="brand" href="index.html" aria-label="${esc(site.name)} — home">${logoMark(44)}<span class="brand-text"><b>GDG on Campus</b><small>GITAM</small></span></a>
     <nav class="nav" id="nav" aria-label="Main">
       ${NAV.map(([href, label, id]) => `<a href="${href}" data-nav="${id}">${label}</a>`).join('')}
       <a class="nav-find" href="find-your-place.html" data-nav="find">Find your place</a>
@@ -97,7 +97,7 @@ ${body}
   <div class="container">
     <div class="foot-top">
       <div class="foot-brand">
-        <a class="brand" href="index.html">${logoMark(44)}<span class="brand-text"><b>GDG</b> on Campus<small>GITAM</small></span></a>
+        <a class="brand" href="index.html">${logoMark(44)}<span class="brand-text"><b>GDG on Campus</b><small>GITAM</small></span></a>
         <p>${esc(site.tagline)} A student community at ${esc(site.location)}.</p>
         <form class="sub-form" data-form="subscribe" novalidate>
           <label for="foot-email" class="sr">Email for updates</label>
