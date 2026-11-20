@@ -10,7 +10,7 @@ export const googleConfigured = () => !!sa();
 const projectId = () => env.firebaseProjectId || sa()?.project_id || '';
 
 let cached: { token: string; exp: number } | null = null;
-async function accessToken(): Promise<string> {
+export async function accessToken(): Promise<string> {
   const acct = sa();
   if (!acct) throw new Error('GOOGLE_SERVICE_ACCOUNT is not configured');
   if (cached && cached.exp > Date.now() + 60_000) return cached.token;

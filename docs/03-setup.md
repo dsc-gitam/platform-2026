@@ -7,13 +7,13 @@ These are the one-time steps to switch on accounts and publishing. The Firebase 
 1. In the [Firebase console](https://console.firebase.google.com/project/gdg-gitam) open **Authentication → Sign-in method** and enable **Google**, **Anonymous** and **Email link (passwordless sign-in)**. Email/password can stay on but is not used.
 2. Under **Authentication → Settings → Authorized domains** add your live domain (and keep `localhost`). Email links only work on authorized domains.
 3. The **web app is already registered** ("GDG GITAM Web", app id `1:650001549225:web:06ae9c83f8fdeeebe0e6b8`) and its public config is saved in `src/data/firebase.web.json`, so the site picks it up without any build variable. The hosting site is `gdg-gitam` (https://gdg-gitam.web.app).
-4. **Project settings → Cloud Messaging → Web Push certificates → Generate key pair**. Add the public key as `"vapidKey"` in `src/data/firebase.web.json` (or in the `FIREBASE_WEB_CONFIG` variable). This is what lets the browser receive push notifications. The Firebase CLI cannot create it, so it has to be done in the console.
+4. **Cloud Messaging → Web Push certificates**: the key pair has been generated and its public key is saved as `vapidKey` in `src/data/firebase.web.json` (public keys are safe to commit). If you ever regenerate it, replace that value.
 5. **Project settings → Service accounts → Generate new private key**. Keep that JSON secret: it goes into the API's `GOOGLE_SERVICE_ACCOUNT`, and a Firebase Hosting deploy key goes into GitHub (step 4).
 
 The Firebase CLI needs to be signed in with an account that has access to `gdg-gitam`:
 
 ```bash
-firebase login:use manas@theananta.in      # or: firebase login:add
+firebase login:use <account with access>   # or: firebase login:add
 firebase apps:list --project gdg-gitam
 firebase apps:sdkconfig web 1:650001549225:web:06ae9c83f8fdeeebe0e6b8 --project gdg-gitam
 ```
