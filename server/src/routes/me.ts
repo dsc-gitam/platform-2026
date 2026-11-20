@@ -69,7 +69,7 @@ me.patch('/', async (c) => {
     bio: optStr(b.bio, 400), linkedin: optStr(b.linkedin, 200), github: optStr(b.github, 200), interests: strArr(b.interests, 12, 40),
   };
   const updated = await db.user.update({ where: { id: u.id }, data });
-  if (updated.showOnSite) queuePublish(`profile update: ${updated.name}`);
+  if (updated.showOnSite) await queuePublish(`profile update: ${updated.name}`);
   return c.json({ user: publicUser(updated) });
 });
 
@@ -82,7 +82,7 @@ me.put('/photo', async (c) => {
   if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return c.json({ error: 'Not a JPEG' }, 400);
   const url = `${new URL(c.req.url).origin}/api/users/${encodeURIComponent(u.id)}/photo?v=${Date.now()}`;
   const updated = await db.user.update({ where: { id: u.id }, data: { photoData: bytes, photoUrl: url } });
-  if (updated.showOnSite) queuePublish(`profile photo: ${updated.name}`);
+  if (updated.showOnSite) await queuePublish(`profile photo: ${updated.name}`);
   return c.json({ user: publicUser(updated) });
 });
 

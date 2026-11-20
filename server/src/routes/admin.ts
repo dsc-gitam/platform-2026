@@ -53,7 +53,7 @@ admin.post('/events', requirePerm('events:write'), async (c) => {
   const id = slug(str(b.id, 60) || d.title);
   if (await db.event.findUnique({ where: { id } })) return c.json({ error: 'An event with this id already exists' }, 409);
   const ev = await db.event.create({ data: { id, ...d } });
-  queuePublish(`event created: ${ev.title}`);
+  await queuePublish(`event created: ${ev.title}`);
   return c.json({ event: ev }, 201);
 });
 
@@ -61,7 +61,7 @@ admin.put('/events/:id', requirePerm('events:write'), async (c) => {
   const b = await c.req.json().catch(() => ({})); const d = eventData(b);
   if (!valid(d)) return c.json({ error: 'Title, date, time, venue and blurb are required' }, 400);
   const ev = await db.event.update({ where: { id: c.req.param('id') }, data: { ...d, ...(['UPCOMING', 'PAST'].includes(str(b.status, 10)) ? { status: str(b.status, 10) as 'UPCOMING' | 'PAST' } : {}) } });
-  queuePublish(`event updated: ${ev.title}`);
+  await queuePublish(`event updated: ${ev.title}`);
   return c.json({ event: ev });
 });
 
@@ -69,7 +69,7 @@ admin.delete('/events/:id', requirePerm('events:write'), async (c) => {
   const n = await db.registration.count({ where: { eventId: c.req.param('id') } });
   if (n > 0) return c.json({ error: `This event has ${n} registrations. Unpublish it instead of deleting.` }, 409);
   await db.event.delete({ where: { id: c.req.param('id') } });
-  queuePublish('event deleted');
+  await queuePublish('event deleted');
   return c.json({ ok: true });
 });
 
@@ -91,7 +91,7 @@ admin.put('/events/:id/details', requirePerm('postevent:write'), async (c) => {
   };
   const ready = !!b.ready;
   const ev = await db.event.update({ where: { id: c.req.param('id') }, data: { details, ready, ...(ready ? { status: 'PAST' as const } : {}) } });
-  queuePublish(`post-event data: ${ev.title}`);
+  await queuePublish(`post-event data: ${ev.title}`);
   return c.json({ event: ev });
 });
 
@@ -189,14 +189,14 @@ admin.patch('/applications/:id', requirePerm('requests:review'), async (c) => {
           teamBlurb: str(t.blurb, 300) || target.teamBlurb || target.bio, teamColor: str(t.color, 10) || target.teamColor || 'blue',
         },
       });
-      if (newRole !== target.role) setRoleClaim(target.id, newRole);
+      if (newRole !== target.role) await setRoleClaim(target.id, newRole);
       publish = true;
     } else if (wasLive && target.showOnSite) {
       await db.user.update({ where: { id: target.id }, data: { showOnSite: false } });
       publish = true;
     }
   }
-  if (publish) queuePublish(`${updated.type.toLowerCase()} ${status.toLowerCase()}: ${updated.name}`);
+  if (publish) await queuePublish(`${updated.type.toLowerCase()} ${status.toLowerCase()}: ${updated.name}`);
   return c.json({ application: updated, publishing: publish });
 });
 
@@ -224,7 +224,7 @@ admin.patch('/users/:id/team', requirePerm('roles:write'), async (c) => {
   const b = await c.req.json().catch(() => ({}));
   const kind = ['ORGANIZER', 'CORE', 'VOLUNTEER'].includes(str(b.kind, 12)) ? str(b.kind, 12) as 'ORGANIZER' | 'CORE' | 'VOLUNTEER' : null;
   const u = await db.user.update({ where: { id: c.req.param('id') }, data: { teamKind: kind, showOnSite: !!kind && b.showOnSite !== false, teamTitle: optStr(b.title, 80), teamBlurb: optStr(b.blurb, 300), teamColor: optStr(b.color, 10) } });
-  queuePublish(`team update: ${u.name}`);
+  await queuePublish(`team update: ${u.name}`);
   return c.json({ ok: true });
 });
 

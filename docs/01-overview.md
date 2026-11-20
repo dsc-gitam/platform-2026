@@ -1,13 +1,13 @@
 # Overview
 
-The GDG on Campus GITAM website is a **static site** (plain HTML, CSS and JavaScript built by a small Node script) plus an optional **API** that adds accounts, registrations, QR tickets, points and an admin panel.
+The GDG on Campus GITAM website is a **static site** (plain HTML, CSS and JavaScript built by a small Node script) plus an optional **API** (Deno-authored, running as a Firebase Function) that adds accounts, registrations, QR tickets, points and an admin panel.
 
 ```
 Browser  ──►  Firebase Hosting (static site, built by GitHub Actions)
    │
    │  Firebase Auth: Google, guest (anonymous) and email link
    ▼
-Deno API (server/)  ──►  Supabase Postgres (through Prisma 7)
+Firebase Function (the API, /api/**)  ──►  Supabase Postgres (Prisma 7)
    │
    │  approved story / team change / event / profile update
    ▼
@@ -39,6 +39,7 @@ Without the API the site still works: forms are kept in the visitor's browser an
 | `src/data/site.mjs` | Sample content and site settings. Replaced by `src/data/generated/*.json` when the API publishes. |
 | `src/assets/` | CSS, JavaScript, images and team photos. |
 | `docs/` | These documents (Markdown). They are rendered at `/docs.html`. |
-| `server/` | The Deno API, the Prisma schema and migrations, and the tests. |
+| `server/` | The API source (Deno), the Prisma schema and migrations, and the tests. |
+| `functions/` | Bundles `server/` into a Firebase Function that serves the API at `/api/**`. |
 | `build.mjs` | Builds the site into `dist/`. |
 | `.github/workflows/deploy.yml` | Builds and deploys the site on every push and nightly. |

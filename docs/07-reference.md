@@ -2,16 +2,18 @@
 
 ## Environment variables (API)
 
+On Firebase Functions `DATABASE_URL`, `GOOGLE_SERVICE_ACCOUNT` and `GITHUB_TOKEN` are **secrets** (Secret Manager), the rest go in `functions/.env.gdg-gitam`. Locally they come from `server/.env`.
+
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | Runtime Postgres connection (Supabase pooler). |
 | `DIRECT_URL` | Direct connection used by `deno task migrate`. |
-| `FIREBASE_PROJECT_ID` | Used to verify Firebase ID tokens. |
+| `FIREBASE_PROJECT_ID` | Used to verify Firebase ID tokens (local only: Cloud Functions provides it). |
 | `GOOGLE_SERVICE_ACCOUNT` | Service account JSON: sets role claims and sends push notifications. |
 | `SUPERADMIN_EMAILS` | Become ADMIN on first sign-in. |
 | `ALLOWED_ORIGINS` | CORS allow-list for the site. |
 | `GITHUB_TOKEN`, `GITHUB_REPO`, `GITHUB_BRANCH` | Where approved content is committed. |
-| `PORT` | Port to listen on (default 8000). |
+| `PORT` | Port to listen on locally (default 8000). |
 | `DEV_AUTH` | Local testing only. Never in production. |
 
 ## Build-time variables (site)
@@ -60,7 +62,7 @@ All paths start with `/api`. "Auth" means a valid Firebase ID token (`Authorizat
 |---|---|
 | No account badge on the live site | `GDG_API_BASE` or `FIREBASE_WEB_CONFIG` was not set at build time. |
 | Google sign-in popup says unauthorized domain | Add the domain under Firebase **Authentication → Settings → Authorized domains**. |
-| "Could not reach the server" | API down, wrong `GDG_API_BASE`, or the site origin is missing from `ALLOWED_ORIGINS`. |
+| "Could not reach the server" | Function not deployed, wrong `GDG_API_BASE`, or (for another origin) it is missing from `ALLOWED_ORIGINS`. Function logs: `firebase functions:log --project gdg-gitam`. |
 | Email link says expired or already used | Links work once and expire. Request a new one. |
 | Approved something but the site did not change | Open **Admin → Publishing**: the log shows the GitHub error (token scope, repo name, branch). |
 | Admin panel says "No admin access" | The account has no role yet. Add the email to `SUPERADMIN_EMAILS` or ask an admin. |

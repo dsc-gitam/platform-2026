@@ -33,22 +33,39 @@ firebase apps:sdkconfig web 1:650001549225:web:06ae9c83f8fdeeebe0e6b8 --project 
    deno task seed      # optional: imports the sample events
    ```
 
-## 3. The API (Deno)
+## 3. The API (Firebase Functions)
 
-Deploy `server/` to **Deno Deploy** (or any host that runs Deno). Set the build command to `deno task generate` and the entry point to `src/main.ts`, then add these environment variables:
+The API is written for Deno (`server/`, with its tests) and is **bundled to run as a Firebase Function** (Node 22) from `functions/`. Hosting rewrites `/api/**` to the function, so the site and the API share one origin (`https://gdg-gitam.web.app`) and there is no CORS to configure for the live site.
+
+One-time setup (needs the **Blaze** plan; Firebase Functions and Secret Manager do not run on Spark):
+
+```bash
+# secrets live in Secret Manager
+firebase functions:secrets:set DATABASE_URL --project gdg-gitam            # Supabase transaction pooler string
+firebase functions:secrets:set GOOGLE_SERVICE_ACCOUNT --data-file key.json --project gdg-gitam
+firebase functions:secrets:set GITHUB_TOKEN --project gdg-gitam            # fine-grained token, Contents read/write on this repo
+```
+
+Then add `GITHUB_TOKEN` to the `secrets` list in `functions/index.js` (a comment shows where). Non-secret settings go in `functions/.env.gdg-gitam` (git-ignored, copy `functions/.env.example`):
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | Supabase transaction pooler string |
-| `FIREBASE_PROJECT_ID` | `gdg-gitam` |
-| `GOOGLE_SERVICE_ACCOUNT` | the service account JSON on one line |
 | `SUPERADMIN_EMAILS` | comma-separated emails that become admin on first sign-in |
-| `ALLOWED_ORIGINS` | your site origin(s), for example `https://gdg-gitam.web.app,https://gdg-gitam.firebaseapp.com` |
-| `GITHUB_TOKEN` | fine-grained token with **Contents: read and write** on `dsc-gitam/platform-2026` |
+| `ALLOWED_ORIGINS` | the site origins, for example `https://gdg-gitam.web.app` (plus `http://localhost:4173` for local work) |
 | `GITHUB_REPO` | `dsc-gitam/platform-2026` |
 | `GITHUB_BRANCH` | `main` |
 
-Do not set `DEV_AUTH` in production. Check `https://<your-api>/api/health` returns `{"ok":true}`.
+The Firebase project id is provided by Cloud Functions itself, and the database password never leaves Secret Manager.
+
+Deploy the function whenever `server/` changes:
+
+```bash
+firebase deploy --only functions --project gdg-gitam    # builds functions/lib/app.js, then uploads
+```
+
+Check it: `https://gdg-gitam.web.app/api/health` returns `{"ok":true}` once the site is deployed with the rewrite, or `https://asia-south1-gdg-gitam.cloudfunctions.net/api/api/health` directly.
+
+Run the same code locally with Deno (`deno task dev` in `server/`) or smoke-test the bundle on Node with `npm run smoke` in `functions/`.
 
 ## 4. GitHub (build and deploy)
 
@@ -56,7 +73,7 @@ In the repository **Settings → Secrets and variables → Actions**:
 
 | Name | Kind | Value |
 |---|---|---|
-| `GDG_API_BASE` | variable | the API URL, no trailing slash |
+| `GDG_API_BASE` | variable | `https://gdg-gitam.web.app` (the API is served from the same origin) |
 | `FIREBASE_WEB_CONFIG` | variable (optional) | overrides `src/data/firebase.web.json`; one-line JSON, including `vapidKey` |
 | `FIREBASE_PROJECT_ID` | variable | `gdg-gitam` |
 | `SITE_URL` | variable | the live site URL |

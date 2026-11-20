@@ -2,6 +2,7 @@
 // and let the deploy workflow rebuild the site. Called after stories/team/events/profile changes.
 import { db } from './db.ts';
 import { commitFiles, githubConfigured, type RepoFile } from './github.ts';
+import { env } from './env.ts';
 
 const todayIST = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 const safe = (id: string) => id.replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -57,8 +58,9 @@ export async function buildFiles(): Promise<RepoFile[]> {
 
 let timer: number | undefined; let pending: string[] = [];
 
-/** Debounced publish: several admin actions in a row become one commit/deploy. */
-export function queuePublish(reason: string) {
+/** Locally: debounced (several admin actions in a row become one commit). Serverless: publish before the response ends. */
+export async function queuePublish(reason: string): Promise<void> {
+  if (env.serverless) { await publishNow(reason); return; }
   pending.push(reason);
   if (timer) clearTimeout(timer);
   timer = setTimeout(() => { const r = pending.join('; '); pending = []; timer = undefined; publishNow(r).catch(console.error); }, 5000) as unknown as number;

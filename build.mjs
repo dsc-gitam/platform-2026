@@ -34,6 +34,8 @@ await writeFile(join(dist, 'find-your-place.html'), `<!doctype html><html lang="
 // Static assets
 await cp(join(root, 'src/assets'), join(dist, 'assets'), { recursive: true });
 
+await cp(join(root, 'src/assets/gdg-logo.png'), join(dist, 'favicon.ico')); // some browsers request /favicon.ico regardless of <link rel=icon>
+
 // Client-side icon helper (same Lucide set as the server-rendered pages)
 await writeFile(join(dist, 'assets/js/icons.js'), `window.GDG_ICON=(function(I){return function(n,s){s=s||24;return '<svg class="ico" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(I[n]||'')+'</svg>';};})(${JSON.stringify(ICONS)});\n`);
 

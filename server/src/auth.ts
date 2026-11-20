@@ -90,7 +90,7 @@ async function loadUser(id: Identity) {
 
   const role: Role = env.superAdmins.includes(id.email) ? 'ADMIN' : 'MEMBER';
   const created = await db.user.create({ data: { id: id.uid, email: id.email, name: id.name, photoUrl: id.picture ?? null, role } });
-  if (role !== 'MEMBER') setRoleClaim(id.uid, role);
+  if (role !== 'MEMBER') await setRoleClaim(id.uid, role);
   if (id.verified) await claimGuests(created.id, id.email);
   return created;
 }

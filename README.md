@@ -3,9 +3,9 @@
 The website and platform for **GDG on Campus GITAM**: events and registration with QR tickets, a profile with points and badges, a Tech Atlas for exploring tech roles, a community noticeboard, and an admin panel for the team.
 
 - **Site:** a static site built with a small zero-dependency Node script (plain HTML, CSS and JavaScript).
-- **API:** [Deno](https://deno.com) with [Hono](https://hono.dev), [Prisma 7](https://www.prisma.io) and PostgreSQL on [Supabase](https://supabase.com).
+- **API:** written for [Deno](https://deno.com) with [Hono](https://hono.dev) and [Prisma 7](https://www.prisma.io) on PostgreSQL ([Supabase](https://supabase.com)), and run in production as a **Firebase Function** (`functions/` bundles `server/`).
 - **Auth:** [Firebase Auth](https://firebase.google.com/docs/auth) (Google, guest sessions and passwordless email links) with role-based access control.
-- **Hosting and deploys:** Firebase Hosting through GitHub Actions. Approved content is committed back to this repository and redeployed automatically.
+- **Hosting and deploys:** Firebase Hosting through GitHub Actions; `/api/**` is rewritten to the function. Approved content is committed back to this repository and redeployed automatically.
 
 Full documentation is in [`docs/`](docs/) and is also published inside the site at **`/docs.html`**.
 
@@ -43,7 +43,8 @@ deno task test                      # end-to-end tests against Postgres
 ```
 src/pages/        one file per page            src/data/site.mjs   sample content and settings
 src/sections/     blocks shared by pages       src/assets/         CSS, JS, images, team photos
-server/           Deno API, Prisma schema, tests
+server/           API source (Deno), Prisma schema, tests
+functions/        Firebase Function that bundles and serves the API
 docs/             these documents (Markdown, rendered at /docs.html)
 build.mjs         builds the site into dist/   .github/workflows/  build and deploy
 ```
@@ -56,6 +57,7 @@ build.mjs         builds the site into dist/   .github/workflows/  build and dep
 | `npm run dev` | Build, then serve on port 4173. |
 | `deno task dev` (in `server/`) | Run the API with file watching. |
 | `deno task test` (in `server/`) | API and GitHub-publishing tests. |
+| `firebase deploy --only functions` | Bundle and deploy the API function. |
 
 ## Environment
 
