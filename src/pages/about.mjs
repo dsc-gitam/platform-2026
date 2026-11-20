@@ -1,4 +1,5 @@
 import { team, roadmap, values, expectations, faqs } from '../data/site.mjs';
+import { icon } from '../icons.mjs';
 import { esc, avatar, pageHero, ctaBand, sample, arrow } from '../lib.mjs';
 
 const person = (p, big) => `<article class="card person reveal">
@@ -61,12 +62,24 @@ ${pageHero({ eyebrow: 'About', title: 'A club built <span class="hl">with</span>
       <h2>The people <span class="hl">behind</span> it.</h2>
     </div>
     <div class="team-grid">${[...team.organizers, team.mentor].map(p => person(p)).join('')}</div>
+    <h3 class="reveal" style="margin:56px 0 22px;font-size:1.5rem">Core team</h3>
+    <div class="team-grid team-grid-2">${team.core.map(p => person(p)).join('')}</div>
+
     <div style="margin-top:70px" class="reveal">
-      <h3 style="font-size:1.8rem">Roles that need <span class="hl">you</span></h3>
-      <p style="color:var(--ink-2);max-width:60ch">The organizers can't do this alone. Core team roles open each term. No prior title needed, just energy and consistency.</p>
+      <h3 style="font-size:1.8rem">How the team is <span class="hl">built</span></h3>
+      <p style="color:var(--ink-2);max-width:62ch">${team.structure.reduce((n, r) => n + r.headcount, 0)} seats across seven areas, backed by a bench of volunteers. Filled seats are shown in colour; the dashed ones are open.</p>
+    </div>
+    <div class="structure">
+      ${team.structure.map(r => `<article class="card st c-${r.color} reveal"><div class="badge">${icon(r.icon, 24)}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.does)}</p></div><div class="seats" aria-label="${r.filled} of ${r.headcount} seats filled">${Array.from({ length: r.headcount }, (_, i) => `<i class="${i < r.filled ? 'on' : ''}"></i>`).join('')}<span>${r.filled}/${r.headcount}</span></div></article>`).join('')}
+      <article class="card st st-vol c-blue reveal"><div class="badge">${icon('users', 24)}</div><div><h4>Volunteer cohort · ${esc(team.volunteers.capacity)}</h4><p><b>${esc(team.volunteers.note)}.</b> ${esc(team.volunteers.workflow)}</p></div><a class="btn btn-ghost btn-sm" href="join.html#volunteer">Volunteer</a></article>
+    </div>
+
+    <div style="margin-top:70px" class="reveal">
+      <h3 style="font-size:1.8rem">Seats open for <span class="hl">you</span></h3>
+      <p style="color:var(--ink-2);max-width:60ch">Core team seats open each term. No prior title needed, just energy and consistency.</p>
     </div>
     <div class="grid g3">
-      ${team.openRoles.map(r => `<a class="open-role c-${r.color} reveal" href="join.html?role=${r.id}#core"><i class="sq"></i><div><b>${esc(r.title)}</b><span>${esc(r.desc)}</span></div></a>`).join('')}
+      ${team.openRoles.map(r => `<a class="open-role c-${r.color} reveal" href="join.html?role=${r.id}#core"><i class="sq"></i><div><b>${esc(r.title)}</b><span>${esc(r.desc)}</span><em>${r.open} open</em></div></a>`).join('')}
     </div>
   </div>
 </section>

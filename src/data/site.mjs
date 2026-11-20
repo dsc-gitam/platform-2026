@@ -34,19 +34,27 @@ export const team = {
   organizers: [
     { name: 'Gagana Bandaru', role: 'Co-Organizer', color: 'blue', blurb: 'Placeholder — a line about Gagana, what they care about and what they are building.', links: { linkedin: '#', github: '#' } },
     { name: 'Chaitanya Sameer', role: 'Co-Organizer', color: 'red', blurb: 'Placeholder — a line about Chaitanya, what they care about and what they are building.', links: { linkedin: '#', github: '#' } },
-    { name: 'Satwika', role: 'Co-Organizer', color: 'green', blurb: 'Placeholder — a line about Satwika, what they care about and what they are building.', links: { linkedin: '#', github: '#' } }
+    { name: 'Satwika Rejeti', role: 'Co-Organizer', color: 'green', blurb: 'Placeholder — a line about Satwika, what they care about and what they are building.', links: { linkedin: '#', github: '#' } }
   ],
   mentor: { name: 'Manas Malla', role: 'Faculty Advisor & Chapter Mentor', color: 'yellow', blurb: 'Placeholder — a line about Manas, the chapter\'s mentor and faculty advisor.', links: { linkedin: '#', github: '#' } },
-  openRoles: [
-    { id: 'tech', title: 'Tech Lead', color: 'blue', desc: 'Guide project squads, review code, run workshops.' },
-    { id: 'design', title: 'Design Lead', color: 'red', desc: 'Own how GDG GITAM looks, feels and tells its story.' },
-    { id: 'content', title: 'Content & Social', color: 'yellow', desc: 'Reels, posts, recaps, newsletters — the voice of the club.' },
-    { id: 'events', title: 'Events & Ops', color: 'green', desc: 'Venues, schedules, speakers, and the chaos behind the calm.' },
-    { id: 'community', title: 'Community Lead', color: 'blue', desc: 'Welcome newcomers, keep the board alive, grow the family.' },
-    { id: 'outreach', title: 'Outreach & Partnerships', color: 'red', desc: 'Connect with clubs, companies and other GDG chapters.' },
-    { id: 'web', title: 'Web & Dev Ops', color: 'green', desc: 'Keep this very website sharp and shipping.' }
-  ]
+  core: [
+    { name: 'Pavan Kumar', role: 'Core Team · Technical', color: 'blue', blurb: 'Placeholder — a line about Pavan, their track and what they are building.', links: { linkedin: '#', github: '#' } },
+    { name: 'Jaswanth Kumar', role: 'Core Team · Technical', color: 'red', blurb: 'Placeholder — a line about Jaswanth, their track and what they are building.', links: { linkedin: '#', github: '#' } }
+  ],
+  // The planned team structure. `filled` = seats taken so far; the rest are open for applications.
+  structure: [
+    { id: 'advisor', title: 'Faculty Advisor', color: 'yellow', icon: 'graduation-cap', headcount: 1, filled: 1, does: 'Institutional compliance, permissions, and faculty alignment.' },
+    { id: 'organizers', title: 'Organizers', color: 'blue', icon: 'flag', headcount: 3, filled: 3, does: 'Strategic direction, event operations, external partnerships.' },
+    { id: 'tech', title: 'Technical', color: 'green', icon: 'code-xml', headcount: 3, filled: 2, does: 'Split across Frontend, Backend, and GenAI/ML tracks.' },
+    { id: 'design', title: 'Design & Media', color: 'red', icon: 'palette', headcount: 2, filled: 0, does: 'Branding, UI/UX, visual assets, posters, social media presence.' },
+    { id: 'research', title: 'Research & Onboarding', color: 'blue', icon: 'compass', headcount: 2, filled: 0, does: 'Student pulse surveys, student sentiment analysis, campus engagement, driving registrations, targeted outreach.' },
+    { id: 'docs', title: 'Documentation & Reports', color: 'yellow', icon: 'pen-line', headcount: 1, filled: 0, does: 'Official MoMs, annual reports, internal Wikis, post-event reports, assisted photography.' },
+    { id: 'photo', title: 'Photography & Media', color: 'green', icon: 'mic', headcount: 1, filled: 0, does: 'Live event capture, visual coverage and media archiving (assisted by Documentation).' }
+  ],
+  volunteers: { capacity: '~50', note: 'student volunteers on standby', workflow: 'Direct assignment and reporting under respective core leads across registration desks, crowd flow, technical support and the other domains above, as and when necessary.' }
 };
+
+team.openRoles = team.structure.filter(r => r.filled < r.headcount).map(r => ({ id: r.id, title: r.title, color: r.color, desc: r.does, open: r.headcount - r.filled }));
 
 export const events = [
   { id: 'reboot-kickoff', status: 'upcoming', type: 'meetup', color: 'blue', title: 'Reboot: GDG GITAM Kickoff', date: '2026-12-05', time: '10:00', end: '13:00', venue: 'Seminar Hall (placeholder)', seats: 200, free: true,
