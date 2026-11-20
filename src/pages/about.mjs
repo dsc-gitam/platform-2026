@@ -84,10 +84,10 @@ ${pageHero({ eyebrow: 'About', title: 'A club built <span class="hl">with</span>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="faq">
   <div class="container split">
     <div class="reveal"><p class="eyebrow"><i class="dot"></i>FAQ</p><h2>Quick <span class="hl">answers</span>.</h2><p class="lead">Still unsure? Ask on the community board, we reply fast.</p><a class="btn btn-ghost" href="community.html">Ask the community ${arrow}</a></div>
-    <div class="reveal">${faqs.map(f => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
+    <div class="reveal faq-groups">${[...new Set(faqs.map(f => f.cat))].map(c => `<h3 class="faq-cat">${esc(c)}</h3>${faqs.filter(f => f.cat === c).map(f => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}`).join('')}</div>
   </div>
 </section>
 

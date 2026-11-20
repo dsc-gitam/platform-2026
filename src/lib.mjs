@@ -80,7 +80,11 @@ export const NAV = [
   ['explore.html', 'Tech Atlas', 'explore']
 ];
 
+const SOCIALS = [['instagram', 'Instagram'], ['linkedin', 'LinkedIn'], ['whatsapp', 'WhatsApp community'], ['github', 'GitHub'], ['youtube', 'YouTube'], ['x', 'X'], ['discord', 'Discord'], ['community', 'GDG chapter page']];
+const socialLinks_ = () => SOCIALS.filter(([k]) => site.social[k] && site.social[k] !== '#').map(([k, label]) => `<a href="${esc(site.social[k])}" target="_blank" rel="noopener">${label}</a>`).join('');
+
 export const layout = (page, body) => {
+  const socials = socialLinks_();
   if (page.bare) return `<!doctype html>
 <html lang="en">
 <head>
@@ -178,9 +182,9 @@ ${body}
         </form>
       </div>
       <div class="foot-cols">
-        <div><h4>Explore</h4><a href="events.html">Events</a><a href="domains.html">Domains</a><a href="legacy.html">Legacy</a><a href="about.html">About &amp; team</a></div>
+        <div><h4>Explore</h4><a href="events.html">Events</a><a href="domains.html">Domains</a><a href="legacy.html">Legacy</a><a href="about.html">About &amp; team</a><a href="about.html#faq">FAQ</a></div>
         <div><h4>Get involved</h4><a href="index.html#find-your-place">Find your place</a><a href="join.html">Join the club</a><a href="join.html#core">Apply for a role</a><a href="join.html#speaker">Become a speaker</a></div>
-        <div><h4>Hang out</h4><a href="community.html">Community board</a><a href="explore.html">Tech Atlas</a><a href="docs.html">Docs</a><a href="${site.social.discord}">Discord</a><a href="${site.social.instagram}">Instagram</a><a href="${site.social.linkedin}">LinkedIn</a></div>
+        <div><h4>Hang out</h4><a href="community.html">Community board</a><a href="explore.html">Tech Atlas</a><a href="docs.html">Docs</a>${socials}</div>
       </div>
     </div>
     <div class="foot-bottom">

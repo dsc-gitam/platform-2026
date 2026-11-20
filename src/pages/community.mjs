@@ -46,7 +46,7 @@ ${pageHero({ eyebrow: 'Community', title: 'The <span class="hl">board</span>. As
           <p class="form-done" role="status" hidden>Subscribed!</p>
         </form>
         <button class="btn btn-ghost btn-sm" id="push-btn" style="margin-top:14px">Enable browser alerts</button>
-        <p style="margin:14px 0 0;font-size:.92rem">Or join us on <a class="link" href="${site.social.whatsapp}">WhatsApp</a> · <a class="link" href="${site.social.discord}">Discord</a></p>
+        ${[['whatsapp', 'WhatsApp'], ['discord', 'Discord'], ['instagram', 'Instagram']].filter(([k]) => site.social[k] && site.social[k] !== '#').length ? `<p style="margin:14px 0 0;font-size:.92rem">Or join us on ${[['whatsapp', 'WhatsApp'], ['discord', 'Discord'], ['instagram', 'Instagram']].filter(([k]) => site.social[k] && site.social[k] !== '#').map(([k, l]) => `<a class="link" href="${site.social[k]}" target="_blank" rel="noopener">${l}</a>`).join(' · ')}</p>` : ''}
       </div>
 
       <div class="card c-green reveal">

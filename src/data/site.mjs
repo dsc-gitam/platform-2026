@@ -18,14 +18,14 @@ export const site = {
   location: 'GITAM (Deemed to be University), Visakhapatnam',
   // Social links — placeholders
   social: {
-    instagram: '#',
-    linkedin: '#',
-    youtube: '#',
-    x: '#',
-    discord: '#',
-    whatsapp: '#',
-    github: '#',
-    community: '#' // gdg.community.dev chapter page
+    instagram: 'https://www.instagram.com/gdgoncampusgitam/',
+    linkedin: 'https://linkedin.com/company/gdgoc-gitam-vizag',
+    // youtube: '#',
+    // x: '#',
+    // discord: '#',
+    whatsapp: 'https://chat.whatsapp.com/LfLD5HrJh3cHvpoxB236Qk?s=cl&p=i&iam=2',
+    github: 'https://github.com/dsc-gitam',
+    community: 'https://gdg.community.dev/gdg-on-campus-gandhi-institute-of-technology-and-management-visakhapatnam-india/' // gdg.community.dev chapter page
   },
   // When true, sample/placeholder sections show a small "Sample" tag so nothing fake looks real.
   showPlaceholderTags: true,
@@ -85,21 +85,33 @@ team.openRoles = team.structure.filter(r => r.filled < r.headcount).map(r => ({ 
 const tba = (role) => [{ name: 'Speaker to be announced', role, tba: true, color: 'blue' }];
 
 export const events = [
-  { id: 'reboot-kickoff', status: 'upcoming', speakerLabel: 'Hosted by', speakers: [...team.organizers.map(o => ({ name: o.name, role: o.role, photo: o.photo, color: o.color })), { name: team.mentor.name, role: 'Faculty Advisor', photo: team.mentor.photo, color: team.mentor.color }], type: 'meetup', color: 'blue', title: 'Reboot: GDG GITAM Kickoff', date: '2026-12-05', time: '10:00', end: '13:00', venue: 'Seminar Hall (placeholder)', seats: 200, free: true,
-    blurb: 'The relaunch. Meet the team, see the plan for the next 12 months, try live demos and pick your first path.', tags: ['Beginner friendly', 'Free snacks'] },
-  { id: 'android-101', status: 'upcoming', speakers: tba('Android / Kotlin trainer'), type: 'workshop', color: 'green', title: 'Android 101: Your first app in Kotlin', date: '2026-12-12', time: '14:00', end: '17:00', venue: 'CS Lab 3 (placeholder)', seats: 60, free: true,
-    blurb: 'Bring a laptop. Leave with a real app on your phone. No prior experience needed.', tags: ['Hands-on', 'Laptop needed'] },
-  { id: 'gemini-study-jam', status: 'upcoming', speakers: tba('Gemini API mentor'), type: 'studyjam', color: 'red', title: 'Study Jam: Build with the Gemini API', date: '2027-01-09', time: '11:00', end: '14:00', venue: 'Innovation Lab (placeholder)', seats: 80, free: true,
-    blurb: 'Guided codelabs in small groups. Go from "what is a prompt" to a tiny AI-powered tool.', tags: ['AI', 'Guided'] },
-  { id: 'web-jam-24', status: 'upcoming', speakers: tba('Mentors & judges'), type: 'hackathon', color: 'yellow', title: 'Web Jam: 24-hour mini hackathon', date: '2027-01-23', time: '09:00', end: '09:00', venue: 'Main Block (placeholder)', seats: 120, free: true,
-    blurb: 'Teams of 3–4, one theme, one night. Mentors on call, snacks on tap, demos at sunrise.', tags: ['Teams', 'Prizes'] },
-  { id: 'campus-to-company', status: 'upcoming', speakers: tba('GITAM alum · guest speaker'), type: 'talk', color: 'blue', title: 'Talk: From campus to Google (guest speaker)', date: '2027-02-06', time: '16:00', end: '17:30', venue: 'Auditorium (placeholder)', seats: 300, free: true,
-    blurb: 'A graduate\'s honest story — the rejections, the projects that mattered, and what they would do again.', tags: ['Career', 'Q&A'] },
-  { id: 'design-sprint', status: 'upcoming', speakers: tba('Product design mentor'), type: 'workshop', color: 'red', title: 'Design Sprint: Idea to clickable prototype', date: '2027-02-20', time: '10:00', end: '16:00', venue: 'Design Studio (placeholder)', seats: 50, free: true,
-    blurb: 'Pick a real campus problem, sketch it, prototype it in Figma, and test it with strangers by lunch.', tags: ['Design', 'Hands-on'] },
+  {
+    id: 'reboot-kickoff', status: 'upcoming', speakerLabel: 'Hosted by', speakers: [...team.organizers.map(o => ({ name: o.name, role: o.role, photo: o.photo, color: o.color })), { name: team.mentor.name, role: 'Faculty Advisor', photo: team.mentor.photo, color: team.mentor.color }], type: 'meetup', color: 'blue', title: 'Reboot: GDG GITAM Kickoff', date: '2026-12-05', time: '10:00', end: '13:00', venue: 'Seminar Hall (placeholder)', seats: 200, free: true,
+    blurb: 'The relaunch. Meet the team, see the plan for the next 12 months, try live demos and pick your first path.', tags: ['Beginner friendly', 'Free snacks']
+  },
+  // {
+  //   id: 'android-101', status: 'upcoming', speakers: tba('Android / Kotlin trainer'), type: 'workshop', color: 'green', title: 'Android 101: Your first app in Kotlin', date: '2026-12-12', time: '14:00', end: '17:00', venue: 'CS Lab 3 (placeholder)', seats: 60, free: true,
+  //   blurb: 'Bring a laptop. Leave with a real app on your phone. No prior experience needed.', tags: ['Hands-on', 'Laptop needed']
+  // },
+  // {
+  //   id: 'gemini-study-jam', status: 'upcoming', speakers: tba('Gemini API mentor'), type: 'studyjam', color: 'red', title: 'Study Jam: Build with the Gemini API', date: '2027-01-09', time: '11:00', end: '14:00', venue: 'Innovation Lab (placeholder)', seats: 80, free: true,
+  //   blurb: 'Guided codelabs in small groups. Go from "what is a prompt" to a tiny AI-powered tool.', tags: ['AI', 'Guided']
+  // },
+  // {
+  //   id: 'web-jam-24', status: 'upcoming', speakers: tba('Mentors & judges'), type: 'hackathon', color: 'yellow', title: 'Web Jam: 24-hour mini hackathon', date: '2027-01-23', time: '09:00', end: '09:00', venue: 'Main Block (placeholder)', seats: 120, free: true,
+  //   blurb: 'Teams of 3–4, one theme, one night. Mentors on call, snacks on tap, demos at sunrise.', tags: ['Teams', 'Prizes']
+  // },
+  // {
+  //   id: 'campus-to-company', status: 'upcoming', speakers: tba('GITAM alum · guest speaker'), type: 'talk', color: 'blue', title: 'Talk: From campus to Google (guest speaker)', date: '2027-02-06', time: '16:00', end: '17:30', venue: 'Auditorium (placeholder)', seats: 300, free: true,
+  //   blurb: 'A graduate\'s honest story — the rejections, the projects that mattered, and what they would do again.', tags: ['Career', 'Q&A']
+  // },
+  // {
+  //   id: 'design-sprint', status: 'upcoming', speakers: tba('Product design mentor'), type: 'workshop', color: 'red', title: 'Design Sprint: Idea to clickable prototype', date: '2027-02-20', time: '10:00', end: '16:00', venue: 'Design Studio (placeholder)', seats: 50, free: true,
+  //   blurb: 'Pick a real campus problem, sketch it, prototype it in Figma, and test it with strangers by lunch.', tags: ['Design', 'Hands-on']
+  // },
   // Past
   {
-    id: 'past-devfest', status: 'past', type: 'talk', color: 'blue', title: 'DevFest GITAM (placeholder year)', date: '2025-11-15', time: '09:30', end: '17:00', venue: 'Main Auditorium', attendees: '400+',
+    id: 'past-devfest', status: 'past', type: 'talk', color: 'blue', title: 'DevFest GITAM 2025', date: '2025-11-15', time: '09:30', end: '17:00', venue: 'Main Auditorium', attendees: '400+',
     blurb: 'A full-day community conference with talks and demos.',
     speakers: [
       { name: 'Placeholder Speaker', role: 'Google Developer Expert · Keynote', color: 'blue' },
@@ -153,16 +165,18 @@ export const typeLabels = { meetup: 'Meetup', workshop: 'Workshop', studyjam: 'S
 export const updates = [
   { id: 'u1', pinned: true, date: '2026-11-18', tag: 'Announcement', color: 'blue', title: 'We\'re back. Reboot kickoff is on 5 December.', body: 'GDG GITAM is being rebuilt from the ground up, with students, for students. Registrations open now.' },
   { id: 'u2', pinned: false, date: '2026-11-16', tag: 'Applications', color: 'red', title: 'Core team applications are open', body: 'Seven roles, no gatekeeping. If you have energy and curiosity, apply — we will help with the rest.' },
-  { id: 'u3', pinned: false, date: '2026-11-12', tag: 'Opportunity', color: 'green', title: 'Call for speakers: share what you learned', body: 'Built something? Cracked an internship? 20 minutes on stage is all it takes.' },
+  // { id: 'u3', pinned: false, date: '2026-11-12', tag: 'Opportunity', color: 'green', title: 'Call for speakers: share what you learned', body: 'Built something? Cracked an internship? 20 minutes on stage is all it takes.' },
   { id: 'u4', pinned: false, date: '2026-11-08', tag: 'Resource', color: 'yellow', title: 'Starter pack: free Google learning links', body: 'Codelabs, Skills Boost and roadmaps, curated by the team for complete beginners.' }
 ];
 
 export const forumSeed = [
-  { id: 'p1', cat: 'ask', author: 'Placeholder Member', ts: '2026-11-19T10:00:00', title: 'Where do I start if I have never written code?', body: 'First year, CSE. I keep watching videos but never build anything. What would you do in my place?', votes: 12,
-    replies: [{ author: 'Gagana B.', ts: '2026-11-19T11:30:00', body: 'Pick one tiny thing (a to-do app) and build it badly. Come to Android 101 or the kickoff — we\'ll pair you up.' }] },
-  { id: 'p2', cat: 'show', author: 'Placeholder Member', ts: '2026-11-17T18:20:00', title: 'Show & tell: my first Flutter screen', body: 'It is just a login screen, but it runs on my phone. Feedback welcome!', votes: 21, replies: [] },
-  { id: 'p3', cat: 'idea', author: 'Placeholder Member', ts: '2026-11-15T09:10:00', title: 'Idea: a "Study Buddy" matching board for exam weeks', body: 'Could we use the community board to find people learning the same topic? Maybe a project for the first hackathon.', votes: 17, replies: [] },
-  { id: 'p4', cat: 'resource', author: 'Chaitanya S.', ts: '2026-11-14T14:00:00', title: 'Free: Google Cloud Skills Boost beginner path', body: 'Start with "Cloud Digital Leader" content, it makes everything else click. Link in the starter pack.', votes: 9, replies: [] }
+  // {
+  //   id: 'p1', cat: 'ask', author: 'Placeholder Member', ts: '2026-11-19T10:00:00', title: 'Where do I start if I have never written code?', body: 'First year, CSE. I keep watching videos but never build anything. What would you do in my place?', votes: 12,
+  //   replies: [{ author: 'Gagana B.', ts: '2026-11-19T11:30:00', body: 'Pick one tiny thing (a to-do app) and build it badly. Come to Android 101 or the kickoff — we\'ll pair you up.' }]
+  // },
+  // { id: 'p2', cat: 'show', author: 'Placeholder Member', ts: '2026-11-17T18:20:00', title: 'Show & tell: my first Flutter screen', body: 'It is just a login screen, but it runs on my phone. Feedback welcome!', votes: 21, replies: [] },
+  // { id: 'p3', cat: 'idea', author: 'Placeholder Member', ts: '2026-11-15T09:10:00', title: 'Idea: a "Study Buddy" matching board for exam weeks', body: 'Could we use the community board to find people learning the same topic? Maybe a project for the first hackathon.', votes: 17, replies: [] },
+  // { id: 'p4', cat: 'resource', author: 'Chaitanya S.', ts: '2026-11-14T14:00:00', title: 'Free: Google Cloud Skills Boost beginner path', body: 'Start with "Cloud Digital Leader" content, it makes everything else click. Link in the starter pack.', votes: 9, replies: [] }
 ];
 
 export const domains = [
@@ -185,16 +199,16 @@ export const timeline = [
 ];
 
 export const achievements = [
-  { n: '12', label: 'Members placed in tech roles', color: 'blue' },
-  { n: '5', label: 'Solution Challenge finalists', color: 'red' },
-  { n: '30+', label: 'Workshops run over the years', color: 'yellow' },
-  { n: '1', label: 'Member now at a Google office', color: 'green' }
+  { n: '48+', label: 'Members placed in tech roles', color: 'blue' },
+  { n: '5+', label: 'Solution Challenge finalists', color: 'red' },
+  { n: '60+', label: 'Workshops run over the years', color: 'yellow' },
+  { n: 'TBA', label: 'Member now at a Google office', color: 'green' }
 ];
 
 export const stories = [
-  { name: 'Placeholder Alum', batch: 'Batch of 20XX', color: 'blue', now: 'Software Engineer, Company', before: 'Had never opened a terminal before a GDG workshop.', after: 'Built three Android apps, one of them used by 2,000 students. Landed an offer through a referral from a club friend.', quote: 'The club gave me the first people who believed I could build things.' },
-  { name: 'Placeholder Member', batch: 'Batch of 20XX', color: 'red', now: 'Design Intern', before: 'Thought design was "making things pretty".', after: 'Ran the design track for a hackathon and turned two sprints into a portfolio.', quote: 'I learnt to show my work, not just talk about it.' },
-  { name: 'Placeholder Member', batch: 'Batch of 20XX', color: 'green', now: 'ML Research Assistant', before: 'Curious about AI, scared of the math.', after: 'Joined a Study Jam, finished the learning path, and gave their first ever talk.', quote: 'Teaching it once made me understand it for good.' }
+  // { name: 'Placeholder Alum', batch: 'Batch of 20XX', color: 'blue', now: 'Software Engineer, Company', before: 'Had never opened a terminal before a GDG workshop.', after: 'Built three Android apps, one of them used by 2,000 students. Landed an offer through a referral from a club friend.', quote: 'The club gave me the first people who believed I could build things.' },
+  // { name: 'Placeholder Member', batch: 'Batch of 20XX', color: 'red', now: 'Design Intern', before: 'Thought design was "making things pretty".', after: 'Ran the design track for a hackathon and turned two sprints into a portfolio.', quote: 'I learnt to show my work, not just talk about it.' },
+  // { name: 'Placeholder Member', batch: 'Batch of 20XX', color: 'green', now: 'ML Research Assistant', before: 'Curious about AI, scared of the math.', after: 'Joined a Study Jam, finished the learning path, and gave their first ever talk.', quote: 'Teaching it once made me understand it for good.' }
 ];
 
 // Key moments & milestones — shown in the Legacy sections.
@@ -242,10 +256,33 @@ export const expectations = {
 };
 
 export const faqs = [
-  { q: 'Do I need to know coding to join?', a: 'No. Most of our events start from zero. There are also design, content, events and community roles that need no code at all.' },
-  { q: 'Is it free?', a: 'Yes. Membership and almost all events are free for GITAM students.' },
-  { q: 'I am not from GITAM. Can I attend?', a: 'Some events are open to other colleges. Each event page says who can register.' },
-  { q: 'How much time will it take?', a: 'As little as one event a month, as much as you want. Core roles need roughly 4–6 hours a week.' }
+  // Getting started
+  { cat: 'Getting started', q: 'Do I need to know coding to join?', a: 'No. Most of our events start from zero. There are also design, content, events, research and community roles that need no code at all.' },
+  { cat: 'Getting started', q: 'Is it free?', a: 'Yes. Membership and almost all events are free for GITAM students.' },
+  { cat: 'Getting started', q: 'I am not from GITAM. Can I attend?', a: 'Some events are open to other colleges. Each event page says who can register.' },
+  { cat: 'Getting started', q: 'Is this only for CSE and IT students?', a: 'No. All branches are welcome. Design, media, writing, research, operations and community work matter as much as code, and every domain has a beginner path.' },
+  { cat: 'Getting started', q: 'I am a first-year and a complete beginner. Will I feel lost?', a: 'Every event has a beginner-friendly track and you can ask the "silly" question. Start with an event, try the Find your place quiz on the home page, or explore the Tech Atlas to see what sounds interesting.' },
+  { cat: 'Getting started', q: 'How much time will it take?', a: 'As little as one event a month, as much as you want. Volunteers give a few hours a month, and core roles need roughly 4–6 hours a week.' },
+  { cat: 'Getting started', q: 'Who runs the club?', a: 'Students. A team of co-organizers and core members runs everything day to day, with a faculty advisor and chapter mentor backing them. You can meet everyone in "The team" section above.' },
+
+  // Volunteer or core team
+  { cat: 'Volunteer or core team?', q: 'What is the difference between a volunteer and a core team member?', a: 'Volunteers are students who are interested in learning or working in a domain and who help with the club\'s operational tasks, like registration desks, crowd flow and technical support at events. Core team members are the experienced, skilled ones who can lead a domain: they own a track, mentor others and run events. Volunteers report to the core lead of their domain.' },
+  { cat: 'Volunteer or core team?', q: 'Can I volunteer if I have no experience?', a: 'Yes, that is exactly who volunteering is for. You need interest and a few hours a month, and you learn a domain by helping with real work.' },
+  { cat: 'Volunteer or core team?', q: 'How do I become a core team member?', a: 'Apply from the Join page (Core team tab) for the role you are strong in, and tell us what you have built, organised or led. Many core members started as volunteers, so volunteering is also a good way in. See "How the team is built" above for the roles and how many seats are open.' },
+  { cat: 'Volunteer or core team?', q: 'Can I be a volunteer in one domain and learn another?', a: 'Yes. Tell us what you are curious about and where you can help when you apply. Moving between domains as you learn is normal.' },
+  { cat: 'Volunteer or core team?', q: 'How do I speak at an event or suggest a session?', a: 'Use the Speak or Suggest a session tabs on the Join page. A rough title and a few bullet points is enough, and we help you shape the talk.' },
+
+  // Events and tickets
+  { cat: 'Events and tickets', q: 'How do I register for an event?', a: 'Open the event and press Register. Sign in with Google for one-click registration, or fill the short guest form if you would rather not sign in. You get a QR ticket straight away.' },
+  { cat: 'Events and tickets', q: 'I registered as a guest. How do I see my ticket on another device?', a: 'Open the registration dialog and choose "Already have a ticket? Access it here". Enter the same email you registered with and we send a sign-in link. Opening it shows your tickets, with no password needed.' },
+  { cat: 'Events and tickets', q: 'What do I show at the event?', a: 'Your QR ticket. On the day of the event the "Save your seat" button on the home page turns into "Access ticket", and your tickets also live on your profile page. The organizers scan it to check you in.' },
+  { cat: 'Events and tickets', q: 'What if I cannot make it after registering?', a: 'No problem. Seats are limited, so please let an organizer know through the community board so someone else can take your place.' },
+
+  // Your account
+  { cat: 'Your account', q: 'What do I get by signing in?', a: 'One-click registration, your tickets in one place, points and badges, a leaderboard, and your Tech Atlas picks saved to your profile.' },
+  { cat: 'Your account', q: 'How do points, badges and the leaderboard work?', a: 'Checking in at an event gives 10 points. During sessions the organizers can award extra points for things like great questions or winning an icebreaker. Badges unlock as you attend events, explore the Tech Atlas and collect points, and the leaderboard on your profile ranks members by points.' },
+  { cat: 'Your account', q: 'What details do you ask for, and why?', a: 'Google gives us your name, email and photo. The first time you register we ask your year (and, optionally, branch, registration number and WhatsApp number) so we can run the event well. You can change them any time from your profile.' },
+  { cat: 'Your account', q: 'Why does the site ask about notifications?', a: 'So we can tell you about new events and reminders. It is optional and you can turn it off in your browser settings whenever you like.' }
 ];
 
 // ---- Overrides from backend-published content (src/data/generated/*.json) ----

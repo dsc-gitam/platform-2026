@@ -66,6 +66,7 @@ export const legacyStories = (tint = true) => `
       <h2>Before the club. <span class="hl">After the club.</span></h2>
       <p>Real members, real starting points. If you are at "before" right now, that is exactly where they started.</p>
     </div>
+    ${stories.length ? '' : '<div class="card c-blue reveal"><h3 style="margin:0 0 6px">Our first stories are on the way</h3><p style="margin:0">We\'re collecting real before-and-after stories from members. Yours could be the first.</p></div>'}
     <div class="grid g3">
       ${stories.map(s => `<article class="card story c-${s.color} reveal">
         <div class="who">${avatar(s.name, s.color)}<div><b>${esc(s.name)}</b><small>${esc(s.batch)} · ${esc(s.now)}</small></div></div>
