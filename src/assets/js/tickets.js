@@ -40,13 +40,16 @@
       const arrow = el.dataset.arrow || '';
       const reg = me && me.registrations.find((r) => r.eventId === el.dataset.ticketEvent);
       el.onclick = null;
-      if (!reg) { label.innerHTML = el.dataset.orig; if (el.dataset.href) el.setAttribute('href', el.dataset.href); return; }
+      const pill = (on) => { if (label !== el) label.classList.toggle('pill', on); };
+      if (!reg) { pill(true); label.innerHTML = el.dataset.orig; if (el.dataset.href) el.setAttribute('href', el.dataset.href); return; }
       if (!el.dataset.href) el.dataset.href = el.getAttribute('href') || '';
       if (el.dataset.ticketDate === today) {
+        pill(true);
         label.innerHTML = `${window.GDG_ICON('ticket', 18)} Access ticket ${arrow}`;
         el.setAttribute('href', 'profile.html#tickets');
         el.onclick = (ev) => { ev.preventDefault(); G.openTicket(reg, me.user); };
       } else {
+        pill(false);
         label.innerHTML = `${window.GDG_ICON('check', 18)} You're registered ${arrow}`;
         el.setAttribute('href', 'profile.html#tickets');
       }

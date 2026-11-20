@@ -35,7 +35,7 @@ const body = `
         <div class="bt-date"><b>${dateParts(up[0].date).d}</b><span>${dateParts(up[0].date).mon}</span></div>
         <h2>${esc(up[0].title)}</h2>
         <p>${esc(up[0].venue)} · <span data-countdown="${up[0].date}">coming soon</span></p>
-        <span class="bt-go" data-ticket-label>Save your seat ${arrow}</span>
+        <span class="bt-go pill" data-ticket-label>Save your seat ${arrow}</span>
       </a>
       <a class="bt bt-find" href="#find-your-place">
         <span class="bt-label">2-minute quiz</span>

@@ -798,3 +798,6 @@ main, .site-footer { overflow-x: clip; }
 .board-card { padding: 8px 26px; } .board-card .update:first-child { padding-top: 20px; }
 .board-more { margin: 0; padding: 14px 0 18px; border-top: 2px dashed rgba(29, 27, 38, .25); }
 @media (max-width: 900px) { .board-home { grid-template-columns: 1fr; } }
+
+.bt-go.pill { align-self: flex-start; margin-top: auto; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font-size: .92rem; box-shadow: 2px 2px 0 var(--ink); }
+.bt-event .bt-go.pill { justify-self: start; margin-top: 16px; }
