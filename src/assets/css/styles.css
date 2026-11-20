@@ -15,7 +15,7 @@
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow-x: hidden; scroll-behavior: smooth; scroll-padding-top: 90px; -webkit-text-size-adjust: 100%; }
-body { margin: 0; background-color: var(--paper); background-image: radial-gradient(rgba(29, 27, 38, .10) 1.2px, transparent 1.4px); background-size: 24px 24px; color: var(--ink); font: 400 1.0625rem/1.6 var(--body); }
+body { margin: 0; background-color: var(--paper); background-image: radial-gradient(rgba(29, 27, 38, .22) 1.3px, transparent 1.5px); background-size: 24px 24px; color: var(--ink); font: 400 1.0625rem/1.6 var(--body); }
 img, svg { max-width: 100%; display: block; }
 a { color: inherit; }
 h1, h2, h3, h4 { font-family: var(--display); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 .5em; font-weight: 800; text-wrap: balance; }
