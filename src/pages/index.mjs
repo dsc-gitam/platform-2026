@@ -2,6 +2,7 @@ import { site, updates, events, domains, achievements, gallery, team, roadmap, t
 import { legacyStory, milestoneStrip, legacyGallery, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { findSection } from '../sections/find.mjs';
+import { registerModal } from '../sections/register.mjs';
 import { speakerPills, socialLinks, fmtDate, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
 const latest = [...updates].sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date)).slice(0, 3);
@@ -30,7 +31,7 @@ const body = `
           <div class="term-body" id="term-body"></div>
         </div>
       </div>
-      <a class="bt bt-event" href="events.html" data-ticket-event="${up[0].id}" data-ticket-date="${up[0].date}">
+      <a class="bt bt-event js-register" data-id="${up[0].id}" href="events.html#${up[0].id}" data-ticket-event="${up[0].id}" data-ticket-date="${up[0].date}">
         <span class="bt-label">Next up</span>
         <div class="bt-date"><b>${dateParts(up[0].date).d}</b><span>${dateParts(up[0].date).mon}</span></div>
         <h2>${esc(up[0].title)}</h2>
@@ -82,7 +83,7 @@ const body = `
         <h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>
         ${speakerPills(e.speakers)}
       </div>
-      <div class="ev-act"><a class="btn btn-ink btn-sm" href="events.html#${e.id}" data-ticket-event="${e.id}" data-ticket-date="${e.date}">Register ${arrow}</a></div>
+      <div class="ev-act"><a class="btn btn-ink btn-sm js-register" data-id="${e.id}" href="events.html#${e.id}" data-ticket-event="${e.id}" data-ticket-date="${e.date}">Register ${arrow}</a></div>
     </article>`; }).join('')}
     <p class="reveal"><a class="link" href="events.html">All upcoming events →</a></p>
   </div>
@@ -197,12 +198,14 @@ ${legacyStories(false)}
 
 ${ctaBand({ title: 'Join us. It really is that simple.', text: 'Become a member, get notified about events, and bring a friend. The only requirement is curiosity.', primary: ['join.html', 'Join the club'], secondary: ['community.html', 'Visit the community board'] })}
 ${lightbox}
+${registerModal}
+<script type="application/json" id="events-data">${JSON.stringify(events.filter(e => e.status === 'upcoming'))}</script>
 `;
 
 export default {
   path: 'index.html', nav: 'home', title: 'Home',
   description: 'GDG on Campus GITAM is a student-run tech community for learning, building and shipping with Google technologies. Free events, workshops, hackathons and mentors — beginners welcome.',
-  scripts: ['home.js', 'quiz.js'],
+  scripts: ['register.js', 'home.js', 'quiz.js'],
   body,
   jsonld: [{ '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url + '/' }]
 };

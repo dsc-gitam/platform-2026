@@ -39,7 +39,7 @@
       if (!el.dataset.orig) { el.dataset.orig = label.innerHTML; const a = $('svg.arr', label); el.dataset.arrow = a ? a.outerHTML : ''; }
       const arrow = el.dataset.arrow || '';
       const reg = me && me.registrations.find((r) => r.eventId === el.dataset.ticketEvent);
-      el.onclick = null;
+      el.onclick = null; el.classList.toggle('js-register', !reg);
       const pill = (on) => { if (label !== el) label.classList.toggle('pill', on); };
       if (!reg) { pill(true); label.innerHTML = el.dataset.orig; if (el.dataset.href) el.setAttribute('href', el.dataset.href); return; }
       if (!el.dataset.href) el.dataset.href = el.getAttribute('href') || '';
