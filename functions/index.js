@@ -5,12 +5,11 @@ import { defineSecret } from 'firebase-functions/params';
 
 const DATABASE_URL = defineSecret('DATABASE_URL');
 const GOOGLE_SERVICE_ACCOUNT = defineSecret('GOOGLE_SERVICE_ACCOUNT');
-// To let the API commit approved content to GitHub, create the secret (see docs/03-setup.md), then add GITHUB_TOKEN here:
-//   const GITHUB_TOKEN = defineSecret('GITHUB_TOKEN');  ...  secrets: [DATABASE_URL, GOOGLE_SERVICE_ACCOUNT, GITHUB_TOKEN]
+const GITHUB_TOKEN = defineSecret('GITHUB_TOKEN'); // lets the API commit approved content to GitHub
 
 let app;
 export const api = onRequest(
-  { region: 'asia-south1', memory: '512MiB', timeoutSeconds: 60, maxInstances: 10, secrets: [DATABASE_URL, GOOGLE_SERVICE_ACCOUNT] },
+  { region: 'asia-south1', memory: '512MiB', timeoutSeconds: 60, maxInstances: 10, secrets: [DATABASE_URL, GOOGLE_SERVICE_ACCOUNT, GITHUB_TOKEN] },
   async (req, res) => {
     app ??= (await import('./lib/app.js')).app;
     // Firebase has already read the body (req.rawBody), so rebuild a standard Request for Hono.

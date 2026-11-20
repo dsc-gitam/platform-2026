@@ -46,7 +46,7 @@ firebase functions:secrets:set GOOGLE_SERVICE_ACCOUNT --data-file key.json --pro
 firebase functions:secrets:set GITHUB_TOKEN --project gdg-gitam            # fine-grained token, Contents read/write on this repo
 ```
 
-Then add `GITHUB_TOKEN` to the `secrets` list in `functions/index.js` (a comment shows where). Non-secret settings go in `functions/.env.gdg-gitam` (git-ignored, copy `functions/.env.example`):
+`GITHUB_TOKEN` is already listed in the `secrets` of `functions/index.js`. Non-secret settings go in `functions/.env.gdg-gitam` (git-ignored, copy `functions/.env.example`):
 
 | Variable | Value |
 |---|---|
