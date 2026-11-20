@@ -1,5 +1,5 @@
 import { site, events, domains, achievements, gallery, team, roadmap, typeLabels } from '../data/site.mjs';
-import { legacyStory, milestoneStrip, legacyGallery, legacyAchievements, legacyStories, lightbox } from '../sections/legacy.mjs';
+import { legacyStory, milestoneStrip, legacyGallery, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { findSection } from '../sections/find.mjs';
 import { arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
@@ -153,8 +153,7 @@ ${findSection}
 
 ${legacyStory(false)}
 ${legacyGallery(true)}
-${legacyAchievements(false)}
-${legacyStories(true)}
+${legacyStories(false)}
 
 <section class="section">
   <div class="container">
