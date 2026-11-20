@@ -21,7 +21,8 @@ export const photo = (label, color = 'blue', cls = '') => `<figure class="ph ph-
   <svg viewBox="0 0 120 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="30" cy="26" r="9"/><path d="M0 80 40 38l24 26 18-16 38 32z"/></svg>
   <figcaption>${esc(label)}</figcaption></figure>`;
 
-export const avatar = (name, color) => {
+export const avatar = (name, color, photoSrc) => {
+  if (photoSrc) return `<div class="avatar av-${color} has-photo"><img src="${esc(photoSrc)}" alt="${esc(name)}" width="110" height="110" loading="lazy"></div>`;
   const initials = name.split(/\s+/).map(w => w[0]).slice(0, 2).join('');
   return `<div class="avatar av-${color}" aria-hidden="true"><span>${esc(initials)}</span></div>`;
 };
