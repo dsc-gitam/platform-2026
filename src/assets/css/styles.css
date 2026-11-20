@@ -680,7 +680,7 @@ main, .site-footer { overflow-x: clip; }
 .sp-pill .avatar { width: 34px; height: 34px; margin: 0; flex: none; border-width: 2px; box-shadow: none; font-size: .85rem; border-radius: 50%; }
 .sp-pill .avatar span { line-height: 1; }
 .sp-pill em { font: 700 .85rem var(--body); font-style: normal; white-space: nowrap; max-width: 0; opacity: 0; overflow: hidden; transition: max-width .3s var(--ease), opacity .2s, padding .3s var(--ease); }
-.sp-pill:hover, .sp-pill:focus-visible { background: var(--yellow-100); }
+.sp-pill:hover, .sp-pill:focus-visible { background: var(--c-100, var(--yellow-100)); }
 .sp-pill:hover em, .sp-pill:focus-visible em { max-width: 220px; opacity: 1; padding: 0 12px 0 8px; }
 .sp-pill.tba em { font-weight: 500; font-style: italic; }
 @media (hover: none) { .sp-pill:focus em { max-width: 220px; opacity: 1; padding: 0 12px 0 8px; } }
