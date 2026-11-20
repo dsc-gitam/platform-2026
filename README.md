@@ -59,7 +59,7 @@ build.mjs         builds the site into dist/   .github/workflows/  build and dep
 
 ## Environment
 
-The API reads its settings from `server/.env` (copy `server/.env.example`). The site reads `GDG_API_BASE`, `FIREBASE_WEB_CONFIG` and `SITE_URL` at build time. Nothing secret is ever built into the site. Details are in the [reference](docs/07-reference.md).
+The API reads its settings from `server/.env` (copy `server/.env.example`). The site reads `GDG_API_BASE`, `SITE_URL` and (optionally) `FIREBASE_WEB_CONFIG` at build time; the public Firebase web config is already in `src/data/firebase.web.json`. Nothing secret is ever built into the site. Details are in the [reference](docs/07-reference.md).
 
 ## Contributing
 

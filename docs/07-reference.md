@@ -19,8 +19,8 @@
 | Variable | Purpose |
 |---|---|
 | `GDG_API_BASE` | API URL. Without it the account features stay off. |
-| `FIREBASE_WEB_CONFIG` | Firebase web app config as JSON (add `vapidKey` for push). |
-| `SITE_URL` | Canonical URL, sitemap and share tags. |
+| `FIREBASE_WEB_CONFIG` | Optional override of `src/data/firebase.web.json` (the public web config; add `vapidKey` for push). |
+| `SITE_URL` | Canonical URL, sitemap and share tags (default `https://gdg-gitam.web.app`). |
 | `GDG_DEV_AUTH` | Shows the dev sign-in dialog when set to `1`. |
 
 ## API endpoints

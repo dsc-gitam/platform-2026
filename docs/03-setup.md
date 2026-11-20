@@ -6,16 +6,16 @@ These are the one-time steps to switch on accounts and publishing. The Firebase 
 
 1. In the [Firebase console](https://console.firebase.google.com/project/gdg-gitam) open **Authentication → Sign-in method** and enable **Google**, **Anonymous** and **Email link (passwordless sign-in)**. Email/password can stay on but is not used.
 2. Under **Authentication → Settings → Authorized domains** add your live domain (and keep `localhost`). Email links only work on authorized domains.
-3. **Project settings → Your apps → Add app → Web**. Copy the config object. You will need it as `FIREBASE_WEB_CONFIG` (below).
-4. **Project settings → Cloud Messaging → Web Push certificates → Generate key pair**. Add the public key to the config object as `"vapidKey"`. This is what lets the browser receive push notifications.
+3. The **web app is already registered** ("GDG GITAM Web", app id `1:650001549225:web:06ae9c83f8fdeeebe0e6b8`) and its public config is saved in `src/data/firebase.web.json`, so the site picks it up without any build variable. The hosting site is `gdg-gitam` (https://gdg-gitam.web.app).
+4. **Project settings → Cloud Messaging → Web Push certificates → Generate key pair**. Add the public key as `"vapidKey"` in `src/data/firebase.web.json` (or in the `FIREBASE_WEB_CONFIG` variable). This is what lets the browser receive push notifications. The Firebase CLI cannot create it, so it has to be done in the console.
 5. **Project settings → Service accounts → Generate new private key**. Keep that JSON secret: it goes into the API's `GOOGLE_SERVICE_ACCOUNT`, and a Firebase Hosting deploy key goes into GitHub (step 4).
 
-With the Firebase CLI you can read the web config once you are signed in to the account that owns the project:
+The Firebase CLI needs to be signed in with an account that has access to `gdg-gitam`:
 
 ```bash
-firebase login --reauth
+firebase login:use manas@theananta.in      # or: firebase login:add
 firebase apps:list --project gdg-gitam
-firebase apps:sdkconfig web <APP_ID> --project gdg-gitam
+firebase apps:sdkconfig web 1:650001549225:web:06ae9c83f8fdeeebe0e6b8 --project gdg-gitam
 ```
 
 ## 2. Supabase (database)
@@ -43,7 +43,7 @@ Deploy `server/` to **Deno Deploy** (or any host that runs Deno). Set the build 
 | `FIREBASE_PROJECT_ID` | `gdg-gitam` |
 | `GOOGLE_SERVICE_ACCOUNT` | the service account JSON on one line |
 | `SUPERADMIN_EMAILS` | comma-separated emails that become admin on first sign-in |
-| `ALLOWED_ORIGINS` | your site origin(s), for example `https://gdg-gitam.web.app` |
+| `ALLOWED_ORIGINS` | your site origin(s), for example `https://gdg-gitam.web.app,https://gdg-gitam.firebaseapp.com` |
 | `GITHUB_TOKEN` | fine-grained token with **Contents: read and write** on `dsc-gitam/platform-2026` |
 | `GITHUB_REPO` | `dsc-gitam/platform-2026` |
 | `GITHUB_BRANCH` | `main` |
@@ -57,7 +57,7 @@ In the repository **Settings → Secrets and variables → Actions**:
 | Name | Kind | Value |
 |---|---|---|
 | `GDG_API_BASE` | variable | the API URL, no trailing slash |
-| `FIREBASE_WEB_CONFIG` | variable | the web config from step 1 as one-line JSON, including `vapidKey` |
+| `FIREBASE_WEB_CONFIG` | variable (optional) | overrides `src/data/firebase.web.json`; one-line JSON, including `vapidKey` |
 | `FIREBASE_PROJECT_ID` | variable | `gdg-gitam` |
 | `SITE_URL` | variable | the live site URL |
 | `FIREBASE_SERVICE_ACCOUNT` | secret | a service account JSON allowed to deploy to Firebase Hosting |

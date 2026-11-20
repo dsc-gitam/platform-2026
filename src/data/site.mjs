@@ -13,7 +13,7 @@ export const site = {
   short: 'GDG GITAM',
   tagline: 'Learn it. Build it. Ship it — together.',
   // TODO: replace with the real domain before launch (used for canonical URLs, sitemap, OG tags).
-  url: env('SITE_URL') || 'https://gdg-gitam.example.com',
+  url: env('SITE_URL') || 'https://gdg-gitam.web.app',
   email: 'gdg@gitam.example.edu',
   location: 'GITAM (Deemed to be University), Visakhapatnam',
   // Social links — placeholders
@@ -40,7 +40,8 @@ export const site = {
     apiBase: env('GDG_API_BASE'),
     // Firebase web app config (public, not a secret). Set FIREBASE_WEB_CONFIG at build time to the JSON from the Firebase console;
     // optional `vapidKey` enables push notifications.
-    firebase: json(env('FIREBASE_WEB_CONFIG')),
+    // Falls back to src/data/firebase.web.json (the public web config for the gdg-gitam project). Add "vapidKey" for push.
+    firebase: json(env('FIREBASE_WEB_CONFIG')) || generated('../firebase.web', null) || null,
     // Local testing only: sign in without Firebase (the backend must run with DEV_AUTH=1).
     devAuth: env('GDG_DEV_AUTH') === '1'
   }
