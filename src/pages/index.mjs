@@ -132,7 +132,13 @@ const body = `
       <p class="eyebrow"><i class="dot"></i>Legacy &amp; wins ${sample()}</p>
       <h2>This club has done it <span class="hl">before</span>. Let's do it again.</h2>
     </div>
-    <p style="margin-top:34px" class="reveal"><a class="link" href="legacy.html">Open the full legacy page →</a></p>
+    <div class="grid g4" style="margin-bottom:46px">
+      ${achievements.map(a => `<div class="stat c-${a.color} reveal"><b>${esc(a.n)}</b><span>${esc(a.label)}</span></div>`).join('')}
+    </div>
+    <div class="gallery-strip reveal">
+      ${gallery.slice(0, 5).map(g => photo(g.label, g.color)).join('')}
+    </div>
+    <p style="margin-top:34px" class="reveal"><a class="link" href="legacy.html">Relive the legacy, meet the members it changed →</a></p>
   </div>
 </section>
 
