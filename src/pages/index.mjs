@@ -6,30 +6,46 @@ const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
 const marquee = domains.map((d, i) => `<span style="--c:var(--${['blue', 'red', 'yellow', 'green'][i % 4]})">${esc(d.name)}</span>`).join('');
 
 const body = `
-<section class="hero">
-  <div class="container"><div class="hero-card hero-grid">
-    <div>
+<section class="hero hero-bento">
+  <div class="container">
+    <div class="hb-head">
       <p class="eyebrow"><i class="dot"></i>GDG on Campus · GITAM</p>
-      <h1><span class="w1">Learn</span> it.<br><span class="w2">Build</span> it.<br><span class="u-wrap"><span class="w4">Ship</span> it —<svg class="squig" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c14-9 24 7 38-1s24 7 38-1 24 7 38-1 24 7 38-1 24 7 44 0" stroke="#FBBC04" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span><br>together.</h1>
+      <h1><span class="w1">Learn</span> it. <span class="w2">Build</span> it. <span class="u-wrap"><span class="w4">Ship</span> it<svg class="squig" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c14-9 24 7 38-1s24 7 38-1 24 7 38-1 24 7 38-1 24 7 44 0" stroke="#FBBC04" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span> — together.</h1>
       <p class="lead">A student-run tech community at GITAM, rebuilt from scratch. No gatekeeping, no prerequisites. Just people who want to learn real things and make real stuff.</p>
       <div class="hero-cta">
-        <a class="btn btn-blue" href="find-your-place.html">Find your place ${arrow}</a>
+        <a class="btn btn-blue" href="join.html">Join the club ${arrow}</a>
         <a class="btn btn-ghost" href="events.html">See what's coming</a>
       </div>
       <div class="hero-meta">
         <span class="chip blue">Free to join</span><span class="chip red">Beginner friendly</span><span class="chip yellow">All branches welcome</span>
       </div>
     </div>
-    <div class="stage" aria-hidden="true">
-      <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
-      <span class="sticker s-b">Next: Kickoff, 5 Dec</span>
-      <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><span>gdg-gitam.js</span></div>
-        <div class="term-body" id="term-body"></div>
+    <div class="bento">
+      <div class="bt bt-term" aria-hidden="true">
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><span>gdg-gitam.js</span></div>
+          <div class="term-body" id="term-body"></div>
+        </div>
       </div>
-      <span class="sticker s-a">&lt; hello, you /&gt;</span>
+      <a class="bt bt-event" href="events.html">
+        <span class="bt-label">Next up</span>
+        <div class="bt-date"><b>${dateParts(up[0].date).d}</b><span>${dateParts(up[0].date).mon}</span></div>
+        <h2>${esc(up[0].title)}</h2>
+        <p>${esc(up[0].venue)} · <span data-countdown="${up[0].date}">coming soon</span></p>
+        <span class="bt-go">Save your seat ${arrow}</span>
+      </a>
+      <a class="bt bt-find" href="find-your-place.html">
+        <span class="bt-label">2-minute quiz</span>
+        <h3>Not sure where you fit?</h3>
+        <span class="bt-go">Find your place ${arrow}</span>
+      </a>
+      <a class="bt bt-atlas" href="explore.html">
+        <span class="bt-label">Tech Atlas</span>
+        <h3>Confused about tech? Explore it.</h3>
+        <span class="bt-go">Start exploring ${arrow}</span>
+      </a>
     </div>
-  </div></div>
+  </div>
 </section>
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track">${marquee}${marquee}</div></div>

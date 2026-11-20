@@ -90,6 +90,12 @@
     load();
   }
 
+  // ---- Hero: days-to-go on the next event ----
+  $$('[data-countdown]').forEach(el => {
+    const days = Math.ceil((new Date(el.dataset.countdown + 'T00:00:00') - new Date()) / 864e5);
+    if (days > 1) el.textContent = `in ${days} days`; else if (days === 1) el.textContent = 'tomorrow'; else if (days === 0) el.textContent = 'today';
+  });
+
   // ---- Activity 3: bracket toy ----
   const toy = $('#bracket-toy');
   if (toy) {
