@@ -1,5 +1,18 @@
 import { site } from './data/site.mjs';
-import { icon } from './icons.mjs';
+import { icon, ICONS } from './icons.mjs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+
+// Version tag for CSS/JS URLs (?v=...): changes whenever an asset changes, so browsers and CDNs never mix an old
+// stylesheet or script with a newer page.
+const assetDir = new URL('./assets/', import.meta.url);
+const files = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(new URL(e.name + '/', d)) : [new URL(e.name, d)]));
+export const ASSET_V = (() => {
+  const h = createHash('sha1');
+  for (const f of [...files(new URL('css/', assetDir)), ...files(new URL('js/', assetDir))].sort((a, b) => a.href.localeCompare(b.href))) h.update(readFileSync(f));
+  h.update(JSON.stringify(ICONS));
+  return h.digest('hex').slice(0, 8);
+})();
 
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -82,11 +95,11 @@ export const layout = (page, body) => {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/styles.css?v=${ASSET_V}">
 </head>
 <body class="report-body">
 ${body}
-${(page.scripts || []).map(x => `<script src="assets/js/${x}" defer></script>`).join('\n')}
+${(page.scripts || []).map(x => `<script src="assets/js/${x}?v=${ASSET_V}" defer></script>`).join('\n')}
 </body>
 </html>`;
   const url = `${site.url}/${page.path === 'index.html' ? '' : page.path}`;
@@ -130,7 +143,7 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/styles.css?v=${ASSET_V}">
 ${ld}
 </head>
 <body data-page="${page.nav || ''}">
@@ -178,12 +191,12 @@ ${body}
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>window.GDG_CONFIG=${JSON.stringify(site.client)};</script>
-<script src="assets/js/icons.js" defer></script>
-<script src="assets/js/main.js" defer></script>
-<script type="module" src="assets/js/auth.js"></script>
-<script src="assets/js/tickets.js" defer></script>
-<script src="assets/js/notify.js" defer></script>
-${(page.scripts || []).map(s => `<script src="assets/js/${s}" defer></script>`).join('\n')}
+<script src="assets/js/icons.js?v=${ASSET_V}" defer></script>
+<script src="assets/js/main.js?v=${ASSET_V}" defer></script>
+<script type="module" src="assets/js/auth.js?v=${ASSET_V}"></script>
+<script src="assets/js/tickets.js?v=${ASSET_V}" defer></script>
+<script src="assets/js/notify.js?v=${ASSET_V}" defer></script>
+${(page.scripts || []).map(s => `<script src="assets/js/${s}?v=${ASSET_V}" defer></script>`).join('\n')}
 </body>
 </html>`;
 };
