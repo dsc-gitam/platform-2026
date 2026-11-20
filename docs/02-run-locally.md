@@ -36,7 +36,7 @@ Edit a file in `src/`, run `npm run build`, refresh. Account features stay hidde
 4. Build the site pointing at it, with the local sign-in switched on:
 
    ```bash
-   GDG_API_BASE=http://localhost:8000 GDG_DEV_AUTH=1 node build.mjs
+   GDG_API_BASE=http://localhost:8000 GDG_DEV_AUTH=1 FIREBASE_WEB_CONFIG=none node build.mjs
    node serve.mjs
    ```
 

@@ -41,7 +41,8 @@ export const site = {
     // Firebase web app config (public, not a secret). Set FIREBASE_WEB_CONFIG at build time to the JSON from the Firebase console;
     // optional `vapidKey` enables push notifications.
     // Falls back to src/data/firebase.web.json (the public web config for the gdg-gitam project). Add "vapidKey" for push.
-    firebase: json(env('FIREBASE_WEB_CONFIG')) || generated('../firebase.web', null) || null,
+    // FIREBASE_WEB_CONFIG=none switches Firebase off (used with GDG_DEV_AUTH for local testing).
+    firebase: env('FIREBASE_WEB_CONFIG') === 'none' ? null : json(env('FIREBASE_WEB_CONFIG')) || generated('../firebase.web', null) || null,
     // Local testing only: sign in without Firebase (the backend must run with DEV_AUTH=1).
     devAuth: env('GDG_DEV_AUTH') === '1'
   }

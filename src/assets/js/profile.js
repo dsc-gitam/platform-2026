@@ -8,6 +8,9 @@
   const ICON = (n, s) => window.GDG_ICON(n, s || 20);
   const fmtDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   const initials = (n) => (n || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  const teamLinks = JSON.parse($('#team-links').textContent);
+  // People already on the team page have their links in the site data; use them until the account has its own.
+  const fromTeam = (u) => teamLinks.find(t => t.name.trim().toLowerCase() === (u.name || '').trim().toLowerCase()) || {};
   let auth;
 
   function ticketCard(r, me) {
@@ -29,6 +32,8 @@
     const atlas = me.exploration.atlas || {}, quiz = me.exploration.quiz || {};
     const place = placeNames[quiz.result];
     const inTop = me.leaderboard.some(l => l.userId === u.id);
+    const tl = fromTeam(u);
+    const li = u.linkedin || tl.linkedin || '', gh = u.github || tl.github || '';
 
     root.innerHTML = `
     <div class="p-head card c-blue">
@@ -78,7 +83,7 @@
         <div class="row2"><div class="field"><label for="pf-reg">Registration no.</label><input id="pf-reg" name="regNo" value="${esc(u.regNo || '')}"></div><div class="field"><label for="pf-branch">Branch</label><input id="pf-branch" name="branch" value="${esc(u.branch || '')}"></div></div>
         <div class="row2"><div class="field"><label for="pf-year">Year</label><select id="pf-year" name="year">${['', '1st', '2nd', '3rd', '4th', 'Other'].map(y => `<option${u.year === y ? ' selected' : ''}>${y}</option>`).join('')}</select></div><div class="field"><label for="pf-email">Email</label><input id="pf-email" value="${esc(u.email)}" readonly></div></div>
         <div class="field"><label for="pf-bio">A line about you <small>(shown on the team page if you join the team)</small></label><textarea id="pf-bio" name="bio" maxlength="400" style="min-height:80px">${esc(u.bio || '')}</textarea></div>
-        <div class="row2"><div class="field"><label for="pf-li">LinkedIn URL</label><input id="pf-li" name="linkedin" type="url" value="${esc(u.linkedin || '')}"></div><div class="field"><label for="pf-gh">GitHub URL</label><input id="pf-gh" name="github" type="url" value="${esc(u.github || '')}"></div></div>
+        <div class="row2"><div class="field"><label for="pf-li">LinkedIn URL</label><input id="pf-li" name="linkedin" type="url" value="${esc(li)}"></div><div class="field"><label for="pf-gh">GitHub URL</label><input id="pf-gh" name="github" type="url" value="${esc(gh)}"></div></div>
         <p class="form-error" id="pf-err" role="alert" hidden></p>
         <button class="btn btn-blue" type="submit">Save changes</button>
         ${u.showOnSite ? '<p class="p-note" style="margin-top:14px">Your name, photo, bio and links appear on the public team page. Saving updates the website automatically (it can take a few minutes).</p>' : ''}

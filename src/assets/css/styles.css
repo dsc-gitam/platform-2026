@@ -853,3 +853,27 @@ input::placeholder, textarea::placeholder { color: var(--ink-3); opacity: 1; }
 .doc-table table { width: 100%; border-collapse: collapse; font-size: .92rem; } .doc-table th { text-align: left; font: 500 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding: 10px 14px; border-bottom: 2px solid var(--ink); background: var(--paper-2); } .doc-table td { padding: 10px 14px; border-bottom: 1px solid #E5E2EE; vertical-align: top; } .doc-table tr:last-child td { border: 0; }
 .doc hr { border: 0; border-top: 2px dashed #D8D5E3; margin: 2em 0; }
 @media (max-width: 900px) { .doc-shell { grid-template-columns: 1fr; } .doc-toc { position: static; max-height: none; } }
+
+/* ---- Admin dialogs: wider, no overflow, stacked on phones ---- */
+input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
+.check { display: flex; gap: 10px; align-items: center; font-weight: 500; cursor: pointer; }
+.check input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var(--blue); }
+.a-form .chk-row { margin: 14px 0; }
+.a-modal .modal-box { width: min(1040px, calc(100% - 24px)); max-width: none; overflow-x: hidden; }
+.a-form > *, .a-form .grid2 > *, .a-form .rowx > * { min-width: 0; }
+.a-form .rowx { display: grid; gap: 10px 14px; align-items: end; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px dashed #D8D5E3; }
+.a-form .rowx:last-child { border-bottom: 0; }
+.a-form .field { margin-bottom: 0; }
+.a-form .sprow { grid-template-columns: 1fr 1fr auto; }
+.a-form .qrow { grid-template-columns: minmax(0, 1.4fr) minmax(0, .7fr) minmax(0, 1.4fr) auto auto; }
+.a-form .q-del { white-space: nowrap; align-self: end; display: inline-flex; gap: 6px; align-items: center; }
+.a-form .q-req { align-self: center; padding-bottom: 4px; }
+@media (max-width: 760px) {
+  .a-modal .modal-box { padding: 20px 16px; }
+  .a-form .sprow, .a-form .qrow { grid-template-columns: 1fr; }
+  .a-form .q-del { justify-self: start; }
+  .a-form .q-req { padding: 0; }
+}
+.a-form .qrow { grid-template-columns: minmax(0, 1.3fr) minmax(120px, .8fr) minmax(0, 1.3fr) auto auto; }
+.a-form input:not([type="checkbox"]), .a-form select { min-height: 50px; }
+@media (max-width: 760px) { .a-form .qrow { grid-template-columns: 1fr; } }

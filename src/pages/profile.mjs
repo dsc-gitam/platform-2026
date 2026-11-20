@@ -1,4 +1,5 @@
 import { roles } from '../data/roles.mjs';
+import { team } from '../data/site.mjs';
 import { paths } from '../sections/find.mjs';
 import { googleButton } from '../lib.mjs';
 
@@ -25,6 +26,7 @@ const body = `
   </div>
 </section>
 <script type="application/json" id="roles-data">${JSON.stringify(roles.map(r => ({ id: r.id, name: r.name, glyph: r.glyph })))}</script>
+<script type="application/json" id="team-links">${JSON.stringify([...team.organizers, team.mentor, ...team.core].map(p => ({ name: p.name, linkedin: p.links?.linkedin || '', github: p.links?.github || '' })))}</script>
 <script type="application/json" id="paths-names">${JSON.stringify(Object.fromEntries(paths.map(p => [p.id, { name: p.name, glyph: p.glyph, color: p.color, cta: p.cta, tab: p.tab }])))}</script>
 `;
 
