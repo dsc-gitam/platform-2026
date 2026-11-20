@@ -89,4 +89,4 @@ Put your email in `SUPERADMIN_EMAILS`, sign in on the site, and open `/admin.htm
 
 - Replace `site.url` and the social links in `src/data/site.mjs`, and set `showPlaceholderTags: false` once real content is in.
 - Replace the sample events, team text and photos (see *Content and publishing*).
-- Add a 1200x630 PNG share image: link previews on WhatsApp and LinkedIn do not render SVG.
+- The share image for link previews is `src/assets/og-image.jpg` (1200x630). Replace the file to change it. Social networks cache previews, so use their debugger tools to refresh after a change.

@@ -75,7 +75,10 @@ export const layout = (page, body) => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(page.title)}</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="assets/gdg-logo.png" type="image/png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -89,10 +92,10 @@ ${(page.scripts || []).map(x => `<script src="assets/js/${x}" defer></script>`).
   const url = `${site.url}/${page.path === 'index.html' ? '' : page.path}`;
   const title = page.path === 'index.html' ? `${site.name} — ${site.tagline}` : `${page.title} · ${site.short}`;
   const desc = page.description;
-  const ogImage = `${site.url}/assets/og-image.svg`;
+  const ogImage = `${site.url}/assets/og-image.jpg`;
   const orgLd = {
     '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url,
-    logo: `${site.url}/assets/gdg-logo.png`, email: site.email,
+    logo: `${site.url}/assets/favicon-512.png`, email: site.email,
     description: 'A student community at GITAM for learning, building and shipping with Google technologies.',
     parentOrganization: { '@type': 'CollegeOrUniversity', name: 'GITAM (Deemed to be University)' },
     sameAs: Object.values(site.social).filter(v => v && v !== '#')
@@ -114,8 +117,15 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${ogImage}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="GDG on Campus GITAM members chatting over a handbook">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/gdg-logo.png" type="image/png">
+<meta name="twitter:image" content="${ogImage}">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

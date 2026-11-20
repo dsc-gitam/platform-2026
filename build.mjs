@@ -34,7 +34,7 @@ await writeFile(join(dist, 'find-your-place.html'), `<!doctype html><html lang="
 // Static assets
 await cp(join(root, 'src/assets'), join(dist, 'assets'), { recursive: true });
 
-await cp(join(root, 'src/assets/gdg-logo.png'), join(dist, 'favicon.ico')); // some browsers request /favicon.ico regardless of <link rel=icon>
+await cp(join(root, 'src/assets/favicon.ico'), join(dist, 'favicon.ico')); // some browsers request /favicon.ico regardless of <link rel=icon>
 
 // Client-side icon helper (same Lucide set as the server-rendered pages)
 await writeFile(join(dist, 'assets/js/icons.js'), `window.GDG_ICON=(function(I){return function(n,s){s=s||24;return '<svg class="ico" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(I[n]||'')+'</svg>';};})(${JSON.stringify(ICONS)});\n`);
@@ -48,7 +48,7 @@ firebase.initializeApp(${JSON.stringify(fb)});
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((p) => {
   const n = p.notification || {};
-  self.registration.showNotification(n.title || 'GDG GITAM', { body: n.body || '', icon: '/assets/gdg-logo.png', data: { url: (p.fcmOptions && p.fcmOptions.link) || '/' } });
+  self.registration.showNotification(n.title || 'GDG GITAM', { body: n.body || '', icon: '/assets/favicon-192.png', data: { url: (p.fcmOptions && p.fcmOptions.link) || '/' } });
 });
 self.addEventListener('notificationclick', (e) => { e.notification.close(); e.waitUntil(clients.openWindow(e.notification.data.url || '/')); });
 `);
@@ -65,7 +65,7 @@ await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${s
 await writeFile(join(dist, 'manifest.webmanifest'), JSON.stringify({
   name: site.name, short_name: site.short, start_url: '/', display: 'standalone',
   background_color: '#FFFFFF', theme_color: '#FFFFFF',
-  icons: [{ src: 'assets/gdg-logo.png', sizes: '575x330', type: 'image/png' }]
+  icons: [{ src: 'assets/favicon-192.png', sizes: '192x192', type: 'image/png' }, { src: 'assets/favicon-512.png', sizes: '512x512', type: 'image/png' }, { src: 'assets/apple-touch-icon.png', sizes: '180x180', type: 'image/png', purpose: 'any' }]
 }, null, 2));
 
 console.log(`\nDone: ${pages.length + 1} pages → dist/`);
