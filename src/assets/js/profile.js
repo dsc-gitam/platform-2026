@@ -33,6 +33,7 @@
     const place = placeNames[quiz.result];
     const inTop = me.leaderboard.some(l => l.userId === u.id);
     const tl = fromTeam(u);
+    const missing = [!u.year && 'year', !u.branch && 'branch', !u.regNo && 'registration number', !u.phone && 'WhatsApp number'].filter(Boolean);
     const li = u.linkedin || tl.linkedin || '', gh = u.github || tl.github || '';
 
     root.innerHTML = `
@@ -48,6 +49,8 @@
         <div><b>${me.badges.length}</b><span>Badges</span></div>
       </div>
     </div>
+
+    ${missing.length ? `<div class="card c-yellow p-complete"><div><h3>Finish your profile</h3><p>Add your ${missing.length > 1 ? missing.slice(0, -1).join(', ') + ' and ' + missing[missing.length - 1] : missing[0]} so registering for events takes a single click. <a class="link" href="#details">Complete it below →</a></p></div></div>` : ''}
 
     <nav class="p-nav" aria-label="Profile sections"><a href="#tickets">Tickets</a><a href="#badges">Badges</a><a href="#leaderboard">Leaderboard</a><a href="#exploration">Exploration</a><a href="#details">Details</a></nav>
 

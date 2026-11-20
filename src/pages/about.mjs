@@ -65,7 +65,7 @@ ${pageHero({ eyebrow: 'About', title: 'A club built <span class="hl">with</span>
     <h3 class="reveal" style="margin:56px 0 22px;font-size:1.5rem">Core team</h3>
     <div class="team-grid team-grid-2">${team.core.map(p => person(p)).join('')}</div>
 
-    <div style="margin-top:70px" class="reveal">
+    <div style="margin-top:70px" class="reveal" id="team-structure">
       <h3 style="font-size:1.8rem">How the team is <span class="hl">built</span></h3>
       <p style="color:var(--ink-2);max-width:62ch">${team.structure.reduce((n, r) => n + r.headcount, 0)} seats across seven areas, backed by a bench of volunteers. Filled seats are shown in colour; the dashed ones are open.</p>
     </div>

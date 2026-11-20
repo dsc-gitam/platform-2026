@@ -42,9 +42,9 @@ Every form on the **Join** page lands here, grouped by type and status.
 
 | Type | What *Approve* does |
 |---|---|
-| **Members** | Created already approved when the person submits the form. |
-| **Volunteers** | *Approve & add to team page* puts them on the team page. *Approve only* just records it. |
-| **Core team** | *Approve & add to team page* also gives them the CORE role. You choose the title and short bio. |
+| **Members** | Optional form; created already approved when the person submits it (everyone who signs in is already a member). |
+| **Volunteers** | People who want to learn or work in a domain and help with operations (registration desk, crowd flow, tech support). *Approve & add to team page* puts them on the team page; *Approve only* just records it. |
+| **Core team** | Experienced people who can lead a domain. *Approve & add to team page* also gives them the CORE role. You choose the title and short bio. |
 | **Speakers** and **Session ideas** | Marks them approved. Follow up with the person by email. |
 | **Stories** | *Approve & feature on site* publishes the story to Home and Legacy. *Edit text* lets you fix it first. |
 

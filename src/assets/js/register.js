@@ -28,12 +28,25 @@
     });
   }
 
+  // First registration: Google gave us name, email and photo; ask for the rest once (year is required) and save it to the profile.
+  const PROFILE_KEYS = ['year', 'branch', 'reg_no', 'phone'];
+  function renderProfile(u) {
+    const box = $('#reg-profile'); box.innerHTML = '';
+    box.hidden = !u || !!u.year; // already complete: nothing to ask
+    if (box.hidden) return;
+    box.innerHTML = `<p class="reg-hint" style="margin-bottom:12px">A few details so we can run the event well. You'll only be asked once.</p>
+      <div class="row2"><div class="field"><label for="rp-year">Year</label><select id="rp-year" name="year" required><option value="">Select…</option>${['1st', '2nd', '3rd', '4th', 'Other'].map(y => `<option${u.year === y ? ' selected' : ''}>${y}</option>`).join('')}</select></div>
+      <div class="field"><label for="rp-branch">Branch / department <small>(optional)</small></label><input id="rp-branch" name="branch" placeholder="e.g. CSE, ECE, B.Des" value="${esc(u.branch || '')}"></div></div>
+      <div class="row2"><div class="field"><label for="rp-reg">Registration no. <small>(optional)</small></label><input id="rp-reg" name="reg_no" value="${esc(u.regNo || '')}"></div>
+      <div class="field"><label for="rp-phone">WhatsApp number <small>(optional)</small></label><input id="rp-phone" name="phone" type="tel" value="${esc(u.phone || '')}"></div></div>`;
+  }
+
   // Which version of the dialog applies: signed-in member, guest with a saved session, signed-in but not yet a member, or new guest
   function decide() {
     const me = auth && auth.enabled ? auth.me : null;
-    const signedIn = !!me, guest = signedIn && me.user.guest, member = signedIn && (guest ? !!me.user.email : me.user.onboarded);
+    const signedIn = !!me, guest = signedIn && me.user.guest, member = signedIn && (guest ? !!me.user.email : true);
     gate.hidden = !(auth && auth.enabled && !signedIn);
-    pending.hidden = !(signedIn && !guest && !member);
+    pending.hidden = true;
     memberBox.hidden = !member;
     form.hidden = member || (signedIn && !guest);
     $('#reg-have').hidden = !(auth && auth.enabled && (!signedIn || guest));
@@ -43,6 +56,7 @@
     if (member) {
       const u = me.user;
       $('#reg-who').innerHTML = `<div class="who">${u.photoUrl ? `<img src="${esc(u.photoUrl)}" alt="" width="40" height="40" referrerpolicy="no-referrer">` : ''}<div><b>${esc(u.name)}</b><small>${esc(u.email)}${guest ? ' · guest' : ''}</small></div>${guest ? '' : '<a class="link" href="profile.html">Edit details</a>'}</div><p class="reg-hint">We'll use ${guest ? 'the details you gave earlier' : 'your profile details'}. Just answer the question${(current.questions || []).length === 1 ? '' : 's'} below.</p>`;
+      renderProfile(guest ? null : u);
       renderQuestions(current.questions);
       const already = me.registrations.find(r => r.eventId === current.id);
       if (already) showSuccess(already.ticketCode, true, guest);
@@ -83,12 +97,11 @@
     e.preventDefault();
     const err = $('#reg-quick-error'); err.hidden = true;
     if (!quick.checkValidity()) { quick.reportValidity(); return; }
-    const answers = {}; new FormData(quick).forEach((v, k) => { answers[k] = v; });
+    const answers = {}, profile = {}; new FormData(quick).forEach((v, k) => { (PROFILE_KEYS.includes(k) ? profile : answers)[k] = v; });
     const btn = $('button[type=submit]', quick); btn.disabled = true;
-    const r = await auth.api('POST', `/me/events/${current.id}/register`, { answers });
+    const r = await auth.api('POST', `/me/events/${current.id}/register`, Object.keys(profile).length ? { answers, profile } : { answers });
     btn.disabled = false;
     if (r.ok) { await auth.refresh(); tell(); showSuccess(r.data.ticketCode, false, auth.me.user.guest); G.toast("You're registered!"); return; }
-    if (r.data && r.data.code === 'NOT_ONBOARDED') { try { sessionStorage.setItem('gdg:next', location.href); } catch { /* ignore */ } location.href = 'join.html#member'; return; }
     err.textContent = (r.data && r.data.error) || 'Could not register. Please try again.'; err.hidden = false;
   });
 

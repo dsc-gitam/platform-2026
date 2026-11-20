@@ -27,9 +27,9 @@ Deno.test('end to end', async (t) => {
     assertEquals((await call('GET', '/admin/stats')).status, 401);
   });
 
-  await t.step('first sign-in creates a MEMBER who is not onboarded; superadmin email becomes ADMIN', async () => {
+  await t.step('first sign-in creates a MEMBER straight away (no membership form); superadmin email becomes ADMIN', async () => {
     const ann = await call('GET', '/me', ANN);
-    assertEquals(ann.json.user.role, 'MEMBER'); assertEquals(ann.json.user.onboarded, false);
+    assertEquals(ann.json.user.role, 'MEMBER'); assertEquals(ann.json.user.onboarded, true); assertEquals(ann.json.user.year, null);
     const admin = await call('GET', '/me', ADMIN);
     assertEquals(admin.json.user.role, 'ADMIN'); // listed in SUPERADMIN_EMAILS (.env.test)
     await call('GET', '/me', CORE); await call('GET', '/me', BOB);
@@ -37,15 +37,20 @@ Deno.test('end to end', async (t) => {
     await db.user.update({ where: { id: core.json.user.id }, data: { role: 'CORE' } });
   });
 
-  await t.step('registration requires the membership form first', async () => {
+  await t.step('the first registration completes the profile (year is required), later ones just use it', async () => {
     const r = await call('POST', `/me/events/${ev.id}/register`, ANN, { answers: { level: 'Total beginner' } });
-    assertEquals(r.status, 409); assertEquals(r.json.code, 'NOT_ONBOARDED');
+    assertEquals(r.status, 400); assertEquals(r.json.code, 'PROFILE_INCOMPLETE');
+    const fresh = 'newbie@test.dev|Nina Newbie';
+    const ok = await call('POST', `/me/events/${ev.id}/register`, fresh, { profile: { year: '1st', branch: 'ece', phone: '9000000002', reg_no: '2024ECE001' }, answers: { level: 'Total beginner' } });
+    assertEquals(ok.status, 201);
+    const me = await call('GET', '/me', fresh);
+    assertEquals(me.json.user.year, '1st'); assertEquals(me.json.user.branch, 'ece'); assertEquals(me.json.user.regNo, '2024ECE001'); assertEquals(me.json.registrations.length, 1);
   });
 
   await t.step('member form onboards and prefills the profile', async () => {
     const r = await call('POST', '/applications', ANN, { type: 'member', data: { name: 'Ann Member', phone: '9999999999', reg_no: '2021001', branch: 'CSE', year: '3rd', domains: 'web, ai' } });
     assertEquals(r.status, 201); assertEquals(r.json.onboarded, true);
-    await call('POST', '/applications', BOB, { type: 'member', data: { branch: 'ECE' } });
+    await call('POST', '/applications', BOB, { type: 'member', data: { branch: 'ECE', year: '2nd' } });
     const me = await call('GET', '/me', ANN);
     assertEquals(me.json.user.onboarded, true); assertEquals(me.json.user.branch, 'CSE'); assertEquals(me.json.user.interests, ['web', 'ai']);
   });

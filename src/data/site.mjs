@@ -76,7 +76,7 @@ export const team = {
     { id: 'docs', title: 'Documentation & Reports', color: 'yellow', icon: 'pen-line', headcount: 1, filled: 0, does: 'Official MoMs, annual reports, internal Wikis, post-event reports, assisted photography.' },
     { id: 'photo', title: 'Photography & Media', color: 'green', icon: 'mic', headcount: 1, filled: 0, does: 'Live event capture, visual coverage and media archiving (assisted by Documentation).' }
   ],
-  volunteers: { capacity: '~50', note: 'student volunteers on standby', workflow: 'Direct assignment and reporting under respective core leads across registration desks, crowd flow, technical support and the other domains above, as and when necessary.' }
+  volunteers: { capacity: '~50', note: 'student volunteers on standby', workflow: "People who want to learn or work in a domain and who help with the club's day-to-day operations: registration desks, crowd flow, technical support at events and more. They are assigned directly by, and report to, the core lead of the relevant domain. Core team members are the experienced ones who lead those domains." }
 };
 
 team.openRoles = team.structure.filter(r => r.filled < r.headcount).map(r => ({ id: r.id, title: r.title, color: r.color, desc: r.does, open: r.headcount - r.filled }));

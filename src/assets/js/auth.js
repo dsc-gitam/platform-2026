@@ -10,9 +10,6 @@ const FB = `https://www.gstatic.com/firebasejs/${FB_VERSION}/`;
 const enabled = !!(API && (CFG.firebase || CFG.devAuth));
 const { $, $$, store, esc } = G;
 const onJoin = /\/join\.html$/.test(location.pathname);
-const onAdmin = /\/admin\.html$/.test(location.pathname);
-// Staff can reach the admin panel without filling in the membership form first.
-const needsMemberForm = () => !!auth.me && !auth.me.user.guest && !auth.me.user.onboarded && !auth.me.registrations.length && !(onAdmin && auth.me.user.perms.length);
 
 // While previewing locally the badge is always visible, so the design can be reviewed before the backend is connected.
 const PREVIEW = ['localhost', '127.0.0.1', ''].includes(location.hostname);
@@ -160,17 +157,12 @@ auth.openSignIn = (message) => {
   G.openModal(m);
 };
 
-// New members go straight to the membership form; everyone else carries on where they were.
-function afterSignIn(explicit) {
+// Signing in is joining: name, email and photo come from the Google account and the rest of the profile is asked
+// at the first event registration (or filled in from the profile page). Nobody is sent to another page.
+function afterSignIn() {
   if (!auth.me) return;
-  G.toast(`Welcome${auth.me.user.onboarded ? ' back' : ''}, ${auth.me.user.name.split(' ')[0]}!`);
-  if (needsMemberForm()) gotoMemberForm(explicit); else syncExploration();
-  pushSaveToken();
-}
-function gotoMemberForm(remember) {
-  if (onJoin) return;
-  if (remember) try { sessionStorage.setItem('gdg:next', location.href); } catch { /* ignore */ }
-  location.replace('join.html#member');
+  G.toast(`Welcome${auth.me.user.createdAt && Date.now() - Date.parse(auth.me.user.createdAt) > 60000 ? ' back' : ''}, ${auth.me.user.name.split(' ')[0]}!`);
+  syncExploration(); pushSaveToken();
 }
 
 // ---------- Navbar badge ----------
@@ -206,18 +198,6 @@ function initBadge() {
   paintBadge();
 }
 
-// ---------- Membership gate on the join page ----------
-function joinPageGate() {
-  if (!onJoin || !auth.me || auth.me.user.guest || auth.me.user.onboarded) return;
-  $$('[data-tab]').forEach((t) => { if (t.dataset.tab !== 'member') t.hidden = true; });
-  const panel = $('#panel-member');
-  if (panel && !$('#welcome-note')) {
-    const p = document.createElement('div'); p.id = 'welcome-note'; p.className = 'card c-blue welcome-note';
-    p.innerHTML = `<h3>Welcome, ${esc(auth.me.user.name.split(' ')[0])}! 👋</h3><p>Tell us a little about you to finish joining. Once you're in, registering for events is a single click.</p>`;
-    panel.prepend(p);
-  }
-  if (location.hash && location.hash !== '#member') history.replaceState(null, '', '#member');
-}
 function prefillForms() {
   if (!auth.me || auth.me.user.guest) return;
   const u = auth.me.user;
@@ -227,13 +207,6 @@ function prefillForms() {
     if (f.elements.email && u.email) f.elements.email.readOnly = true;
   });
 }
-document.addEventListener('gdg:submitted', (e) => {
-  if (e.detail && e.detail.kind === 'member') {
-    let next = 'profile.html'; try { next = sessionStorage.getItem('gdg:next') || next; sessionStorage.removeItem('gdg:next'); } catch { /* ignore */ }
-    setTimeout(() => { location.href = next; }, 1300);
-  }
-});
-
 // ---------- Sign-in nudges on forms (when signed out) ----------
 function formGate() {
   if (!onJoin) return;
@@ -303,11 +276,10 @@ function boot() {
   initBadge();
   if (!enabled) { G._authResolve(auth); return; }
   const done = async () => {
-    joinPageGate(); prefillForms(); formGate();
-    if (needsMemberForm()) gotoMemberForm(false);
+    prefillForms(); formGate();
     if (auth.me) { syncExploration(); pushSaveToken(); }
   };
-  auth.on(() => { joinPageGate(); prefillForms(); formGate(); });
+  auth.on(() => { prefillForms(); formGate(); });
   (async () => {
     try {
       await initFirebase();

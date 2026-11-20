@@ -28,6 +28,7 @@ export const registerModal = `
       <section id="reg-member" hidden>
         <div class="reg-who" id="reg-who"></div>
         <form id="reg-quick" novalidate>
+          <div id="reg-profile" hidden></div>
           <div id="reg-questions"></div>
           <p class="form-error" id="reg-quick-error" role="alert" hidden></p>
           <button class="btn btn-blue" type="submit">Confirm my spot ${arrow}</button>

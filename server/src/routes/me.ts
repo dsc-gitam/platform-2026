@@ -106,7 +106,6 @@ type Q = { id: string; label?: string; required?: boolean };
 
 me.post('/events/:id/register', async (c) => {
   const u = userOf(c);
-  if (!u.onboarded && !u.isAnonymous) return c.json({ error: 'Finish the membership form first', code: 'NOT_ONBOARDED' }, 409);
   const ev = await db.event.findUnique({ where: { id: c.req.param('id') } });
   if (!ev || !ev.published) return c.json({ error: 'Event not found' }, 404);
   if (ev.status === 'PAST' || ev.date < todayIST()) return c.json({ error: 'This event has already happened' }, 410);
@@ -119,6 +118,16 @@ me.post('/events/:id/register', async (c) => {
       if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return c.json({ error: 'Please enter your name and a valid email' }, 400);
       await db.user.update({ where: { id: u.id }, data: { name, guestEmail: email, phone: optStr(g.phone, 20), regNo: optStr(g.reg_no ?? g.regNo, 30), branch: optStr(g.branch, 60), year: optStr(g.year, 20) } });
     } else if (!u.guestEmail) return c.json({ error: 'Please enter your name and a valid email' }, 400);
+  }
+  if (!u.isAnonymous) {
+    // Members complete their profile while registering for the first time (Google already gave name, email and photo).
+    const g = (body.profile ?? {}) as Record<string, unknown>;
+    const data = {
+      name: str(g.name, 80) || u.name, phone: optStr(g.phone, 20) ?? u.phone, regNo: optStr(g.reg_no ?? g.regNo, 30) ?? u.regNo,
+      branch: optStr(g.branch, 60) ?? u.branch, year: optStr(g.year, 20) ?? u.year,
+    };
+    if (!data.year) return c.json({ error: 'Please tell us your year of study', code: 'PROFILE_INCOMPLETE' }, 400);
+    if (data.year !== u.year || data.phone !== u.phone || data.regNo !== u.regNo || data.branch !== u.branch || data.name !== u.name) await db.user.update({ where: { id: u.id }, data });
   }
   const questions = (Array.isArray(ev.questions) ? ev.questions : []) as Q[];
   const answers: Record<string, string> = {};

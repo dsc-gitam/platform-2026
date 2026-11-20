@@ -4,7 +4,7 @@
 
 | Way | Who it is for | What they get |
 |---|---|---|
-| **Continue with Google** | Members | Full profile, points, badges, leaderboard, one-click registration, applications. |
+| **Continue with Google** | Members | Full profile, points, badges, leaderboard, one-click registration (after the first), applications. |
 | **Guest** (automatic) | Someone who just wants a ticket | A ticket for the event, kept on this device. No password, no account form. |
 | **Email link** | A guest on another device | Their guest tickets, moved onto an account tied to their email. |
 
@@ -12,7 +12,11 @@ The account badge in the top right of the navbar opens the sign-in dialog, or th
 
 ## First sign-in
 
-A new member who signs in is taken to the **Become a member** form and nothing else. After submitting it they go back to the page they were on, and registering for events becomes a single click: their details are already stored and only the event's own questions are asked.
+Signing in with Google is joining the club: the account's name, email and photo become the profile, and the visitor stays on the page they were on. Nothing sends them to another form.
+
+The rest of the profile is asked **once, at the first event registration**: the dialog shows a short block (year is required; branch, registration number and WhatsApp number are optional) above the event's own questions, and saves the answers to the profile. From then on registering is a single click. People can also complete the profile at any time from **Profile → Details**, where a "Finish your profile" note appears until it is done.
+
+The **Become a member** form on the Join page is optional: it records interests and experience level, nothing more.
 
 ## Guests and the "already have a ticket?" link
 

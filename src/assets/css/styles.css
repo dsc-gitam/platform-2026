@@ -949,3 +949,12 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 .drawer-body, .drawer-head { min-width: 0; }
 .drawer-body > * { min-width: 0; }
 .drawer .res { display: block; padding: 0; border: 0; box-shadow: none; background: none; }
+
+/* ---- Join: which one is for me ---- */
+.role-guide { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: stretch; margin-bottom: 28px; }
+.rg-item { padding: 16px 18px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--c-100, var(--white)); }
+.rg-item b { display: block; font: 800 1.1rem var(--display); margin-bottom: 4px; } .rg-item p { margin: 0; font-size: .94rem; color: var(--ink-2); } .rg-item em { font-style: normal; font-weight: 700; color: var(--ink); }
+.rg-link { align-self: center; display: inline-flex; gap: 8px; align-items: center; padding: 12px 18px; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font-weight: 700; text-decoration: none; box-shadow: var(--shadow-sm); white-space: nowrap; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.rg-link:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+@media (max-width: 900px) { .role-guide { grid-template-columns: 1fr; } .rg-link { justify-self: start; } }
+.p-complete { margin: 22px 0 0; } .p-complete h3 { margin: 0 0 4px; } .p-complete p { margin: 0; color: var(--ink-2); }

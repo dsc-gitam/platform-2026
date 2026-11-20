@@ -89,7 +89,8 @@ async function loadUser(id: Identity) {
   if (sameEmail && id.verified && !sameEmail.isAnonymous) return sameEmail;
 
   const role: Role = env.superAdmins.includes(id.email) ? 'ADMIN' : 'MEMBER';
-  const created = await db.user.create({ data: { id: id.uid, email: id.email, name: id.name, photoUrl: id.picture ?? null, role } });
+  // Signing in with Google is joining: name, email and photo come from the account; the rest is asked at the first registration.
+  const created = await db.user.create({ data: { id: id.uid, email: id.email, name: id.name, photoUrl: id.picture ?? null, role, onboarded: true } });
   if (role !== 'MEMBER') await setRoleClaim(id.uid, role);
   if (id.verified) await claimGuests(created.id, id.email);
   return created;

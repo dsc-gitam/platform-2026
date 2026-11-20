@@ -31,6 +31,11 @@ ${pageHero({ eyebrow: 'Join', title: 'Pick how you want to <span class="hl">show
 
 <section class="section">
   <div class="container">
+    <div class="role-guide reveal">
+      <div class="rg-item c-green"><b>Volunteer</b><p>You're interested in <em>learning or working in a domain</em> and you'd like to help with the club's operational tasks: registration desks, crowd flow, technical support at events. No experience needed.</p></div>
+      <div class="rg-item c-red"><b>Core team</b><p>You're <em>experienced and skilled</em> in an area and can <em>lead that domain</em>: own a track, mentor others and run events. Volunteers often grow into the core team.</p></div>
+      <a class="rg-link" href="about.html#team-structure">Explore roles ${arrow}</a>
+    </div>
     <div class="tabs" role="tablist" aria-label="Ways to join">
       <button class="tab" role="tab" id="tab-member" aria-controls="panel-member" aria-selected="true" data-tab="member">Become a member</button>
       <button class="tab" role="tab" id="tab-volunteer" aria-controls="panel-volunteer" aria-selected="false" data-tab="volunteer">Volunteer</button>
@@ -47,15 +52,15 @@ ${pageHero({ eyebrow: 'Join', title: 'Pick how you want to <span class="hl">show
         ${hp}<button class="btn btn-blue" type="submit">Join GDG GITAM ${arrow}</button>${done('Welcome to the family! Check your inbox soon. 🎉')}</form>`,
       ['What members get', ['Event alerts + early registration', 'Access to the community board', 'A buddy for your first event', 'Starter pack of free learning links']])}
 
-    ${panel('volunteer', 'green', 'Volunteer', ['Help out. Learn by doing.', 'Love building or organising but not ready to commit to a core role? Volunteer for specific events and projects, and get real experience you can show.'],
+    ${panel('volunteer', 'green', 'Volunteer', ['Learn it. Help run it.', "Volunteers are students who want to learn or work in a domain (web, AI, design, cloud and more) and who pitch in with the club's operational tasks: registration desks, crowd flow, technical support and outreach. You don't need experience, just interest and a few hours."],
       `<form data-form="volunteer" novalidate>${common('v')}
         <div class="field"><label>How can you help?</label><div class="choice">${['Event logistics', 'Registration desk', 'Mentoring beginners', 'Photography & video', 'Social media', 'Building a project', 'Design & posters', 'Teaching a mini-session'].map((x, i) => `<input type="checkbox" name="help" id="vh${i}" value="${x}"><label for="vh${i}">${x}</label>`).join('')}</div></div>
         <div class="field"><label for="v-skill">Something you're good at <small>(a skill, a project, a link)</small></label><textarea id="v-skill" name="skill"></textarea></div>
         <div class="field"><label for="v-hours">Hours per month you can give</label><select id="v-hours" name="hours"><option>2–4</option><option>5–10</option><option>10+</option></select></div>
         ${hp}<button class="btn btn-green" type="submit">Count me in ${arrow}</button>${done('Thanks! We\'ll match you with something fun.')}</form>`,
-      ['Why volunteer', ['Real, shippable experience', 'Letters of recognition', 'A fast lane to core team', 'Friends who build']])}
+      ['Why volunteer', ['Learn a domain by doing real work', 'Help at events and meet the team', 'A fast lane to the core team', 'Letters of recognition']])}
 
-    ${panel('core', 'red', 'Core team', ['Run the club with us.', 'Seven roles open. You don\'t need prior titles, but you do need consistency, curiosity and care. Roughly 4–6 hours a week.'],
+    ${panel('core', 'red', 'Core team', ['Lead a domain with us.', "The core team is for people who are experienced and good at something and can lead it: owning a track such as Frontend, Backend or GenAI/ML, design, media or research, mentoring others and running events. Roughly 4–6 hours a week. New here? Volunteering is the way in."],
       `<form data-form="core-application" novalidate>${common('c')}
         <div class="field"><label for="c-role">Role you're applying for</label><select id="c-role" name="role" required><option value="">Select a role…</option>${team.openRoles.map(r => `<option value="${r.id}">${esc(r.title)}</option>`).join('')}</select></div>
         <div class="field"><label for="c-why">Why this role? <small>(3–5 lines)</small></label><textarea id="c-why" name="why" required></textarea></div>
@@ -63,7 +68,7 @@ ${pageHero({ eyebrow: 'Join', title: 'Pick how you want to <span class="hl">show
         <div class="field"><label for="c-link">Portfolio / GitHub / LinkedIn</label><input id="c-link" type="url" name="link" placeholder="https://"></div>
         <div class="field"><label for="c-idea">One idea you'd bring to GDG GITAM</label><textarea id="c-idea" name="idea"></textarea></div>
         ${hp}<button class="btn btn-red" type="submit">Submit application ${arrow}</button>${done('Application received! We\'ll be in touch for a quick chat.')}</form>`,
-      ['What we look for', ['Reliability over résumé', 'Willingness to learn in public', 'Kindness with teammates', 'An idea, even a rough one']])}
+      ['What we look for', ['Real skill or experience in the domain', 'Ability to lead and mentor others', 'Reliability and consistency', 'An idea you would bring to the club']])}
 
     ${panel('speaker', 'yellow', 'Speaker', ['Share what you know.', 'Built something? Cracked a hard problem? Interned somewhere? 20 minutes is enough, and we\'ll help you shape the talk.'],
       `<form data-form="speaker" novalidate>${common('s')}
