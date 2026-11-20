@@ -48,7 +48,7 @@
 
   root.addEventListener('click', (e) => {
     const opt = e.target.closest('.q-opt');
-    if (opt) { picks[step] = +opt.dataset.i; step++; step < Q.length ? question() : result(); window.scrollTo({ top: root.offsetTop - 120, behavior: 'smooth' }); return; }
+    if (opt) { picks[step] = +opt.dataset.i; step++; step < Q.length ? question() : result(); const top = root.getBoundingClientRect().top; if (top < 90 || top > innerHeight * 0.6) window.scrollTo({ top: scrollY + top - 110, behavior: 'smooth' }); return; }
     if (e.target.closest('[data-back]')) { step--; question(); return; }
     if (e.target.closest('[data-restart]')) { step = 0; picks = []; question(); }
   });

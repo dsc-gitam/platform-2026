@@ -533,3 +533,21 @@ a.bt:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink);
 .drawer-head .og .ico { stroke-width: 1.8; }
 .result-top .big-glyph { font-size: 0; line-height: 0; opacity: .22; }
 .result-top .big-glyph .ico { stroke-width: 1.4; }
+
+/* ---- Find your place: two columns ---- */
+.find-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.find-grid .quiz { max-width: none; margin: 0; background: var(--white); border: 2px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); padding: clamp(20px, 3vw, 34px); min-width: 0; }
+.find-grid .q-title { font-size: clamp(1.4rem, 2.4vw, 1.9rem); }
+.find-grid .q-opt { padding: 14px 16px; font-size: 1rem; }
+.find-intro { position: sticky; top: 100px; }
+.find-points { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 16px; }
+.find-points li { display: flex; gap: 14px; align-items: flex-start; color: var(--ink-2); }
+.find-points .ico { margin-top: 2px; color: var(--blue); }
+.find-points b { color: var(--ink); }
+.find-note { margin: 24px 0 0; font: 500 .85rem var(--mono); color: var(--ink-3); }
+.find-grid .result-top { box-shadow: var(--shadow-sm); }
+@media (max-width: 900px) { .find-grid { grid-template-columns: 1fr; } .find-intro { position: static; } }
+.find-grid .result, .find-grid .result > * { min-width: 0; }
+.find-grid .result .g2 { grid-template-columns: 1fr; }
+.find-grid .mb { grid-template-columns: 120px 1fr 40px; }
+.find-grid .quiz:has(.result) { background: none; border: 0; box-shadow: none; padding: 0; border-radius: 0; }

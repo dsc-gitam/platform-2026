@@ -33,16 +33,24 @@ export const paths = [
 export const findSection = `
 <section class="section find" id="find-your-place">
   <div class="container">
-    <div class="section-head reveal">
-      <p class="eyebrow"><i class="dot"></i>Find your place</p>
-      <h2>Tell us a bit. <span class="hl">We'll point the way.</span></h2>
-      <p>Four quick questions, no sign-up. We'll suggest where you fit, whether that's attending, learning, building, leading or speaking.</p>
-    </div>
-    <div class="quiz" id="quiz" aria-live="polite">
-      <noscript>
-        <p>Turn on JavaScript to take the quiz. Or pick a path directly:</p>
-        <ul>${paths.map(p => `<li><a href="join.html#${p.tab}">${esc(p.name)}</a>: ${esc(p.line)}</li>`).join('')}</ul>
-      </noscript>
+    <div class="find-grid">
+      <div class="find-intro reveal">
+        <p class="eyebrow"><i class="dot"></i>Find your place</p>
+        <h2>Tell us a bit. <span class="hl">We'll point the way.</span></h2>
+        <p class="lead">Four quick questions, no sign-up. We'll suggest where you fit, whether that's attending, learning, building, leading or speaking.</p>
+        <ul class="find-points">
+          <li>${icon('compass', 22)}<span><b>Takes about a minute.</b> Pick the answer closest to you; there are no wrong ones.</span></li>
+          <li>${icon('trending-up', 22)}<span><b>Get a 30-day plan.</b> Concrete steps for this week, this month and what comes next.</span></li>
+          <li>${icon('users', 22)}<span><b>Nothing is stored on a server.</b> Your result stays in your browser.</span></li>
+        </ul>
+        <p class="find-note">Prefer to browse? The five paths are right below.</p>
+      </div>
+      <div class="quiz" id="quiz" aria-live="polite">
+        <noscript>
+          <p>Turn on JavaScript to take the quiz. Or pick a path directly:</p>
+          <ul>${paths.map(p => `<li><a href="join.html#${p.tab}">${esc(p.name)}</a>: ${esc(p.line)}</li>`).join('')}</ul>
+        </noscript>
+      </div>
     </div>
     <div class="section-head reveal" style="margin-top:clamp(48px,6vw,80px)"><p class="eyebrow"><i class="dot"></i>The five paths</p><h2>Everyone has a <span class="hl">place</span> here.</h2></div>
     <div class="grid g3">
