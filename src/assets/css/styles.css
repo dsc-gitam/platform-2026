@@ -912,9 +912,11 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 /* Events: date card sits at the top of the card on phones, next to the title */
 @media (max-width: 900px) { .event { align-items: start; } }
 
-/* Tech Atlas drawer: reveal with a clip instead of sliding in from off-screen, so the page never gets wider while it opens */
-.drawer { transform: none; clip-path: inset(0 0 0 100%); transition: clip-path .4s var(--ease), visibility 0s .4s, box-shadow .4s; }
-.drawer.open { clip-path: inset(0 0 0 0); transition: clip-path .4s var(--ease), visibility 0s, box-shadow .4s; }
+/* Tech Atlas drawer: slides in from the right. It lives inside a fixed layer that clips it, so while it is off-screen it
+   can never make the page wider (some mobile browsers widen the page for fixed elements parked outside the screen). */
+.drawer-layer { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 250; }
+.drawer { position: absolute; z-index: auto; clip-path: none; transform: translateX(105%); transition: transform .4s var(--ease), visibility 0s .4s; }
+.drawer.open { transform: none; pointer-events: auto; transition: transform .4s var(--ease), visibility 0s; }
 
 /* Touch screens keep :hover after a tap, so only apply hover effects where a real pointer exists */
 .q-opt:hover { transform: none; box-shadow: var(--shadow-sm); background: var(--white); }

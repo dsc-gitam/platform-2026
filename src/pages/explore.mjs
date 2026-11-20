@@ -38,7 +38,7 @@ ${pageHero({ eyebrow: 'Tech Atlas', title: 'Lost in tech? <span class="hl">Wande
 </section>
 
 <div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Role details"></aside>
+<div class="drawer-layer"><aside class="drawer" id="drawer" aria-hidden="true" aria-label="Role details"></aside></div>
 `;
 
 export default {
