@@ -14,6 +14,8 @@ const onAdmin = /\/admin\.html$/.test(location.pathname);
 // Staff can reach the admin panel without filling in the membership form first.
 const needsMemberForm = () => !!auth.me && !auth.me.user.onboarded && !(onAdmin && auth.me.user.perms.length);
 
+// While previewing locally the badge is always visible, so the design can be reviewed before the backend is connected.
+const PREVIEW = ['localhost', '127.0.0.1', ''].includes(location.hostname);
 const listeners = new Set();
 const auth = {
   enabled, me: null,
@@ -132,7 +134,7 @@ function gotoMemberForm(remember) {
 function initials(n) { return (n || '?').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase(); }
 function paintBadge() {
   const box = $('#acct'); if (!box) return;
-  box.hidden = !enabled;
+  box.hidden = !(enabled || PREVIEW);
   const btn = $('.acct-btn', box), menu = $('.acct-menu', box);
   const u = auth.me && auth.me.user;
   if (!u) {
@@ -152,7 +154,7 @@ function initBadge() {
   const box = $('#acct'); if (!box) return;
   const btn = $('.acct-btn', box), menu = $('.acct-menu', box);
   btn.addEventListener('click', () => {
-    if (!auth.me) { auth.openSignIn(); return; }
+    if (!auth.me) { if (enabled) auth.openSignIn(); else G.toast('Sign-in switches on once the backend is connected (see the README).'); return; }
     menu.hidden = !menu.hidden; btn.setAttribute('aria-expanded', String(!menu.hidden));
   });
   menu.addEventListener('click', (e) => { if (e.target.closest('[data-signout]')) auth.signOut(); });

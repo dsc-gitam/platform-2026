@@ -71,7 +71,7 @@ button.chip[aria-pressed="true"], button.chip.on { background: var(--ink); color
 .sticker { position: absolute; padding: 10px 16px; border: 2px solid var(--ink); border-radius: 14px; font: 800 .95rem/1.1 var(--display); box-shadow: var(--shadow-sm); background: var(--yellow); transform: rotate(var(--rot, -6deg)); z-index: 3; }
 
 /* ---- Header ---- */
-.site-header { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 2px solid var(--ink); }
+.site-header { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); }
 .bar { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand-text { font: 500 1rem/1.05 var(--display); display: flex; flex-direction: column; }
