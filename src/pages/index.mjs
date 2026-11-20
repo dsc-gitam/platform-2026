@@ -2,7 +2,7 @@ import { site, events, domains, achievements, gallery, team, roadmap, typeLabels
 import { legacyStory, milestoneStrip, legacyGallery, legacyStories, lightbox } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { findSection } from '../sections/find.mjs';
-import { arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
+import { socialLinks, arrow, dateParts, esc, photo, avatar, ctaBand, sample } from '../lib.mjs';
 
 const up = events.filter(e => e.status === 'upcoming').slice(0, 3);
 const marquee = domains.map((d, i) => `<span style="--c:var(--${['blue', 'red', 'yellow', 'green'][i % 4]})">${esc(d.name)}</span>`).join('');
@@ -161,10 +161,14 @@ ${legacyStories(false)}
       <p class="eyebrow"><i class="dot"></i>The crew</p>
       <h2>Students running it. A mentor <span class="hl">backing</span> them.</h2>
     </div>
+    <div class="team-grid">
+      ${[...team.organizers, team.mentor].map(p => `<article class="card person reveal">${avatar(p.name, p.color, p.photo)}<h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div>${socialLinks(p)}</article>`).join('')}
+    </div>
+    <h3 class="reveal crew-sub">Core team</h3>
   </div>
-  <div class="crew-marquee" role="region" aria-label="The GDG GITAM team">
+  <div class="crew-marquee" role="region" aria-label="The GDG GITAM core team">
     <div class="crew-track">
-      ${[0, 1].map(copy => [...team.organizers, team.mentor, ...team.core].map(p => `<article class="crew-card"${copy ? ' aria-hidden="true"' : ''}>${avatar(p.name, p.color, p.photo)}<div><h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div></div></article>`).join('')).join('')}
+      ${[0, 1].map(half => [0, 1, 2].map(rep => team.core.map(p => `<article class="crew-card"${half || rep ? ' aria-hidden="true"' : ''}>${avatar(p.name, p.color, p.photo)}<div><h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div>${socialLinks(p)}</div></article>`).join('')).join('')).join('')}
     </div>
   </div>
   <div class="container">

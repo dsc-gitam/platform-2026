@@ -30,16 +30,17 @@ export const site = {
   }
 };
 
+// Add each person's profile URLs in `links` (leave empty to hide the icon).
 export const team = {
   organizers: [
-    { name: 'Gagana Bandaru', photo: 'assets/team/gagana.jpg', role: 'Co-Organizer', color: 'blue', blurb: 'Placeholder — a line about Gagana, what they care about and what they are building.', links: { linkedin: '#', github: '#' } },
-    { name: 'Chaitanya Sameer', photo: 'assets/team/chaitanya.jpg', role: 'Co-Organizer', color: 'red', blurb: 'Placeholder — a line about Chaitanya, what they care about and what they are building.', links: { linkedin: '#', github: '#' } },
-    { name: 'Satwika Rejeti', photo: 'assets/team/satwika.jpg', role: 'Co-Organizer', color: 'green', blurb: 'Placeholder — a line about Satwika, what they care about and what they are building.', links: { linkedin: '#', github: '#' } }
+    { name: 'Gagana Bandaru', photo: 'assets/team/gagana.jpg', role: 'Co-Organizer', color: 'blue', blurb: 'Placeholder — a line about Gagana, what they care about and what they are building.', links: { linkedin: '', github: '' } },
+    { name: 'Chaitanya Sameer', photo: 'assets/team/chaitanya.jpg', role: 'Co-Organizer', color: 'red', blurb: 'Placeholder — a line about Chaitanya, what they care about and what they are building.', links: { linkedin: '', github: '' } },
+    { name: 'Satwika Rejeti', photo: 'assets/team/satwika.jpg', role: 'Co-Organizer', color: 'green', blurb: 'Placeholder — a line about Satwika, what they care about and what they are building.', links: { linkedin: '', github: '' } }
   ],
-  mentor: { name: 'Manas Malla', photo: 'assets/team/manasmalla.jpg', role: 'Faculty Advisor & Chapter Mentor', color: 'yellow', blurb: 'Placeholder — a line about Manas, the chapter\'s mentor and faculty advisor.', links: { linkedin: '#', github: '#' } },
+  mentor: { name: 'Manas Malla', photo: 'assets/team/manasmalla.jpg', role: 'Faculty Advisor & Chapter Mentor', color: 'yellow', blurb: 'Placeholder — a line about Manas, the chapter\'s mentor and faculty advisor.', links: { linkedin: '', github: '' } },
   core: [
-    { name: 'Pavan Kumar', role: 'Core Team · Technical', color: 'blue', blurb: 'Placeholder — a line about Pavan, their track and what they are building.', links: { linkedin: '#', github: '#' } },
-    { name: 'Jaswanth Kumar', role: 'Core Team · Technical', color: 'red', blurb: 'Placeholder — a line about Jaswanth, their track and what they are building.', links: { linkedin: '#', github: '#' } }
+    { name: 'Pavan Kumar', role: 'Core Team · Technical', color: 'blue', blurb: 'Placeholder — a line about Pavan, their track and what they are building.', links: { linkedin: '', github: '' } },
+    { name: 'Jaswanth Kumar', role: 'Core Team · Technical', color: 'red', blurb: 'Placeholder — a line about Jaswanth, their track and what they are building.', links: { linkedin: '', github: '' } }
   ],
   // The planned team structure. `filled` = seats taken so far; the rest are open for applications.
   structure: [

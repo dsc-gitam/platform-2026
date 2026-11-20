@@ -1,4 +1,5 @@
 import { site } from './data/site.mjs';
+import { icon } from './icons.mjs';
 
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -25,6 +26,14 @@ export const avatar = (name, color, photoSrc) => {
   if (photoSrc) return `<div class="avatar av-${color} has-photo"><img src="${esc(photoSrc)}" alt="${esc(name)}" width="110" height="110" loading="lazy"></div>`;
   const initials = name.split(/\s+/).map(w => w[0]).slice(0, 2).join('');
   return `<div class="avatar av-${color}" aria-hidden="true"><span>${esc(initials)}</span></div>`;
+};
+
+// LinkedIn / GitHub icon links for a person; empty or '#' links are hidden.
+export const socialLinks = (p) => {
+  const L = p.links || {};
+  const item = (url, name, label) => url && url !== '#' ? `<a href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc(p.name)} on ${label}" title="${label}">${icon(name, 18)}</a>` : '';
+  const out = item(L.linkedin, 'linkedin', 'LinkedIn') + item(L.github, 'github', 'GitHub');
+  return out ? `<div class="social">${out}</div>` : '';
 };
 
 export const arrow = '<svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';

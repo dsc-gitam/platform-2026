@@ -1,11 +1,11 @@
 import { team, roadmap, values, expectations, faqs } from '../data/site.mjs';
 import { icon } from '../icons.mjs';
-import { esc, avatar, pageHero, ctaBand, sample, arrow } from '../lib.mjs';
+import { socialLinks, esc, avatar, pageHero, ctaBand, sample, arrow } from '../lib.mjs';
 
 const person = (p, big) => `<article class="card person reveal">
   ${avatar(p.name, p.color, p.photo)}<h3>${esc(p.name)}</h3><div class="role">${esc(p.role)}</div>
   <p>${esc(p.blurb)}</p>
-  <div class="links"><a href="${p.links.linkedin}">LinkedIn</a><a href="${p.links.github}">GitHub</a></div>
+  ${socialLinks(p)}
 </article>`;
 
 const body = `
