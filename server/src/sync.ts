@@ -46,13 +46,13 @@ export async function buildFiles(): Promise<RepoFile[]> {
 
   // Stories: approved + featured
   const stories = await db.application.findMany({ where: { type: 'STORY', status: 'APPROVED', featured: true }, orderBy: { reviewedAt: 'asc' } });
-  files.push({
-    path: 'src/data/generated/stories.json',
-    content: json(stories.map((s, i) => {
-      const d = asObj(s.data);
-      return { name: s.name, batch: d.batch ?? '', now: d.now ?? '', before: d.before ?? '', after: d.after ?? '', quote: d.quote ?? d.after ?? '', color: ['blue', 'red', 'yellow', 'green'][i % 4] };
-    })),
+  const storyRows = stories.map((st, i) => {
+    const d = asObj(st.data);
+    let photo = '';
+    if (st.photoData) { photo = `assets/stories/${safe(st.id)}.jpg`; files.push({ path: `src/assets/stories/${safe(st.id)}.jpg`, content: new Uint8Array(st.photoData) }); }
+    return { name: st.name, batch: d.batch ?? '', now: d.now ?? '', before: d.before ?? '', after: d.after ?? '', quote: d.quote ?? '', color: ['blue', 'red', 'yellow', 'green'][i % 4], ...(photo ? { photo } : {}) };
   });
+  files.push({ path: 'src/data/generated/stories.json', content: json(storyRows) });
   return files;
 }
 

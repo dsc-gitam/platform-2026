@@ -13,7 +13,7 @@
     "generate": "deno run -A npm:prisma@7.0.0 generate",
     "migrate": "deno run -A --env-file=.env npm:prisma@7.0.0 migrate deploy",
     "migrate:dev": "deno run -A --env-file=.env npm:prisma@7.0.0 migrate dev",
-    "seed": "deno run -A --env-file=.env src/seed.ts",
+    "seed": "GDG_IGNORE_GENERATED=1 deno run -A --env-file=.env src/seed.ts",
     "check": "deno check src/main.ts src/seed.ts",
     "test": "deno test -A --env-file=.env.test src/"
   },

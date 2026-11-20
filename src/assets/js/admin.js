@@ -246,11 +246,12 @@
     $$('[data-status]', el).forEach((b) => b.addEventListener('click', () => { reqStatus = b.dataset.status; requests(el); }));
     const r = await api('GET', `/applications?type=${reqType}${reqStatus ? '&status=' + reqStatus : ''}`); if (!r.ok) return;
     const list = r.data.applications; const box = $('#req-list', el);
-    box.innerHTML = list.length ? list.map((a) => `<article class="a-req" data-id="${a.id}"><header><div><b>${esc(a.name)}</b> <small>${esc(a.email)}</small><br><small>${esc(fmt(a.createdAt))}</small></div>
+    box.innerHTML = list.length ? list.map((a) => `<article class="a-req" data-id="${a.id}"><header><div style="display:flex;gap:12px;align-items:center">${a.hasPhoto ? `<img class="a-photo" data-photo="${a.id}" alt="" width="64" height="64">` : ''}<div><b>${esc(a.name)}</b> <small>${esc(a.email)}</small><br><small>${esc(fmt(a.createdAt))}</small></div></div>
       <div><span class="chip ${a.status === 'APPROVED' ? 'green' : a.status === 'REJECTED' ? 'red' : 'yellow'}">${a.status.toLowerCase()}</span>${a.featured ? ' <span class="chip blue">featured</span>' : ''}${a.user?.showOnSite ? ' <span class="chip green">on site</span>' : ''}</div></header>
       <dl>${Object.entries(a.data || {}).filter(([k]) => !['name', 'email', 'honeypot'].includes(k)).map(([k, v]) => `<dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
       ${can('requests:review') && a.type !== 'MEMBER' ? `<div class="a-actions">${a.type === 'STORY' ? `<button class="btn btn-blue btn-sm" data-act="feature">Approve & feature on site</button><button class="btn btn-ghost btn-sm" data-act="edit">Edit text</button>` : (a.type === 'CORE' || a.type === 'VOLUNTEER') ? `<button class="btn btn-blue btn-sm" data-act="team">Approve & add to team page</button><button class="btn btn-ghost btn-sm" data-act="approve">Approve only</button>` : '<button class="btn btn-blue btn-sm" data-act="approve">Approve</button>'}<button class="btn btn-sm danger" data-act="reject">Reject</button></div>` : ''}</article>`).join('') : '<div class="card"><p style="margin:0">Nothing here.</p></div>';
     const byId = Object.fromEntries(list.map((a) => [a.id, a]));
+    $$('img[data-photo]', box).forEach(async (img) => { img.src = await auth.blobUrl(`/admin/applications/${img.dataset.photo}/photo`); });
     $$('[data-act]', box).forEach((b) => b.addEventListener('click', () => reviewAct(byId[b.closest('.a-req').dataset.id], b.dataset.act, el)));
   }
   async function patch(a, body, el, msg) {
@@ -263,8 +264,17 @@
     if (act === 'feature') return patch(a, { status: 'APPROVED', featured: true }, el, 'Story approved. Publishing to GitHub; the site redeploys in a few minutes.');
     if (act === 'edit') {
       const d = a.data || {};
-      return dialog(`<h3>Edit story before featuring</h3><form class="a-form" id="st-form">${['before', 'after', 'now', 'batch', 'quote'].map((k) => `<div class="field"><label>${k}</label><textarea name="${k}" style="min-height:60px">${esc(d[k] || '')}</textarea></div>`).join('')}<button class="btn btn-blue" type="submit">Save & feature</button></form>`, (m, close) => {
-        $('#st-form', m).addEventListener('submit', async (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); close(); await patch(a, { status: 'APPROVED', featured: true, data }, el, 'Story saved and featured. Publishing…'); });
+      return dialog(`<h3>Edit story before featuring</h3><form class="a-form" id="st-form">${['before', 'after', 'now', 'batch', 'quote'].map((k) => `<div class="field"><label>${k}</label><textarea name="${k}" style="min-height:60px">${esc(d[k] || '')}</textarea></div>`).join('')}
+        <div class="field"><label>Photo ${a.hasPhoto ? '<small>(one was uploaded with the story; choose a file to replace it)</small>' : '<small>(optional)</small>'}</label><div class="photo-pick"><span class="photo-prev" id="ph-prev"></span><div><input id="ph-file" type="file" accept="image/*">${a.hasPhoto ? '<label class="check" style="margin-top:8px"><input type="checkbox" id="ph-remove"> Remove the photo</label>' : ''}</div></div><input type="hidden" id="ph-data"></div>
+        <button class="btn btn-blue" type="submit">Save & feature</button></form>`, (m, close) => {
+        const prev = $('#ph-prev', m);
+        if (a.hasPhoto) auth.blobUrl(`/admin/applications/${a.id}/photo`).then((u) => { prev.style.backgroundImage = `url(${u})`; });
+        $('#ph-file', m).addEventListener('change', async (e) => { const f = e.target.files[0]; $('#ph-data', m).value = ''; if (!f) return; try { const url = await G.resizePhoto(f); $('#ph-data', m).value = url; prev.style.backgroundImage = `url(${url})`; } catch { toast('That image could not be read'); } });
+        $('#st-form', m).addEventListener('submit', async (e) => {
+          e.preventDefault(); const fd = new FormData(e.target); const data = {}; fd.forEach((v, k) => { if (typeof v === 'string' && ['before', 'after', 'now', 'batch', 'quote'].includes(k)) data[k] = v; });
+          const photo = $('#ph-data', m).value; const removePhoto = !!($('#ph-remove', m) && $('#ph-remove', m).checked);
+          close(); await patch(a, { status: 'APPROVED', featured: true, data, ...(photo ? { photo } : {}), ...(removePhoto && !photo ? { removePhoto: true } : {}) }, el, 'Story saved and featured. Publishing…');
+        });
       });
     }
     if (act === 'team') {

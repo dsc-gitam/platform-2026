@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { db } from '../db.ts';
 import { optionalAuth, userOf } from '../auth.ts';
-import { rateLimit, str } from '../util.ts';
+import { jpegFromDataUrl, rateLimit, str } from '../util.ts';
 
 export const pub = new Hono();
 
@@ -56,8 +56,11 @@ pub.post('/applications', optionalAuth, async (c) => {
       },
     });
   }
+  // Stories can come with a photo (small JPEG). It stays private until an admin features the story.
+  const photo = type === 'STORY' && b.photo ? jpegFromDataUrl(b.photo) : null;
+  if (type === 'STORY' && b.photo && !photo) return c.json({ error: 'Please use a JPEG photo under 250 KB' }, 400);
   const app = await db.application.create({
-    data: { type, name, email, userId: user?.id ?? null, data, status: type === 'MEMBER' ? 'APPROVED' : 'PENDING', ...(type === 'MEMBER' ? { reviewedAt: new Date() } : {}) },
+    data: { type, name, email, ...(photo ? { photoData: photo } : {}), userId: user?.id ?? null, data, status: type === 'MEMBER' ? 'APPROVED' : 'PENDING', ...(type === 'MEMBER' ? { reviewedAt: new Date() } : {}) },
   });
   return c.json({ ok: true, id: app.id, onboarded: type === 'MEMBER' }, 201);
 });

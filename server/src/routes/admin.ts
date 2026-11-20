@@ -3,7 +3,7 @@ import { db } from '../db.ts';
 import { requirePerm, userOf } from '../auth.ts';
 import { sendPush, setRoleClaim } from '../google.ts';
 import { publishNow, queuePublish } from '../sync.ts';
-import { optStr, normCode, slug, str, strArr } from '../util.ts';
+import { jpegFromDataUrl, optStr, normCode, slug, str, strArr } from '../util.ts';
 import type { Role } from '../perms.ts';
 import type { Prisma } from '../../generated/client.ts';
 
@@ -153,8 +153,15 @@ admin.get('/applications', requirePerm('requests:read'), async (c) => {
   const type = c.req.query('type'); const status = c.req.query('status');
   const where: Prisma.ApplicationWhereInput = {};
   if (type) where.type = type as never; if (status) where.status = status as never;
-  const apps = await db.application.findMany({ where, orderBy: { createdAt: 'desc' }, take: 200, include: { user: { select: { id: true, photoUrl: true, showOnSite: true, teamKind: true, role: true } } } });
-  return c.json({ applications: apps });
+  const apps = await db.application.findMany({ where, orderBy: { createdAt: 'desc' }, take: 200, omit: { photoData: true }, include: { user: { select: { id: true, photoUrl: true, showOnSite: true, teamKind: true, role: true } } } });
+  const withPhoto = new Set((await db.application.findMany({ where: { id: { in: apps.map((a) => a.id) }, photoData: { not: null } }, select: { id: true } })).map((a) => a.id));
+  return c.json({ applications: apps.map((a) => ({ ...a, hasPhoto: withPhoto.has(a.id) })) });
+});
+
+admin.get('/applications/:id/photo', requirePerm('requests:read'), async (c) => {
+  const a = await db.application.findUnique({ where: { id: c.req.param('id') }, select: { photoData: true } });
+  if (!a?.photoData) return c.body(null, 404);
+  return c.body(a.photoData.buffer.slice(a.photoData.byteOffset, a.photoData.byteOffset + a.photoData.byteLength) as ArrayBuffer, 200, { 'content-type': 'image/jpeg', 'cache-control': 'private, max-age=300' });
 });
 
 const ROLE_TITLES: Record<string, string> = { tech: 'Technical', design: 'Design & Media', research: 'Research & Onboarding', docs: 'Documentation & Reports', photo: 'Photography & Media' };
@@ -166,16 +173,21 @@ admin.patch('/applications/:id', requirePerm('requests:review'), async (c) => {
   const status = ['PENDING', 'APPROVED', 'REJECTED'].includes(str(b.status, 10)) ? str(b.status, 10) as 'PENDING' | 'APPROVED' | 'REJECTED' : app.status;
   const featured = app.type === 'STORY' ? (b.featured === undefined ? app.featured : !!b.featured) && status === 'APPROVED' : false;
   const wasLive = app.status === 'APPROVED' && (app.type !== 'STORY' || app.featured);
+  const photoEdited = !!(b.photo || b.removePhoto);
 
   // Story edits before publishing (fix typos, add batch/role).
   const data = { ...(app.data as Record<string, string>) };
   if (b.data && typeof b.data === 'object') for (const [k, v] of Object.entries(b.data)) data[str(k, 40)] = str(String(v), 4000);
 
-  const updated = await db.application.update({ where: { id: app.id }, data: { status, featured, notes: b.notes === undefined ? app.notes : optStr(b.notes, 500), data, reviewedById: me.id, reviewedAt: new Date() } });
+  let photoChange: { photoData?: Uint8Array<ArrayBuffer> | null } = {};
+  if (b.removePhoto) photoChange = { photoData: null };
+  else if (b.photo) { const j = jpegFromDataUrl(b.photo); if (!j) return c.json({ error: 'Please use a JPEG photo under 250 KB' }, 400); photoChange = { photoData: j }; }
+
+  const updated = await db.application.update({ where: { id: app.id }, data: { ...photoChange, status, featured, notes: b.notes === undefined ? app.notes : optStr(b.notes, 500), data, reviewedById: me.id, reviewedAt: new Date() } });
 
   let publish = false;
   const target = app.userId ? await db.user.findUnique({ where: { id: app.userId } }) : await db.user.findUnique({ where: { email: app.email } });
-  if (updated.type === 'STORY') publish = featured || (wasLive && !featured);
+  if (updated.type === 'STORY') publish = featured || (wasLive && !featured) || (photoEdited && featured);
   if ((updated.type === 'CORE' || updated.type === 'VOLUNTEER') && target) {
     const t = (b.team ?? {}) as Record<string, unknown>;
     if (status === 'APPROVED') {

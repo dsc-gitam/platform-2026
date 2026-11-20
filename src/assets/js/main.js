@@ -53,13 +53,24 @@
   // The auth module (auth.js) resolves this once it knows whether anyone is signed in.
   let authResolve; const authReady = new Promise(r => { authResolve = r; });
 
+  // ---------- photos: crop to a square, resize and return a small JPEG data URL (<= ~240 KB) ----------
+  async function resizePhoto(file, size = 480) {
+    const bmp = await createImageBitmap(file); const side = Math.min(bmp.width, bmp.height);
+    const c = document.createElement('canvas'); c.width = c.height = size;
+    c.getContext('2d').drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, size, size);
+    let q = 0.88, url = c.toDataURL('image/jpeg', q);
+    while (url.length * 0.75 > 240000 && q > 0.4) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
+    return url;
+  }
+
   // ---------- submit (backend API, form endpoint or local fallback) ----------
   async function submitData(kind, data) {
     if (CFG.apiBase) {
       const auth = await authReady;
       if (auth && auth.enabled) {
         if (!auth.me || auth.me.user.guest) { auth.openSignIn('Sign in with Google to send this'); throw new Error('Sign in required'); }
-        const r = await auth.api('POST', '/applications', { type: kind, data });
+        const photo = data.photo_data; const clean = { ...data }; delete clean.photo_data;
+        const r = await auth.api('POST', '/applications', photo ? { type: kind, data: clean, photo } : { type: kind, data: clean });
         if (!r.ok) throw new Error((r.data && r.data.error) || 'Request failed');
         if (kind === 'member') await auth.refresh();
         return r.data;
@@ -84,7 +95,7 @@
         if (!form.checkValidity()) { form.reportValidity(); return; }
         const kind = form.dataset.form;
         const fd = new FormData(form); const data = {};
-        for (const [k, v] of fd.entries()) data[k] = data[k] ? data[k] + ', ' + v : v;
+        for (const [k, v] of fd.entries()) { if (typeof v !== 'string') continue; data[k] = data[k] ? data[k] + ', ' + v : v; } // files are sent separately (photo_data)
         if (form.honeypot?.value) return; // spam trap
         const btn = $('button[type=submit]', form); const label = btn?.textContent;
         form.dataset.busy = '1'; if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
@@ -150,6 +161,6 @@
     }));
   }
 
-  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, _authResolve: authResolve };
+  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, resizePhoto, _authResolve: authResolve };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

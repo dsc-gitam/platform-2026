@@ -93,6 +93,9 @@ ${pageHero({ eyebrow: 'Join', title: 'Pick how you want to <span class="hl">show
         <div class="field"><label for="st-before">Where were you before?</label><textarea id="st-before" name="before" required></textarea></div>
         <div class="field"><label for="st-after">What changed?</label><textarea id="st-after" name="after" required></textarea></div>
         <div class="field"><label for="st-now">Where are you now? <small>(role, company, project)</small></label><input id="st-now" name="now"></div>
+        <div class="field photo-field"><label for="st-photo">Your photo <small>(optional, shown with your story if it's featured)</small></label>
+          <div class="photo-pick"><span class="photo-prev" id="st-prev" aria-hidden="true"></span><div><input id="st-photo" type="file" accept="image/*" data-photo-for="st-photo-data"><small>A clear, friendly photo of you. JPEG, PNG or a phone photo all work; we resize it.</small></div></div>
+          <input type="hidden" name="photo_data" id="st-photo-data"></div>
         <div class="field"><label class="choice" style="gap:8px;font-weight:500"><input type="checkbox" name="consent" value="yes" required style="position:static;opacity:1;width:auto;pointer-events:auto"> I'm happy for GDG GITAM to feature my story.</label></div>
         ${hp}<button class="btn btn-green" type="submit">Share my story ${arrow}</button>${done('Thank you! This means a lot.')}</form>`,
       ['Why share', ['Inspire the next batch', 'Get featured on the site', 'Reconnect with the community', 'Possibly speak at an event']])}

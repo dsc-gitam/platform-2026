@@ -20,6 +20,15 @@
   show(location.hash.slice(1));
   window.addEventListener('hashchange', () => show(location.hash.slice(1)));
 
+  // Optional photo on the story form: resized in the browser, sent with the story
+  $$('input[data-photo-for]').forEach(inp => inp.addEventListener('change', async () => {
+    const hidden = document.getElementById(inp.dataset.photoFor), prev = inp.closest('.photo-pick').querySelector('.photo-prev');
+    const f = inp.files[0]; hidden.value = ''; prev.style.backgroundImage = 'none';
+    if (!f) return;
+    try { const url = await window.GDG.resizePhoto(f); hidden.value = url; prev.style.backgroundImage = `url(${url})`; }
+    catch { window.GDG.toast('That image could not be read. Try a different photo.'); }
+  }));
+
   // ?role=tech or ?domain=web prefills
   const q = new URLSearchParams(location.search);
   if (q.get('role')) { const s = $('#c-role'); if (s) s.value = q.get('role'); }

@@ -959,3 +959,12 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 @media (max-width: 900px) { .role-guide { grid-template-columns: 1fr; } .rg-link { justify-self: start; } }
 .p-complete { margin: 22px 0 0; } .p-complete h3 { margin: 0 0 4px; } .p-complete p { margin: 0; color: var(--ink-2); }
 .faq-cat { font: 500 .8rem var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--ink-3); margin: 28px 0 10px; } .faq-groups .faq-cat:first-child { margin-top: 0; }
+
+/* ---- Avatars keep their proportions (they were being squeezed into ovals inside flex rows) ---- */
+.avatar { flex: none; aspect-ratio: 1 / 1; }
+.who .avatar { width: 56px; height: 56px; margin: 0; font-size: 1.15rem; box-shadow: 2px 2px 0 var(--ink); }
+.who .avatar.has-photo img { object-position: center 20%; }
+.photo-pick { display: flex; gap: 14px; align-items: center; } .photo-pick small { display: block; margin-top: 6px; color: var(--ink-3); }
+.photo-prev { flex: none; width: 72px; height: 72px; border-radius: 50%; border: 2px dashed var(--ink); background: var(--white) center / cover no-repeat; }
+.photo-pick input[type="file"] { padding: 10px; }
+.a-photo { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--ink); object-fit: cover; }

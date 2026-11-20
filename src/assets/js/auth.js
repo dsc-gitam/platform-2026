@@ -52,6 +52,13 @@ auth.api = async function api(method, path, body) {
   }
 };
 
+// Fetch an image that needs sign-in (e.g. a private story photo) and return an object URL for <img src>.
+auth.blobUrl = async function blobUrl(path) {
+  const headers = {}; const t = await token();
+  if (t) headers.authorization = 'Bearer ' + t; else if (CFG.devAuth && store.get('devuser')) headers['x-dev-user'] = store.get('devuser');
+  try { const res = await fetch(API + '/api' + path, { headers }); return res.ok ? URL.createObjectURL(await res.blob()) : ''; } catch { return ''; }
+};
+
 auth.refresh = async function refresh() {
   const r = await auth.api('GET', '/me');
   auth.me = r.ok ? r.data : null;

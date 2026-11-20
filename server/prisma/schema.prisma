@@ -172,6 +172,7 @@ model Application {
   email        String
   data         Json              @default("{}")
   featured     Boolean           @default(false) // stories: show on the site
+  photoData    Bytes?            // stories: optional photo (small JPEG); published only when the story is featured
   notes        String?
   reviewedById String?
   reviewedAt   DateTime?

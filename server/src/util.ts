@@ -20,3 +20,13 @@ export function rateLimit(key: string, max = 8, windowMs = 60_000): boolean {
   if (!h || now - h.t > windowMs) { hits.set(key, { n: 1, t: now }); return true; }
   h.n++; return h.n <= max;
 }
+
+/** Parse a JPEG data URL (max 250 KB). Returns null when it is not a small JPEG. */
+export function jpegFromDataUrl(v: unknown): Uint8Array<ArrayBuffer> | null {
+  const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(v || ''));
+  if (!m) return null;
+  const raw = atob(m[1]); const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  if (bytes.length > 250_000 || bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  return bytes;
+}

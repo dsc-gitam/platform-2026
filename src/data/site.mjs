@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 // Content published by the backend (admin panel -> GitHub commit -> deploy). Missing files = use the defaults below.
 const generated = (name, fallback) => {
+  if ((typeof process !== 'undefined' ? process.env.GDG_IGNORE_GENERATED : '') === '1') return fallback; // used by `deno task seed` to read the defaults below
   try { return JSON.parse(readFileSync(new URL(`./generated/${name}.json`, import.meta.url), 'utf8')); } catch { return fallback; }
 };
 const env = (k) => (typeof process !== 'undefined' ? process.env[k] : '') || '';

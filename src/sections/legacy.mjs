@@ -69,9 +69,9 @@ export const legacyStories = (tint = true) => `
     ${stories.length ? '' : '<div class="card c-blue reveal"><h3 style="margin:0 0 6px">Our first stories are on the way</h3><p style="margin:0">We\'re collecting real before-and-after stories from members. Yours could be the first.</p></div>'}
     <div class="grid g3">
       ${stories.map(s => `<article class="card story c-${s.color} reveal">
-        <div class="who">${avatar(s.name, s.color)}<div><b>${esc(s.name)}</b><small>${esc(s.batch)} · ${esc(s.now)}</small></div></div>
+        <div class="who">${avatar(s.name, s.color, s.photo)}<div><b>${esc(s.name)}</b><small>${esc(s.batch)} · ${esc(s.now)}</small></div></div>
         <div class="ba"><div><small>Before</small>${esc(s.before)}</div><div><small>After</small>${esc(s.after)}</div></div>
-        <blockquote>${esc(s.quote)}</blockquote>
+        ${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ''}
       </article>`).join('')}
     </div>
     <div class="card c-yellow reveal" style="margin-top:34px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap">

@@ -19,7 +19,10 @@ Deno.test('end to end', async (t) => {
   await db.pointAward.deleteMany({ where: { OR: [{ user: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }] } }, { awardedBy: { email: { endsWith: '@test.dev' } } }] } });
   await db.user.deleteMany({ where: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }, { id: 'dev_up@test.dev' }] } });
   await db.application.deleteMany({ where: { email: { endsWith: '@test.dev' } } });
-  const ev = await db.event.findFirstOrThrow({ where: { status: 'UPCOMING' }, orderBy: { date: 'asc' } });
+  for (const [id, date] of [['test-evt-a', '2031-03-01'], ['test-evt-b', '2031-04-01']]) {
+    await db.event.upsert({ where: { id }, create: { id, title: 'Test ' + id, type: 'workshop', date, time: '10:00', venue: 'Lab', blurb: 'Test event', seats: 50, questions: [{ id: 'level', label: 'Experience', type: 'radio', options: ['Total beginner', 'Tried a bit'], required: true }, { id: 'note', label: 'Anything else?', type: 'textarea', options: [], required: false }] }, update: { status: 'UPCOMING', published: true, date } });
+  }
+  const ev = await db.event.findFirstOrThrow({ where: { id: 'test-evt-a' } });
 
   await t.step('health + anonymous protection', async () => {
     assertEquals((await call('GET', '/health')).status, 200);
@@ -112,6 +115,25 @@ Deno.test('end to end', async (t) => {
     assert(list.json.applications.some((a: { id: string }) => a.id === s.json.id));
   });
 
+  await t.step('stories can carry a photo that is private until featured, then published with the story', async () => {
+    const tiny = 'data:image/jpeg;base64,/9j/2Q==';
+    assertEquals((await call('POST', '/applications', ANN, { type: 'story', photo: 'data:image/png;base64,AAAA', data: { before: 'x', after: 'y' } })).status, 400);
+    const s = await call('POST', '/applications', ANN, { type: 'story', photo: tiny, data: { before: 'Lost', after: 'Found my place', now: 'Intern' } });
+    assertEquals(s.status, 201);
+    const list = await call('GET', '/admin/applications?type=STORY&status=PENDING', ADMIN);
+    const row = list.json.applications.find((a: { id: string }) => a.id === s.json.id);
+    assertEquals(row.hasPhoto, true); assert(!('photoData' in row));
+    assertEquals((await call('GET', `/admin/applications/${s.json.id}/photo`, ANN)).status, 403); // members cannot read it
+    const { buildFiles } = await import('./sync.ts');
+    let files = await buildFiles();
+    assert(!files.some((f) => f.path.includes('assets/stories/' + s.json.id))); // not featured yet: not published
+    assertEquals((await call('PATCH', `/admin/applications/${s.json.id}`, ADMIN, { status: 'APPROVED', featured: true })).status, 200);
+    files = await buildFiles();
+    assert(files.some((f) => f.path === `src/assets/stories/${s.json.id}.jpg`));
+    const stories = JSON.parse(files.find((f) => f.path.endsWith('stories.json'))!.content as string);
+    assertEquals(stories.find((x: { after: string }) => x.after === 'Found my place').photo, `assets/stories/${s.json.id}.jpg`);
+  });
+
   await t.step('requests: core approval puts the person on the team and grants CORE', async () => {
     const a = await call('POST', '/applications', BOB, { type: 'core-application', data: { role: 'design', why: 'Love design' } });
     const r = await call('PATCH', `/admin/applications/${a.json.id}`, ADMIN, { status: 'APPROVED', team: { title: 'Core Team · Design', blurb: 'Pixels.' } });
@@ -166,7 +188,7 @@ Deno.test('end to end', async (t) => {
     const team = JSON.parse(files.find((f) => f.path.endsWith('team.json'))!.content as string);
     assert(team.core.some((p: { name: string }) => p.name === 'Bob Member'));
     const events = JSON.parse(files.find((f) => f.path.endsWith('events.json'))!.content as string);
-    assert(events.length >= 9);
+    assert(events.length >= 2);
   });
 
   await db.$disconnect();
