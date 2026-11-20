@@ -1,5 +1,5 @@
 import { events, typeLabels, site } from '../data/site.mjs';
-import { speakerRow, eventPage, esc, dateParts, fmtDate, pageHero, ctaBand, arrow, sample } from '../lib.mjs';
+import { googleButton, speakerRow, eventPage, esc, dateParts, fmtDate, pageHero, ctaBand, arrow, sample } from '../lib.mjs';
 
 const upcoming = events.filter(e => e.status === 'upcoming');
 const past = events.filter(e => e.status === 'past');
@@ -70,7 +70,22 @@ ${ctaBand({ title: 'Have an idea for a session?', text: 'Want to learn (or teach
       <p class="eyebrow" style="margin-bottom:8px"><i class="dot"></i>Register</p>
       <h3 id="reg-title">Event</h3>
       <p id="reg-sub" style="color:var(--ink-2)"></p>
-      <form data-form="event-registration" data-reset="no" data-toast="You're registered! See you there." novalidate>
+      <div id="reg-gate" hidden>
+        ${googleButton('Continue with Google')}
+        <p class="or"><span>or register with the form below</span></p>
+      </div>
+      <div id="reg-pending" hidden>
+        <div class="card c-yellow"><h3>One quick step first</h3><p>Join the club (it takes a minute) and registering becomes a single click.</p><a class="btn btn-ink btn-sm" href="join.html#member">Become a member</a></div>
+      </div>
+      <section id="reg-member" hidden>
+        <div class="reg-who" id="reg-who"></div>
+        <form id="reg-quick" novalidate>
+          <div id="reg-questions"></div>
+          <p class="form-error" id="reg-quick-error" role="alert" hidden></p>
+          <button class="btn btn-blue" type="submit">Confirm my spot ${arrow}</button>
+        </form>
+      </section>
+      <form id="reg-guest" data-form="event-registration" data-reset="no" data-toast="You're registered! See you there." novalidate>
         <input type="hidden" name="event_id"><input type="hidden" name="event_title">
         <div class="field"><label for="r-name">Full name</label><input id="r-name" name="name" required autocomplete="name"></div>
         <div class="row2">
@@ -91,8 +106,9 @@ ${ctaBand({ title: 'Have an idea for a session?', text: 'Want to learn (or teach
     </div>
     <div id="reg-success" hidden>
       <h3>You're in. See you there! 🎉</h3>
-      <p>We'll email you reminders. Add it to your calendar so it doesn't slip by.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn btn-yellow" id="add-cal">Add to calendar</button><a class="btn btn-ghost" href="community.html">Meet others going</a></div>
+      <p id="reg-success-msg">We'll email you reminders. Add it to your calendar so it doesn't slip by.</p>
+      <div id="reg-ticket" class="reg-ticket" hidden></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn btn-yellow" id="add-cal">Add to calendar</button><a class="btn btn-ghost" id="reg-after" href="community.html">Meet others going</a></div>
     </div>
   </div>
 </div>

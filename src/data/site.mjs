@@ -1,10 +1,19 @@
 // Central site config. Edit here; everything else reads from it.
+import { readFileSync } from 'node:fs';
+
+// Content published by the backend (admin panel -> GitHub commit -> deploy). Missing files = use the defaults below.
+const generated = (name, fallback) => {
+  try { return JSON.parse(readFileSync(new URL(`./generated/${name}.json`, import.meta.url), 'utf8')); } catch { return fallback; }
+};
+const env = (k) => (typeof process !== 'undefined' ? process.env[k] : '') || '';
+const json = (s) => { try { return s ? JSON.parse(s) : null; } catch { return null; } };
+
 export const site = {
   name: 'GDG on Campus GITAM',
   short: 'GDG GITAM',
   tagline: 'Learn it. Build it. Ship it — together.',
   // TODO: replace with the real domain before launch (used for canonical URLs, sitemap, OG tags).
-  url: 'https://gdg-gitam.example.com',
+  url: env('SITE_URL') || 'https://gdg-gitam.example.com',
   email: 'gdg@gitam.example.edu',
   location: 'GITAM (Deemed to be University), Visakhapatnam',
   // Social links — placeholders
@@ -26,9 +35,22 @@ export const site = {
     // While empty, submissions are kept in the visitor's localStorage so the flow can be demoed.
     formEndpoint: '',
     // Same idea for the community board (Firebase / Supabase / Apps Script). Empty = local-only preview mode.
-    forumEndpoint: ''
+    forumEndpoint: '',
+    // Backend API (Deno + Prisma + Supabase). Set GDG_API_BASE at build time, e.g. https://gdg-gitam-api.deno.dev
+    apiBase: env('GDG_API_BASE'),
+    // Firebase web app config (public, not a secret). Set FIREBASE_WEB_CONFIG at build time to the JSON from the Firebase console;
+    // optional `vapidKey` enables push notifications.
+    firebase: json(env('FIREBASE_WEB_CONFIG')),
+    // Local testing only: sign in without Firebase (the backend must run with DEV_AUTH=1).
+    devAuth: env('GDG_DEV_AUTH') === '1'
   }
 };
+
+// Default event-specific questions (the rest of the registration details come from the member's profile).
+export const DEFAULT_QUESTIONS = [
+  { id: 'level', label: 'Your experience with this topic', type: 'radio', options: ['Total beginner', 'Tried a bit', 'Pretty comfortable'], required: true },
+  { id: 'note', label: 'Anything we should know?', type: 'textarea', options: [], required: false }
+];
 
 // Add each person's profile URLs in `links` (leave empty to hide the icon).
 export const team = {
@@ -223,3 +245,16 @@ export const faqs = [
   { q: 'I am not from GITAM. Can I attend?', a: 'Some events are open to other colleges. Each event page says who can register.' },
   { q: 'How much time will it take?', a: 'As little as one event a month, as much as you want. Core roles need roughly 4–6 hours a week.' }
 ];
+
+// ---- Overrides from backend-published content (src/data/generated/*.json) ----
+{
+  const genEvents = generated('events', []);
+  if (genEvents.length) { events.length = 0; events.push(...genEvents); }
+  for (const e of events) if (e.status === 'upcoming' && !e.questions?.length) e.questions = DEFAULT_QUESTIONS;
+  const genTeam = generated('team', {});
+  if (genTeam.organizers?.length) team.organizers = genTeam.organizers;
+  if (genTeam.core?.length) team.core = genTeam.core;
+  team.volunteers = genTeam.volunteers || [];
+  const genStories = generated('stories', []);
+  if (genStories.length) stories.unshift(...genStories.map((x) => ({ ...x, real: true })));
+}

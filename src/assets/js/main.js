@@ -8,7 +8,7 @@
   // ---------- storage (safe) ----------
   const store = {
     get(k, d) { try { const v = localStorage.getItem('gdg:' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
-    set(k, v) { try { localStorage.setItem('gdg:' + k, JSON.stringify(v)); } catch { /* private mode */ } }
+    set(k, v) { try { localStorage.setItem('gdg:' + k, JSON.stringify(v)); } catch { /* private mode */ } document.dispatchEvent(new CustomEvent('gdg:store', { detail: { key: k } })); }
   };
 
   // ---------- toast ----------
@@ -39,8 +39,32 @@
   });
   function closeDrawer() { const d = $('.drawer.open'); if (d) { d.classList.remove('open'); $('.scrim')?.classList.remove('open'); } }
 
-  // ---------- submit (form endpoint or local fallback) ----------
+  // ---------- tiny helpers: lazy scripts + QR codes ----------
+  const loaded = {};
+  function loadScript(src) {
+    return loaded[src] || (loaded[src] = new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }));
+  }
+  async function qrSvg(text) {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
+    const q = window.qrcode(0, 'M'); q.addData(text); q.make();
+    return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+  }
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // The auth module (auth.js) resolves this once it knows whether anyone is signed in.
+  let authResolve; const authReady = new Promise(r => { authResolve = r; });
+
+  // ---------- submit (backend API, form endpoint or local fallback) ----------
   async function submitData(kind, data) {
+    if (CFG.apiBase) {
+      const auth = await authReady;
+      if (auth && auth.enabled) {
+        if (!auth.me) { auth.openSignIn('Sign in with Google to send this'); throw new Error('Sign in required'); }
+        const r = await auth.api('POST', '/applications', { type: kind, data });
+        if (!r.ok) throw new Error((r.data && r.data.error) || 'Request failed');
+        if (kind === 'member') await auth.refresh();
+        return r.data;
+      }
+    }
     const payload = { kind, ...data, page: location.pathname, ts: new Date().toISOString() };
     if (CFG.formEndpoint) {
       const res = await fetch(CFG.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
@@ -125,6 +149,6 @@
     }));
   }
 
-  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS };
+  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, _authResolve: authResolve };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

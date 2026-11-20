@@ -39,6 +39,7 @@
     const tl = $('#top-list');
     tl.innerHTML = top.length ? '<b>Top matches:</b> ' + top.map(r => `<button class="chip ${CL[r.cluster].color}" data-role="${r.id}">${esc(r.name)} · ${scored[r.id]}%</button>`).join('') : '<span style="font:500 .85rem var(--mono);color:var(--ink-2)">Pick a few interests above to see your matches.</span>';
     renderTray();
+    store.set('atlas-state', { interests: [...selected], mode: guided ? 'guided' : 'free', top: top.map(r => r.id) });
   }
 
   function renderTray() {

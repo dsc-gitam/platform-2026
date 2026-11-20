@@ -29,12 +29,12 @@ const body = `
           <div class="term-body" id="term-body"></div>
         </div>
       </div>
-      <a class="bt bt-event" href="events.html">
+      <a class="bt bt-event" href="events.html" data-ticket-event="${up[0].id}" data-ticket-date="${up[0].date}">
         <span class="bt-label">Next up</span>
         <div class="bt-date"><b>${dateParts(up[0].date).d}</b><span>${dateParts(up[0].date).mon}</span></div>
         <h2>${esc(up[0].title)}</h2>
         <p>${esc(up[0].venue)} · <span data-countdown="${up[0].date}">coming soon</span></p>
-        <span class="bt-go">Save your seat ${arrow}</span>
+        <span class="bt-go" data-ticket-label>Save your seat ${arrow}</span>
       </a>
       <a class="bt bt-find" href="#find-your-place">
         <span class="bt-label">2-minute quiz</span>
@@ -81,7 +81,7 @@ const body = `
         <h3>${esc(e.title)}</h3><p>${esc(e.blurb)}</p>
         ${speakerPills(e.speakers)}
       </div>
-      <div class="ev-act"><a class="btn btn-ink btn-sm" href="events.html#${e.id}">Register ${arrow}</a></div>
+      <div class="ev-act"><a class="btn btn-ink btn-sm" href="events.html#${e.id}" data-ticket-event="${e.id}" data-ticket-date="${e.date}">Register ${arrow}</a></div>
     </article>`; }).join('')}
     <p class="reveal"><a class="link" href="events.html">All upcoming events →</a></p>
   </div>

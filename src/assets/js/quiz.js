@@ -63,6 +63,7 @@
   function result() {
     const ranked = compute(); const [topId] = ranked[0]; const second = ranked[1][0]; const p = P[topId], s = P[second];
     const max = Math.max(...ranked.map(r => r[1])) || 1;
+    store.set('place-second', second);
     store.set('place', topId);
     root.innerHTML = `
     <div class="result reveal in">

@@ -1,0 +1,187 @@
+// GDG on Campus GITAM — database schema (Prisma 7, PostgreSQL on Supabase)
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated"
+  runtime      = "deno"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  MEMBER     // signed-in member
+  CORE       // core team: scan QR codes, award points, see registrations
+  DOCS       // documentation team: upload post-event data
+  ORGANIZER  // create/edit events, analytics, review requests
+  ADMIN      // everything, including role management
+}
+
+enum TeamKind {
+  ORGANIZER
+  CORE
+  VOLUNTEER
+}
+
+enum EventStatus {
+  UPCOMING
+  PAST
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  CANCELLED
+}
+
+enum ApplicationType {
+  MEMBER
+  VOLUNTEER
+  CORE
+  SPEAKER
+  SESSION
+  STORY
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id          String   @id // Firebase Auth uid
+  email       String   @unique
+  name        String
+  photoUrl    String?  // Google photo or uploaded image URL
+  photoData   Bytes?   // small uploaded JPEG (served from /api/users/:id/photo)
+  role        Role     @default(MEMBER)
+  onboarded   Boolean  @default(false) // has submitted the "become a member" form
+  phone       String?
+  regNo       String?
+  branch      String?
+  year        String?
+  bio         String?
+  linkedin    String?
+  github      String?
+  interests   String[]
+  fcmTokens   String[]
+
+  // Public team presence (published to the static site through GitHub)
+  teamKind    TeamKind?
+  teamTitle   String?
+  teamBlurb   String?
+  teamColor   String?
+  showOnSite  Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLoginAt DateTime @default(now())
+
+  registrations Registration[]
+  awards        PointAward[]   @relation("awardee")
+  awarded       PointAward[]   @relation("awarder")
+  applications  Application[]
+  exploration   Exploration?
+}
+
+model Event {
+  id        String      @id // slug, e.g. "android-101"
+  title     String
+  type      String      // meetup | workshop | studyjam | hackathon | talk
+  color     String      @default("blue")
+  date      String      // YYYY-MM-DD
+  time      String
+  endTime   String?
+  venue     String
+  seats     Int         @default(100)
+  free      Boolean     @default(true)
+  blurb     String
+  tags      String[]
+  speakers  Json        @default("[]")  // [{ name, role, photo?, color?, tba? }]
+  questions Json        @default("[]")  // event-specific form questions
+  status    EventStatus @default(UPCOMING)
+  published Boolean     @default(true)
+  ready     Boolean     @default(false) // post-event page is ready (enables "Explore this event")
+  details   Json        @default("{}")  // about, takeaways, resources, photos, recording, report, attendees
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  registrations Registration[]
+  awards        PointAward[]
+}
+
+model Registration {
+  id          String             @id @default(cuid())
+  userId      String
+  eventId     String
+  answers     Json               @default("{}")
+  ticketCode  String             @unique
+  status      RegistrationStatus @default(REGISTERED)
+  checkedInAt DateTime?
+  createdAt   DateTime           @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+}
+
+model PointAward {
+  id          String   @id @default(cuid())
+  userId      String
+  eventId     String
+  points      Int
+  reason      String
+  awardedById String
+  createdAt   DateTime @default(now())
+
+  user      User  @relation("awardee", fields: [userId], references: [id], onDelete: Cascade)
+  awardedBy User  @relation("awarder", fields: [awardedById], references: [id])
+  event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([eventId])
+}
+
+// Tech Atlas + "Find your place" results, synced from the browser.
+model Exploration {
+  userId    String   @id
+  atlas     Json     @default("{}") // { interests: [], saved: [], mode, top: [] }
+  quiz      Json     @default("{}") // { result, scores }
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Application {
+  id           String            @id @default(cuid())
+  type         ApplicationType
+  status       ApplicationStatus @default(PENDING)
+  userId       String?
+  name         String
+  email        String
+  data         Json              @default("{}")
+  featured     Boolean           @default(false) // stories: show on the site
+  notes        String?
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime          @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([type, status])
+}
+
+// Every attempt to publish content to GitHub (which triggers the site deploy).
+model SyncLog {
+  id        String   @id @default(cuid())
+  reason    String
+  files     String[]
+  commitSha String?
+  ok        Boolean
+  message   String?
+  createdAt DateTime @default(now())
+}

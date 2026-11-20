@@ -51,6 +51,9 @@ export const speakerRow = (list = [], label = 'Speaker') => {
 // Tiny speaker avatars that expand into a name pill on hover / focus (home page).
 export const speakerPills = (list = []) => list.length ? `<div class="sp-pills" aria-label="Speakers">${list.map(sp => `<div class="sp-pill${sp.tba ? ' tba' : ''}" tabindex="0" title="${esc(sp.name)}">${sp.tba ? '<span class="avatar av-blue" aria-hidden="true"><span>?</span></span>' : avatar(sp.name, sp.color || 'blue', sp.photo).replace(/alt="[^"]*" width/, 'alt="" width')}<em>${esc(sp.tba ? 'Speaker to be announced' : sp.name)}</em></div>`).join('')}</div>` : '';
 
+// "Continue with Google" button markup (also used by auth.js for dynamically built dialogs).
+export const googleButton = (label = 'Continue with Google') => `<button type="button" class="btn-google" data-google><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.5-4.1 7-10.2 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>${label}</span></button>`;
+
 export const arrow = '<svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 export const squiggle = (color = '#FBBC04') => `<svg class="squig" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8c14-9 24 7 38-1s24 7 38-1 24 7 38-1 24 7 38-1 24 7 44 0" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;
@@ -130,6 +133,7 @@ ${ld}
       <a class="nav-find" href="index.html#find-your-place" data-nav="find">Find your place</a>
       <a class="btn btn-blue btn-sm" href="join.html">Join the club</a>
     </nav>
+    <div class="acct" id="acct" hidden><button class="acct-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Sign in"></button><div class="acct-menu" role="menu" hidden></div></div>
     <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -166,6 +170,9 @@ ${body}
 <script>window.GDG_CONFIG=${JSON.stringify(site.client)};</script>
 <script src="assets/js/icons.js" defer></script>
 <script src="assets/js/main.js" defer></script>
+<script type="module" src="assets/js/auth.js"></script>
+<script src="assets/js/tickets.js" defer></script>
+<script src="assets/js/notify.js" defer></script>
 ${(page.scripts || []).map(s => `<script src="assets/js/${s}" defer></script>`).join('\n')}
 </body>
 </html>`;

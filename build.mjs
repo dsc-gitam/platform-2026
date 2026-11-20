@@ -37,6 +37,21 @@ await cp(join(root, 'src/assets'), join(dist, 'assets'), { recursive: true });
 // Client-side icon helper (same Lucide set as the server-rendered pages)
 await writeFile(join(dist, 'assets/js/icons.js'), `window.GDG_ICON=(function(I){return function(n,s){s=s||24;return '<svg class="ico" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(I[n]||'')+'</svg>';};})(${JSON.stringify(ICONS)});\n`);
 
+// Push notifications: Firebase Cloud Messaging service worker (only when a Firebase web config is provided)
+if (site.client.firebase && site.client.firebase.vapidKey) {
+  const { vapidKey, ...fb } = site.client.firebase;
+  await writeFile(join(dist, 'firebase-messaging-sw.js'), `importScripts('https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging-compat.js');
+firebase.initializeApp(${JSON.stringify(fb)});
+const messaging = firebase.messaging();
+messaging.onBackgroundMessage((p) => {
+  const n = p.notification || {};
+  self.registration.showNotification(n.title || 'GDG GITAM', { body: n.body || '', icon: '/assets/gdg-logo.png', data: { url: (p.fcmOptions && p.fcmOptions.link) || '/' } });
+});
+self.addEventListener('notificationclick', (e) => { e.notification.close(); e.waitUntil(clients.openWindow(e.notification.data.url || '/')); });
+`);
+}
+
 // SEO files
 const today = new Date().toISOString().slice(0, 10);
 const urls = pages.filter(p => !p.noindex).map(p => {
