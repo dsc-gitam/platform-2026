@@ -617,9 +617,9 @@ main, .site-footer { overflow-x: clip; }
 .facts-card dt { font: 500 .75rem var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); align-self: center; } .facts-card dd { margin: 0; font-weight: 700; }
 .card.take { display: flex; gap: 16px; align-items: flex-start; } .take .badge { margin: 0; flex: none; } .take p { margin: 0; font-size: 1.05rem; align-self: center; }
 .res-list { display: grid; gap: 12px; max-width: 760px; }
-.res { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--white); text-decoration: none; font-weight: 700; box-shadow: var(--shadow-sm); transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
-.res span { flex: 1; } a.res:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
-.res.off { border-style: dashed; box-shadow: none; color: var(--ink-3); font-weight: 500; } .res em { font: 500 .75rem var(--mono); font-style: normal; text-transform: uppercase; letter-spacing: .08em; }
+.ev-res { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--white); text-decoration: none; font-weight: 700; box-shadow: var(--shadow-sm); transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.ev-res span { flex: 1; } a.ev-res:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+.ev-res.off { border-style: dashed; box-shadow: none; color: var(--ink-3); font-weight: 500; } .ev-res em { font: 500 .75rem var(--mono); font-style: normal; text-transform: uppercase; letter-spacing: .08em; }
 .video { position: relative; aspect-ratio: 16 / 9; border: 2px solid var(--ink); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); background: var(--ink); max-width: 960px; }
 .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video.placeholder { display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; color: #fff; background: var(--ink); background-image: radial-gradient(rgba(255,255,255,.16) 1.4px, transparent 1.5px); background-size: 20px 20px; padding: 20px; }
@@ -914,7 +914,7 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 
 /* Tech Atlas drawer: slides in from the right. It lives inside a fixed layer that clips it, so while it is off-screen it
    can never make the page wider (some mobile browsers widen the page for fixed elements parked outside the screen). */
-.drawer-layer { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 250; }
+.drawer-layer { position: fixed; inset: 0; overflow: hidden; overflow: clip; pointer-events: none; z-index: 250; } /* clip: not even scrollable by focus() */
 .drawer { position: absolute; z-index: auto; clip-path: none; transform: translateX(105%); transition: transform .4s var(--ease), visibility 0s .4s; }
 .drawer.open { transform: none; pointer-events: auto; transition: transform .4s var(--ease), visibility 0s; }
 
@@ -944,3 +944,8 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
   .a-stack select { width: auto; min-width: 140px; }
 }
 .q-title:focus { outline: none; }
+/* Tech Atlas drawer: its content may never be wider than the panel */
+.drawer { overflow-x: hidden; }
+.drawer-body, .drawer-head { min-width: 0; }
+.drawer-body > * { min-width: 0; }
+.drawer .res { display: block; padding: 0; border: 0; box-shadow: none; background: none; }

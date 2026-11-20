@@ -73,7 +73,8 @@
         <a class="btn btn-ghost btn-sm" href="events.html">Find an event</a>
       </div>`;
     scrim.classList.add('open'); history.replaceState(null, '', '#' + id);
-    setTimeout(() => $('[data-close]', drawer)?.focus(), 50);
+    // preventScroll: focusing a button inside the (still sliding) panel must not scroll the clipping layer sideways
+    setTimeout(() => $('[data-close]', drawer)?.focus({ preventScroll: true }), 50);
   }
   function close() { drawer.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true'); scrim.classList.remove('open'); history.replaceState(null, '', location.pathname); opener && opener.focus && opener.focus(); }
 

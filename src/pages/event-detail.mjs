@@ -10,8 +10,8 @@ const past = events.filter(e => e.status === 'past' && e.ready);
 const kindIcon = { slides: 'file-text', code: 'external-link', link: 'external-link' };
 
 const resource = (r) => r.url
-  ? `<a class="res" href="${esc(r.url)}" target="_blank" rel="noopener">${icon(kindIcon[r.kind] || 'external-link', 20)}<span>${esc(r.label)}</span>${arrow}</a>`
-  : `<div class="res off">${icon(kindIcon[r.kind] || 'external-link', 20)}<span>${esc(r.label)}</span><em>Coming soon</em></div>`;
+  ? `<a class="ev-res" href="${esc(r.url)}" target="_blank" rel="noopener">${icon(kindIcon[r.kind] || 'external-link', 20)}<span>${esc(r.label)}</span>${arrow}</a>`
+  : `<div class="ev-res off">${icon(kindIcon[r.kind] || 'external-link', 20)}<span>${esc(r.label)}</span><em>Coming soon</em></div>`;
 
 const video = (e) => e.recording.youtubeId
   ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(e.recording.youtubeId)}" title="${esc(e.title)} recording" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`
