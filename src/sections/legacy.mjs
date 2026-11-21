@@ -59,8 +59,8 @@ export const legacyAchievements = (tint = false) => `
 </section>`;
 
 // Word-limited text with an inline ellipsis; full text lives on the story's own page.
-const clip = (t = '', n) => { const w = String(t).trim().split(/\s+/); return w.length > n ? w.slice(0, n).join(' ') + '…' : String(t); };
-const wc = (t = '') => String(t).trim().split(/\s+/).filter(Boolean).length;
+const clip = (t = '', n) => { t = String(t).trim(); if (t.length <= n) return t; const cut = t.slice(0, n); return cut.replace(/\s+\S*$/, '').replace(/[\s,.;:!?-]+$/, '') + '…'; };
+const over = (t = '', n) => String(t).trim().length > n;
 export const storyPage = (s) => 'story-' + (String(s.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'member') + '.html';
 
 export const legacyStories = (tint = true, short = false) => `
@@ -75,9 +75,9 @@ export const legacyStories = (tint = true, short = false) => `
     <div class="grid g3">
       ${stories.map(s => `<article class="card story c-${s.color} reveal">
         <div class="who">${avatar(s.name, s.color, s.photo)}<div><b>${esc(s.name)}</b><small>${esc(s.batch)} · ${esc(s.now)}</small></div></div>
-        <div class="ba"><div><small>Before</small>${esc(short ? clip(s.before, 100) : s.before)}</div><div><small>After</small>${esc(short ? clip(s.after, 150) : s.after)}</div></div>
+        <div class="ba"><div><small>Before</small>${esc(short ? clip(s.before, 120) : s.before)}</div><div><small>After</small>${esc(short ? clip(s.after, 150) : s.after)}</div></div>
         ${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ''}
-        ${short && (wc(s.before) > 100 || wc(s.after) > 150) ? `<a class="link" href="${storyPage(s)}">Read full story →</a>` : ''}
+        ${short && (over(s.before, 120) || over(s.after, 150)) ? `<a class="link" href="${storyPage(s)}">Read full story →</a>` : ''}
       </article>`).join('')}
     </div>
     <div class="card c-yellow reveal" style="margin-top:34px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap">
