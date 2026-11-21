@@ -97,10 +97,14 @@
     if (CFG.apiBase) {
       const auth = await authReady;
       if (auth && auth.enabled) {
-        if (!auth.me || auth.me.user.guest) { auth.openSignIn('Sign in with Google to send this'); throw new Error('Sign in required'); }
+        if (!auth.me || auth.me.user.guest) {
+          // Ask for sign-in right here and carry on automatically afterwards, so nobody has to fill the form twice.
+          const ok = await auth.signInThen('Sign in with Google to send this. Your answers will be kept.');
+          if (!ok) { const e = new Error('Sign in required'); e.userMessage = 'Please sign in with Google to send this. Your answers are still here, just press the button again.'; throw e; }
+        }
         const photo = data.photo_data; const clean = { ...data }; delete clean.photo_data;
         const r = await auth.api('POST', '/applications', photo ? { type: kind, data: clean, photo } : { type: kind, data: clean });
-        if (!r.ok) throw new Error((r.data && r.data.error) || 'Request failed');
+        if (!r.ok) { const e = new Error((r.data && r.data.error) || 'Request failed'); e.userMessage = r.status === 0 ? 'Could not reach the server. Check your connection and try again.' : ((r.data && r.data.error) || null); throw e; }
         if (kind === 'member') await auth.refresh();
         return r.data;
       }
@@ -115,13 +119,24 @@
     return payload;
   }
 
+  // A clear message (and a red outline) for the first field that still needs filling; the browser's own bubble is easy to miss on phones.
+  function showInvalid(form) {
+    form.classList.add('was-validated');
+    const bad = form.querySelector(':invalid'); if (!bad) return;
+    const lab = bad.id && form.querySelector(`label[for="${bad.id}"]`);
+    const name = lab ? [...lab.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim() : (bad.name || 'the highlighted field');
+    $('.form-error', form)?.remove();
+    const p = document.createElement('p'); p.className = 'form-error'; p.setAttribute('role', 'alert'); p.textContent = `Please fill in: ${name.replace(/[?:.]+$/, '')}.`; form.appendChild(p);
+    bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { bad.focus({ preventScroll: true }); } catch { /* ignore */ }
+  }
+
   function handleForms() {
     $$('form[data-form]').forEach((form) => {
       form.addEventListener('submit', async (e) => {
         if (form.dataset.manual) return; // the page handles this form itself (e.g. guest registration)
         e.preventDefault();
         if (form.dataset.busy) return;
-        if (!form.checkValidity()) { form.reportValidity(); return; }
+        if (!form.checkValidity()) { showInvalid(form); return; }
         const kind = form.dataset.form;
         const fd = new FormData(form); const data = {};
         for (const [k, v] of fd.entries()) { if (typeof v !== 'string') continue; data[k] = data[k] ? data[k] + ', ' + v : v; } // files are sent separately (photo_data)
@@ -138,7 +153,7 @@
           toast(form.dataset.toast || 'Done! We\'ve got it.');
         } catch (err) {
           const p = document.createElement('p'); p.className = 'form-error';
-          p.textContent = 'Something went wrong. Please try again in a moment.'; form.appendChild(p);
+          p.textContent = err.userMessage || 'Something went wrong. Please try again in a moment.'; form.appendChild(p);
         } finally {
           delete form.dataset.busy; if (btn) { btn.disabled = false; btn.textContent = label; }
         }

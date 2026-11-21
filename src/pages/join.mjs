@@ -13,7 +13,7 @@ const common = (p) => `
   </div>
   <div class="row2">
     <div class="field"><label for="${p}-branch">Branch / department</label><input id="${p}-branch" name="branch"></div>
-    <div class="field"><label for="${p}-year">Year</label><select id="${p}-year" name="year" required><option value="">Select…</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option><option>Alumni</option><option>Other</option></select></div>
+    <div class="field"><label for="${p}-year">Year <small>(optional)</small></label><select id="${p}-year" name="year"><option value="">Select…</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option><option>Alumni</option><option>Other</option></select></div>
   </div>`;
 const hp = '<input type="text" name="honeypot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">';
 const done = (m) => `<p class="form-done" role="status" hidden>${m}</p>`;

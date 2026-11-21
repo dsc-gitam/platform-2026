@@ -166,6 +166,15 @@ function ensureModal() {
   });
   return m;
 }
+// Opens the sign-in dialog and resolves true once someone is signed in (false if they close it first).
+auth.signInThen = (message) => new Promise((resolve) => {
+  const m = ensureModal();
+  const done = (ok) => { obs.disconnect(); off(); resolve(ok); };
+  const obs = new MutationObserver(() => { if (!m.classList.contains('open')) done(!!auth.me && !auth.me.user.guest); });
+  const off = auth.on((me) => { if (me && !me.user.guest) setTimeout(() => done(true), 0); });
+  obs.observe(m, { attributes: true, attributeFilter: ['class'] });
+  auth.openSignIn(message);
+});
 auth.openSignIn = (message) => {
   const m = ensureModal();
   if (message) $('#auth-sub', m).textContent = message;
