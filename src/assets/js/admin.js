@@ -295,9 +295,13 @@
     $('#u-search', el).addEventListener('submit', (e) => { e.preventDefault(); load($('#u-q', el).value); });
     const load = async (q = '') => {
       const r = await api('GET', '/users?q=' + encodeURIComponent(q)); if (!r.ok) return;
-      $('#u-list', el).innerHTML = `<div class="a-table-wrap"><table class="a-table a-stack"><tr><th>Person</th><th>Joined</th><th>Team</th><th>Role</th></tr>${r.data.users.map((u) => `<tr><td class="st-title"><b>${esc(u.name)}</b><br><small>${esc(u.email)}</small></td><td data-label="Joined">${esc(fmt(u.createdAt))} <small>${u.onboarded ? 'member' : 'not onboarded'} · ${u._count.registrations} regs</small></td><td data-label="Team">${u.teamKind ? `${esc(u.teamKind.toLowerCase())}${u.showOnSite ? ' · on site' : ''}` : '–'}</td>
+      $('#u-list', el).innerHTML = `<div class="a-table-wrap"><table class="a-table a-stack"><tr><th>Person</th><th>Joined</th><th>Team</th><th>Role</th></tr>${r.data.users.map((u) => `<tr><td class="st-title"><b>${esc(u.name)}</b>${can('roles:write') ? ` <button type="button" class="link-btn" data-rename="${u.id}" data-name="${esc(u.name)}" aria-label="Edit name">Edit</button>` : ''}<br><small>${esc(u.email)}</small></td><td data-label="Joined">${esc(fmt(u.createdAt))} <small>${u.onboarded ? 'member' : 'not onboarded'} · ${u._count.registrations} regs</small></td><td data-label="Team">${u.teamKind ? `${esc(u.teamKind.toLowerCase())}${u.showOnSite ? ' · on site' : ''}` : '–'}</td>
         <td data-label="Role">${can('roles:write') ? `<select data-role="${u.id}">${['MEMBER', 'CORE', 'DOCS', 'ORGANIZER', 'ADMIN'].map((r) => `<option${r === u.role ? ' selected' : ''}>${r}</option>`).join('')}</select>` : esc(u.role)}</td></tr>`).join('')}</table></div>
         <p class="p-note" style="margin-top:12px"><b>Roles:</b> MEMBER (no admin access) · CORE (scan tickets, award points) · DOCS (post-event data, analytics) · ORGANIZER (events, requests, notifications, analytics, users) · ADMIN (everything, incl. roles).</p>`;
+      $$('[data-rename]', el).forEach((b) => b.addEventListener('click', async () => {
+        const name = (prompt('Update name', b.dataset.name) || '').trim(); if (!name || name === b.dataset.name) return;
+        const r2 = await api('PATCH', `/users/${b.dataset.rename}/name`, { name }); if (r2.ok) { toast('Name updated'); load($('#u-q', el).value); }
+      }));
       $$('[data-role]', el).forEach((s) => s.addEventListener('change', async () => { const r2 = await api('PATCH', `/users/${s.dataset.role}/role`, { role: s.value }); if (r2.ok) toast('Role updated' + (r2.data.claimSynced ? '' : ' (Firebase claim not synced; the database role is authoritative)')); else load($('#u-q', el).value); }));
     };
     load();

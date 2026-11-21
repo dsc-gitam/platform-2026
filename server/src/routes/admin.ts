@@ -232,6 +232,14 @@ admin.patch('/users/:id/role', requirePerm('roles:write'), async (c) => {
   return c.json({ user: { id: u.id, role: u.role }, claimSynced: claim });
 });
 
+admin.patch('/users/:id/name', requirePerm('roles:write'), async (c) => {
+  const name = str((await c.req.json().catch(() => ({}))).name, 80);
+  if (name.length < 2) return c.json({ error: 'Please enter a name' }, 400);
+  const u = await db.user.update({ where: { id: c.req.param('id') }, data: { name } });
+  if (u.teamKind) await queuePublish(`name update: ${u.name}`); // team cards show the name
+  return c.json({ user: { id: u.id, name: u.name } });
+});
+
 admin.patch('/users/:id/team', requirePerm('roles:write'), async (c) => {
   const b = await c.req.json().catch(() => ({}));
   const kind = ['ORGANIZER', 'CORE', 'VOLUNTEER'].includes(str(b.kind, 12)) ? str(b.kind, 12) as 'ORGANIZER' | 'CORE' | 'VOLUNTEER' : null;
