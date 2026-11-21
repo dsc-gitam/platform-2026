@@ -104,7 +104,7 @@
       if (!f.checkValidity()) { f.reportValidity(); return; }
       const body = Object.fromEntries(new FormData(f)); delete body.email;
       const btn = $('button[type=submit]', f); btn.disabled = true;
-      const r = await auth.api('PATCH', '/me', body); btn.disabled = false;
+      const r = await G.busy.wrap(() => auth.api('PATCH', '/me', body), btn); btn.disabled = false;
       if (r.ok) { await auth.refresh(); G.toast('Profile saved'); } else { err.textContent = (r.data && r.data.error) || 'Could not save'; err.hidden = false; }
     });
 
@@ -112,12 +112,8 @@
     $('#p-photo-in').addEventListener('change', async (e) => {
       const file = e.target.files[0]; if (!file) return;
       try {
-        const bmp = await createImageBitmap(file); const s = Math.min(bmp.width, bmp.height);
-        const c = document.createElement('canvas'); c.width = c.height = 400;
-        c.getContext('2d').drawImage(bmp, (bmp.width - s) / 2, (bmp.height - s) / 2, s, s, 0, 0, 400, 400);
-        let q = 0.88, url = c.toDataURL('image/jpeg', q);
-        while (url.length * 0.75 > 240000 && q > 0.4) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
-        const r = await auth.api('PUT', '/me/photo', { dataUrl: url });
+        const url = await G.cropPhoto(file, 400); e.target.value = ''; if (!url) return;
+        const r = await G.busy.wrap(() => auth.api('PUT', '/me/photo', { dataUrl: url }));
         if (r.ok) { await auth.refresh(); G.toast('Photo updated'); } else G.toast((r.data && r.data.error) || 'Could not upload photo');
       } catch { G.toast('That image could not be read'); }
     });

@@ -28,9 +28,10 @@ Deno.test('publishing commits generated files in one commit', async () => {
 
   assertEquals(sha, 'newcommit');
   const blobs = calls.filter((c) => c.path.endsWith('/git/blobs'));
-  assertEquals(blobs.length, 2);
-  assertEquals(blobs[0].body!.encoding, 'utf-8'); assertEquals(blobs[1].body!.encoding, 'base64'); assertEquals(blobs[1].body!.content, '/9j/2Q==');
-  const tree = calls.find((c) => c.path.endsWith('/git/trees'))!.body as { base_tree: string; tree: { path: string }[] };
+  assertEquals(blobs.length, 1); // only the binary photo needs a blob; text goes inline in the tree
+  assertEquals(blobs[0].body!.encoding, 'base64'); assertEquals(blobs[0].body!.content, '/9j/2Q==');
+  const tree = calls.find((c) => c.path.endsWith('/git/trees'))!.body as { base_tree: string; tree: { path: string; content?: string }[] };
+  assertEquals(tree.tree[0].content, '[]\n');
   assertEquals(tree.base_tree, 'tree0'); assertEquals(tree.tree.map((t) => t.path), ['src/data/generated/stories.json', 'src/assets/team/u1.jpg']);
   const commit = calls.find((c) => c.path.endsWith('/git/commits') && c.method === 'POST')!.body as { parents: string[]; message: string };
   assertEquals(commit.parents, ['parent1']); assert(commit.message.startsWith('content:'));

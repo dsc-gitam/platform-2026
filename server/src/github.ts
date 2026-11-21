@@ -25,12 +25,12 @@ export async function commitFiles(files: RepoFile[], message: string): Promise<s
       const ref = await api(`/git/ref/heads/${env.githubBranch}`);
       const parent: string = ref.object.sha;
       const parentCommit = await api(`/git/commits/${parent}`);
-      const tree = [];
-      for (const f of files) {
-        const isBin = typeof f.content !== 'string';
-        const blob = await api('/git/blobs', { method: 'POST', body: JSON.stringify({ content: isBin ? toBase64(f.content as Uint8Array) : f.content, encoding: isBin ? 'base64' : 'utf-8' }) });
-        tree.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha });
-      }
+      // Text files go inline in the tree (no extra call); binaries (photos) are uploaded as blobs, all in parallel.
+      const tree = await Promise.all(files.map(async (f) => {
+        if (typeof f.content === 'string') return { path: f.path, mode: '100644', type: 'blob', content: f.content };
+        const blob = await api('/git/blobs', { method: 'POST', body: JSON.stringify({ content: toBase64(f.content), encoding: 'base64' }) });
+        return { path: f.path, mode: '100644', type: 'blob', sha: blob.sha };
+      }));
       const newTree = await api('/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: parentCommit.tree.sha, tree }) });
       if (newTree.sha === parentCommit.tree.sha) return null; // identical content, no commit needed
       const commit = await api('/git/commits', { method: 'POST', body: JSON.stringify({ message, tree: newTree.sha, parents: [parent] }) });

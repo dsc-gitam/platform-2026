@@ -98,9 +98,9 @@
     const err = $('#reg-quick-error'); err.hidden = true;
     if (!quick.checkValidity()) { quick.reportValidity(); return; }
     const answers = {}, profile = {}; new FormData(quick).forEach((v, k) => { (PROFILE_KEYS.includes(k) ? profile : answers)[k] = v; });
-    const btn = $('button[type=submit]', quick); btn.disabled = true;
+    const btn = $('button[type=submit]', quick); btn.disabled = true; btn.classList.add('is-loading'); G.busy.start();
     const r = await auth.api('POST', `/me/events/${current.id}/register`, Object.keys(profile).length ? { answers, profile } : { answers });
-    btn.disabled = false;
+    btn.disabled = false; btn.classList.remove('is-loading'); G.busy.end();
     if (r.ok) { await auth.refresh(); tell(); showSuccess(r.data.ticketCode, false, auth.me.user.guest); G.toast("You're registered!"); return; }
     err.textContent = (r.data && r.data.error) || 'Could not register. Please try again.'; err.hidden = false;
   });
@@ -129,13 +129,13 @@
   $('#reg-access-form').addEventListener('submit', async (e) => {
     e.preventDefault(); const msg = $('#reg-access-msg'); const email = $('#reg-access-email');
     if (!email.checkValidity()) { email.reportValidity(); return; }
-    const btn = $('button', e.target); btn.disabled = true; msg.hidden = true;
+    const btn = $('button', e.target); btn.disabled = true; btn.classList.add('is-loading'); G.busy.start(); msg.hidden = true;
     try {
       const r = await auth.sendTicketLink(email.value);
       msg.textContent = r.dev ? 'Dev mode: signed in as ' + email.value : `We emailed a sign-in link to ${email.value}. Open it on this device or any other to see your ticket.`;
       if (r.dev) decide();
     } catch (x) { console.warn(x); msg.textContent = 'Could not send the link. Check the email and try again.'; }
-    msg.hidden = false; btn.disabled = false;
+    msg.hidden = false; btn.disabled = false; btn.classList.remove('is-loading'); G.busy.end();
   });
 
   // guest registration without a backend (classic form)
