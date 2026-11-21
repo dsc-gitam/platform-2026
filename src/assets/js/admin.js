@@ -273,7 +273,7 @@
     if (act === 'feature') return patch(a, { status: 'APPROVED', featured: true }, el, 'Story approved. Publishing to GitHub; the site redeploys in a few minutes.');
     if (act === 'edit') {
       const d = a.data || {};
-      return dialog(`<h3>Edit story before featuring</h3><form class="a-form" id="st-form">${['before', 'after', 'now', 'batch', 'quote'].map((k) => `<div class="field"><label>${k}</label><textarea name="${k}" style="min-height:60px">${esc(d[k] || '')}</textarea></div>`).join('')}
+      return dialog(`<h3>Edit story before featuring</h3><form class="a-form" id="st-form"><div class="field"><label>Name</label><input name="name" value="${esc(a.name)}" required maxlength="80"></div>${['before', 'after', 'now', 'batch', 'quote'].map((k) => `<div class="field"><label>${k}</label><textarea name="${k}" style="min-height:60px">${esc(d[k] || '')}</textarea></div>`).join('')}
         <div class="field"><label>Photo ${a.hasPhoto ? '<small>(one was uploaded with the story; choose a file to replace it)</small>' : '<small>(optional)</small>'}</label><div class="photo-pick"><span class="photo-prev" id="ph-prev"></span><div><input id="ph-file" type="file" accept="image/*">${a.hasPhoto ? '<label class="check" style="margin-top:8px"><input type="checkbox" id="ph-remove"> Remove the photo</label>' : ''}</div></div><input type="hidden" id="ph-data"></div>
         <button class="btn btn-blue" type="submit">Save & feature</button></form>`, (m, close) => {
         const prev = $('#ph-prev', m);
@@ -282,7 +282,7 @@
         $('#st-form', m).addEventListener('submit', async (e) => {
           e.preventDefault(); const fd = new FormData(e.target); const data = {}; fd.forEach((v, k) => { if (typeof v === 'string' && ['before', 'after', 'now', 'batch', 'quote'].includes(k)) data[k] = v; });
           const photo = $('#ph-data', m).value; const removePhoto = !!($('#ph-remove', m) && $('#ph-remove', m).checked);
-          close(); await patch(a, { status: 'APPROVED', featured: true, data, ...(photo ? { photo } : {}), ...(removePhoto && !photo ? { removePhoto: true } : {}) }, el, 'Story saved and featured. Publishing…');
+          close(); await patch(a, { status: 'APPROVED', featured: true, name: String(fd.get('name') || '').trim(), data, ...(photo ? { photo } : {}), ...(removePhoto && !photo ? { removePhoto: true } : {}) }, el, 'Story saved and featured. Publishing…');
         });
       });
     }

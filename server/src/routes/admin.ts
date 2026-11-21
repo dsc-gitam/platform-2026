@@ -194,7 +194,8 @@ admin.patch('/applications/:id', requirePerm('requests:review'), async (c) => {
   if (b.removePhoto) photoChange = { photoData: null };
   else if (b.photo) { const j = jpegFromDataUrl(b.photo); if (!j) return c.json({ error: 'Please use a JPEG photo under 250 KB' }, 400); photoChange = { photoData: j }; }
 
-  const updated = await db.application.update({ where: { id: app.id }, data: { ...photoChange, status, featured, notes: b.notes === undefined ? app.notes : optStr(b.notes, 500), data, reviewedById: me.id, reviewedAt: new Date() } });
+  const newName = str(b.name, 80);
+  const updated = await db.application.update({ where: { id: app.id }, data: { ...photoChange, ...(newName.length >= 2 ? { name: newName } : {}), status, featured, notes: b.notes === undefined ? app.notes : optStr(b.notes, 500), data, reviewedById: me.id, reviewedAt: new Date() } });
 
   let publish = false;
   const target = app.userId ? await db.user.findUnique({ where: { id: app.userId } }) : await db.user.findUnique({ where: { email: app.email } });
@@ -247,7 +248,10 @@ admin.patch('/users/:id/name', requirePerm('roles:write'), async (c) => {
   const name = str((await c.req.json().catch(() => ({}))).name, 80);
   if (name.length < 2) return c.json({ error: 'Please enter a name' }, 400);
   const u = await db.user.update({ where: { id: c.req.param('id') }, data: { name } });
-  if (u.teamKind) await queuePublish(`name update: ${u.name}`); // team cards show the name
+  // Their stories show the name too: keep them in step
+  const stories = await db.application.updateMany({ where: { userId: u.id, type: 'STORY' }, data: { name } });
+  const liveStory = stories.count > 0 && (await db.application.count({ where: { userId: u.id, type: 'STORY', status: 'APPROVED', featured: true } })) > 0;
+  if (u.teamKind || liveStory) await queuePublish(`name update: ${u.name}`); // team and story cards show the name
   return c.json({ user: { id: u.id, name: u.name } });
 });
 
