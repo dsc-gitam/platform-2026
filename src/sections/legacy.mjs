@@ -58,7 +58,12 @@ export const legacyAchievements = (tint = false) => `
   </div>
 </section>`;
 
-export const legacyStories = (tint = true) => `
+// Word-limited text with an inline ellipsis; full text lives on the story's own page.
+const clip = (t = '', n) => { const w = String(t).trim().split(/\s+/); return w.length > n ? w.slice(0, n).join(' ') + '…' : String(t); };
+const wc = (t = '') => String(t).trim().split(/\s+/).filter(Boolean).length;
+export const storyPage = (s) => 'story-' + (String(s.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'member') + '.html';
+
+export const legacyStories = (tint = true, short = false) => `
 <section class="section${tint ? ' tint' : ''}" id="stories">
   <div class="container">
     <div class="section-head reveal">
@@ -70,8 +75,9 @@ export const legacyStories = (tint = true) => `
     <div class="grid g3">
       ${stories.map(s => `<article class="card story c-${s.color} reveal">
         <div class="who">${avatar(s.name, s.color, s.photo)}<div><b>${esc(s.name)}</b><small>${esc(s.batch)} · ${esc(s.now)}</small></div></div>
-        <div class="ba"><div><small>Before</small>${esc(s.before)}</div><div><small>After</small>${esc(s.after)}</div></div>
+        <div class="ba"><div><small>Before</small>${esc(short ? clip(s.before, 100) : s.before)}</div><div><small>After</small>${esc(short ? clip(s.after, 150) : s.after)}</div></div>
         ${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ''}
+        ${short && (wc(s.before) > 100 || wc(s.after) > 150) ? `<a class="link" href="${storyPage(s)}">Read full story →</a>` : ''}
       </article>`).join('')}
     </div>
     <div class="card c-yellow reveal" style="margin-top:34px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap">

@@ -173,7 +173,7 @@ ${findSection}
 
 ${legacyStory(false)}
 ${legacyGallery(true)}
-${legacyStories(false)}
+${legacyStories(false, true)}
 
 <section class="section crew">
   <div class="container">

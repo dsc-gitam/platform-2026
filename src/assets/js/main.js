@@ -97,7 +97,9 @@
     if (CFG.apiBase) {
       const auth = await authReady;
       if (auth && auth.enabled) {
-        if (!auth.me || auth.me.user.guest) {
+        // Stories and session ideas don't need a Google account: a guest (anonymous) session is enough.
+        if ((kind === 'story' || kind === 'suggestion') && !auth.me) await auth.ensureGuest();
+        if (!auth.me || (auth.me.user.guest && kind !== 'story' && kind !== 'suggestion')) {
           // Ask for sign-in right here and carry on automatically afterwards, so nobody has to fill the form twice.
           const ok = await auth.signInThen('Sign in with Google to send this. Your answers will be kept.');
           if (!ok) { const e = new Error('Sign in required'); e.userMessage = 'Please sign in with Google to send this. Your answers are still here, just press the button again.'; throw e; }
@@ -126,9 +128,19 @@
     const lab = bad.id && form.querySelector(`label[for="${bad.id}"]`);
     const name = lab ? [...lab.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim() : (bad.name || 'the highlighted field');
     $('.form-error', form)?.remove();
-    const p = document.createElement('p'); p.className = 'form-error'; p.setAttribute('role', 'alert'); p.textContent = `Please fill in: ${name.replace(/[?:.]+$/, '')}.`; form.appendChild(p);
+    const p = document.createElement('p'); p.className = 'form-error'; p.setAttribute('role', 'alert'); p.textContent = bad.dataset.maxwords && bad.value ? bad.validationMessage : `Please fill in: ${name.replace(/[?:.]+$/, '')}.`; form.appendChild(p);
     bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { bad.focus({ preventScroll: true }); } catch { /* ignore */ }
   }
+
+  // Inputs with data-maxwords: custom validity + live hint
+  function wordLimits() {
+    $$('input[data-maxwords]').forEach((el) => {
+      const max = +el.dataset.maxwords; const hint = document.createElement('small'); hint.className = 'wc'; el.insertAdjacentElement('afterend', hint);
+      const check = () => { const n = el.value.trim().split(/\s+/).filter(Boolean).length; hint.textContent = `${n}/${max} words`; el.setCustomValidity(n > max ? `Please use ${max} words or fewer.` : ''); hint.style.color = n > max ? '#d93025' : ''; };
+      el.addEventListener('input', check); check();
+    });
+  }
+  wordLimits();
 
   function handleForms() {
     $$('form[data-form]').forEach((form) => {
@@ -145,15 +157,16 @@
         form.dataset.busy = '1'; if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
         $('.form-error', form)?.remove();
         try {
-          await submitData(kind, data);
+          await busy.wrap(() => submitData(kind, data), btn); // spinner + top bar from the moment of submit until everything has finished
           const done = $('.form-done', form);
           if (done) { done.hidden = false; }
           form.dispatchEvent(new CustomEvent('gdg:submitted', { bubbles: true, detail: { kind, data } }));
           if (form.dataset.reset !== 'no') form.reset();
           toast(form.dataset.toast || 'Done! We\'ve got it.');
         } catch (err) {
-          const p = document.createElement('p'); p.className = 'form-error';
-          p.textContent = err.userMessage || 'Something went wrong. Please try again in a moment.'; form.appendChild(p);
+          const msg = err.userMessage || 'Something went wrong. Please try again in a moment.';
+          const p = document.createElement('p'); p.className = 'form-error'; p.setAttribute('role', 'alert'); p.textContent = msg; form.appendChild(p);
+          toast(msg); // also as a toast, so it is seen even when the form is scrolled out of view
         } finally {
           delete form.dataset.busy; if (btn) { btn.disabled = false; btn.textContent = label; }
         }

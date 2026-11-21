@@ -18,7 +18,7 @@ Deno.test('end to end', async (t) => {
   // clean slate for test users
   await db.pointAward.deleteMany({ where: { OR: [{ user: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }] } }, { awardedBy: { email: { endsWith: '@test.dev' } } }] } });
   await db.user.deleteMany({ where: { OR: [{ email: { endsWith: '@test.dev' } }, { id: { startsWith: 'dev_anon_' } }, { guestEmail: { endsWith: '@test.dev' } }, { id: 'dev_up@test.dev' }] } });
-  await db.application.deleteMany({ where: { email: { endsWith: '@test.dev' } } });
+  await db.application.deleteMany({ where: { OR: [{ email: { endsWith: '@test.dev' } }, { email: '' }] } });
   for (const [id, date] of [['test-evt-a', '2031-03-01'], ['test-evt-b', '2031-04-01']]) {
     await db.event.upsert({ where: { id }, create: { id, title: 'Test ' + id, type: 'workshop', date, time: '10:00', venue: 'Lab', blurb: 'Test event', seats: 50, questions: [{ id: 'level', label: 'Experience', type: 'radio', options: ['Total beginner', 'Tried a bit'], required: true }, { id: 'note', label: 'Anything else?', type: 'textarea', options: [], required: false }] }, update: { status: 'UPCOMING', published: true, date } });
   }
@@ -132,6 +132,18 @@ Deno.test('end to end', async (t) => {
     assert(files.some((f) => f.path === `src/assets/stories/${s.json.id}.jpg`));
     const stories = JSON.parse(files.find((f) => f.path.endsWith('stories.json'))!.content as string);
     assertEquals(stories.find((x: { after: string }) => x.after === 'Found my place').photo, `assets/stories/${s.json.id}.jpg`);
+  });
+
+  await t.step('guests (anonymous sessions) can share a story, but not send other applications', async () => {
+    const G2 = 'anon:story1|Guest';
+    assertEquals((await call('POST', '/applications', undefined, { type: 'story', data: { name: 'x', email: 'x@test.dev', before: 'a', after: 'b' } })).status, 401); // no session at all
+    assertEquals((await call('POST', '/applications', G2, { type: 'story', data: { name: 'Vee Guest', before: 'a', after: 'b' } })).status, 400); // email needed
+    const ok = await call('POST', '/applications', G2, { type: 'story', data: { name: 'Vee Guest', email: 'vee@test.dev', before: 'Lost', after: 'Found my feet', now: 'Student' } });
+    assertEquals(ok.status, 201);
+    assertEquals((await call('POST', '/applications', G2, { type: 'volunteer', data: { name: 'Vee', email: 'vee@test.dev' } })).status, 401);
+    const list = await call('GET', '/admin/applications?type=STORY&status=PENDING', ADMIN);
+    const row = list.json.applications.find((a: { id: string }) => a.id === ok.json.id);
+    assertEquals(row.email, 'vee@test.dev'); assertEquals(row.name, 'Vee Guest');
   });
 
   await t.step('requests: core approval puts the person on the team and grants CORE', async () => {

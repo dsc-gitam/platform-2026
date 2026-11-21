@@ -49,8 +49,10 @@ auth.api = async function api(method, path, body, opts = {}) {
       const res = await fetch(API + '/api' + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
       const text = await res.text();
       let data = null; try { data = text ? JSON.parse(text) : null; } catch { data = { error: text }; }
+      if (!res.ok && loud && !opts.noToast) G.toast((data && data.error && String(data.error).slice(0, 160)) || 'Something went wrong. Please try again.');
       return { ok: res.ok, status: res.status, data };
     } catch (e) {
+      if (loud && !opts.noToast) G.toast('Could not reach the server. Check your connection and try again.');
       return { ok: false, status: 0, data: { error: 'Could not reach the server' } };
     }
   } finally { if (loud) G.busy.end(); }
@@ -64,7 +66,7 @@ auth.blobUrl = async function blobUrl(path) {
 };
 
 auth.refresh = async function refresh(quiet) {
-  const r = await auth.api('GET', '/me', undefined, { quiet: !!quiet });
+  const r = await auth.api('GET', '/me', undefined, { quiet: !!quiet, noToast: true });
   auth.me = r.ok ? r.data : null;
   if (!r.ok && r.status === 401) store.set('devuser', null);
   paintBadge(); emit();
@@ -236,6 +238,7 @@ function prefillForms() {
 function formGate() {
   if (!onJoin) return;
   $$('.tabpanel').forEach((panel) => {
+    if (panel.id === 'panel-story' || panel.id === 'panel-suggest') return; // these work without a Google account
     let bar = $('.signin-bar', panel);
     if (auth.me && !auth.me.user.guest) { if (bar) bar.remove(); return; }
     if (bar) return;

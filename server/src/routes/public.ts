@@ -31,19 +31,23 @@ const TYPES: Record<string, 'MEMBER' | 'VOLUNTEER' | 'CORE' | 'SPEAKER' | 'SESSI
 pub.post('/applications', optionalAuth, async (c) => {
   const user = (c as unknown as { var: { user?: unknown } }).var.user ? userOf(c) : null;
   const ip = c.req.header('x-forwarded-for') || 'local';
-  if (!rateLimit('app:' + (user?.id ?? ip))) return c.json({ error: 'Too many submissions, please wait a minute' }, 429);
+  if (!rateLimit('ip:' + ip, 20) || !rateLimit('app:' + (user?.id ?? ip))) return c.json({ error: 'Too many submissions, please wait a minute' }, 429);
   const b = await c.req.json().catch(() => ({}));
   const type = TYPES[str(b.type, 30)];
   if (!type) return c.json({ error: 'Unknown form type' }, 400);
   if (b.data?.honeypot) return c.json({ ok: true });
-  if ((!user || user.isAnonymous) && type !== 'SESSION') return c.json({ error: 'Sign in to send this', code: 'SIGN_IN' }, 401);
+  // Stories and session ideas can be sent with a guest (anonymous Firebase) session; everything else needs a Google sign-in.
+  const guestOk = type === 'SESSION' || type === 'STORY';
+  if (!user && type !== 'SESSION') return c.json({ error: 'Sign in to send this', code: 'SIGN_IN' }, 401);
+  if (user?.isAnonymous && !guestOk) return c.json({ error: 'Sign in with Google to send this', code: 'SIGN_IN' }, 401);
 
   // Keep only short string fields from the form.
   const data: Record<string, string> = {};
   for (const [k, v] of Object.entries(b.data ?? {})) if (typeof v === 'string' || typeof v === 'number') data[str(k, 40)] = str(String(v), 4000);
   const name = (user && !user.isAnonymous ? user.name : '') || str(data.name, 80) || 'Anonymous';
   const email = (user && !user.isAnonymous ? user.email : '') || str(data.email, 120).toLowerCase();
-  if (!user && !email) return c.json({ error: 'Please include your email so we can reply' }, 400);
+  if (type === 'STORY' && (data.now ?? '').trim().split(/\s+/).filter(Boolean).length > 10) return c.json({ error: 'Please keep "Where are you now?" to 10 words or fewer' }, 400);
+  if ((!user || user.isAnonymous) && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return c.json({ error: 'Please include a valid email so we can reply' }, 400);
 
   if (type === 'MEMBER' && user) {
     // Joining is instant: save the profile details and mark the user as onboarded.

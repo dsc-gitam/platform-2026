@@ -114,14 +114,14 @@
     if (form.elements.honeypot.value) return;
     const f = form.elements; const profile = { name: f.name.value, email: f.email.value, phone: f.phone.value, reg_no: f.reg_no.value, year: f.year.value, branch: f.branch.value };
     const answers = {}; new FormData(form).forEach((v, k) => { if (/^g-/.test(k) === false && !(k in profile) && !['event_id', 'event_title', 'honeypot'].includes(k)) answers[k] = v; });
-    const btn = $('button[type=submit]', form); btn.disabled = true;
+    const btn = $('button[type=submit]', form); btn.disabled = true; btn.classList.add('is-loading'); G.busy.start();
     try {
       await auth.ensureGuest();
       const r = await auth.api('POST', `/me/events/${current.id}/register`, { profile, answers });
       if (r.ok) { store.set('profile', profile); await auth.refresh(); tell(); showSuccess(r.data.ticketCode, false, true); G.toast("You're registered!"); }
       else { err.textContent = (r.data && r.data.error) || 'Could not register. Please try again.'; err.hidden = false; }
-    } catch (x) { console.warn(x); err.textContent = 'Could not start a guest session. Please try again.'; err.hidden = false; }
-    btn.disabled = false;
+    } catch (x) { console.warn(x); err.textContent = 'Could not start a guest session. Please try again.'; err.hidden = false; G.toast(err.textContent); }
+    btn.disabled = false; btn.classList.remove('is-loading'); G.busy.end();
   });
 
   // "Already have a ticket? Access it here": passwordless email link

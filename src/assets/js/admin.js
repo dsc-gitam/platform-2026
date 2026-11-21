@@ -20,7 +20,7 @@
   ];
   const can = (p) => auth.can(p);
   const toast = (m) => G.toast(m);
-  const api = async (m, p, b) => { const r = await auth.api(m, '/admin' + p, b); if (!r.ok) toast((r.data && r.data.error) || 'Something went wrong'); return r; };
+  const api = async (m, p, b) => { const r = await auth.api(m, '/admin' + p, b, { noToast: true }); if (!r.ok) toast((r.data && r.data.error) || 'Something went wrong'); return r; };
   const fmt = (iso) => iso ? new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
   const lines = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
