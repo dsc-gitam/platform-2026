@@ -109,7 +109,7 @@ ${(page.scripts || []).map(x => `<script src="assets/js/${x}?v=${ASSET_V}" defer
   const url = `${site.url}/${page.path === 'index.html' ? '' : page.path}`;
   const title = page.path === 'index.html' ? `${site.name} — ${site.tagline}` : `${page.title} · ${site.short}`;
   const desc = page.description;
-  const ogImage = `${site.url}/assets/og-image.jpg`;
+  const ogImage = `${site.url}/${page.ogImage || 'assets/og-image.jpg'}`;
   const orgLd = {
     '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url,
     logo: `${site.url}/assets/favicon-512.png`, email: site.email,
@@ -136,7 +136,7 @@ ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:image" content="${ogImage}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="GDG on Campus GITAM members chatting over a handbook">
+<meta property="og:image:alt" content="${esc(page.ogAlt || 'GDG on Campus GITAM members chatting over a handbook')}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${ogImage}">
 <link rel="icon" href="favicon.ico" sizes="any">

@@ -5,3 +5,6 @@ node_modules/
 server/node_modules/
 server/generated/
 server/.env
+
+# generated share images (tools/og-stories.mjs)
+src/assets/og/

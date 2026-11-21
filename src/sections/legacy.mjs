@@ -59,7 +59,7 @@ export const legacyAchievements = (tint = false) => `
 </section>`;
 
 // Word-limited text with an inline ellipsis; full text lives on the story's own page.
-const clip = (t = '', n) => { t = String(t).trim(); if (t.length <= n) return t; const cut = t.slice(0, n); return cut.replace(/\s+\S*$/, '').replace(/[\s,.;:!?-]+$/, '') + '…'; };
+export const clip = (t = '', n) => { t = String(t).trim(); if (t.length <= n) return t; const cut = t.slice(0, n); return cut.replace(/\s+\S*$/, '').replace(/[\s,.;:!?-]+$/, '') + '…'; };
 const over = (t = '', n) => String(t).trim().length > n;
 export const storyPage = (s) => 'story-' + (String(s.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'member') + '.html';
 

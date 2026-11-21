@@ -1,11 +1,17 @@
 // One page per story, so the home page can show a short version and link here for the full text.
+import { existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { stories } from '../data/site.mjs';
 import { storyPage } from '../sections/legacy.mjs';
 import { icon } from '../icons.mjs';
 import { esc, avatar, ctaBand } from '../lib.mjs';
 
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const ogFor = (s) => { const f = 'assets/og/' + storyPage(s).replace(/\.html$/, '.png'); return existsSync(join(root, 'src', f)) ? { ogImage: f, ogAlt: `${s.name}'s story: before and after joining GDG on Campus GITAM` } : {}; };
+
 const page = (s) => ({
-  path: storyPage(s), nav: 'legacy', title: `${s.name}'s story`,
+  path: storyPage(s), nav: 'legacy', title: `${s.name}'s story`, ...ogFor(s),
   description: `${s.name} (${s.batch}) on what changed after joining GDG on Campus GITAM.`,
   body: `
 <section class="page-hero ph-${s.color}">
