@@ -987,3 +987,7 @@ input[type="checkbox"], input[type="radio"] { width: auto; flex: none; }
 .acct-btn .spin { width: 18px; height: 18px; }
 @media (prefers-reduced-motion: reduce) { .topbar::before { animation-duration: 2.4s; } .spin, .is-loading::before { animation-duration: 1.6s; } }
 .was-validated input:invalid:not([type="checkbox"]):not([type="radio"]), .was-validated select:invalid, .was-validated textarea:invalid { border-color: #B3261E; box-shadow: 0 0 0 3px rgba(179, 38, 30, .15); }
+
+/* Story cards: "Read full story" sits at the card bottom, hugs its text, and its hover highlight is softer */
+.story .link { align-self: flex-start; margin-top: auto; }
+.story .link:hover { background: color-mix(in srgb, var(--yellow) 60%, transparent); }

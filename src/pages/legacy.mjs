@@ -8,7 +8,7 @@ ${legacyStory(false)}
 ${legacyMilestones(true)}
 ${legacyAchievements(false)}
 ${legacyGallery(true)}
-${legacyStories(false)}
+${legacyStories(false, true)}
 
 ${ctaBand({ title: 'Help write the next chapter.', text: 'The legacy is not a museum. It is what the next batch builds on.', primary: ['index.html#find-your-place', 'Find your place'], secondary: ['events.html', 'Upcoming events'] })}
 
