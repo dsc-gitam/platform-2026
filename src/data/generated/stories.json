@@ -10,23 +10,23 @@
     "photo": "assets/stories/cmwoqv4ll000001s6eu4tbfxo.jpg"
   },
   {
-    "name": "santhosh srikar",
-    "batch": "",
-    "now": "3rd Year B.Tech CSE Student",
-    "before": "Before joining Google Developer Groups (GDG), I was someone who was genuinely interested in technology and always wanted to explore different domains, learn new technologies, and understand how things worked. However, I often lacked the right guidance, opportunities, and practical exposure. I had the enthusiasm to learn, but I didn't always know where to start or how to move forward.",
-    "after": "After joining Google Developer Groups, my journey has been filled with learning, exploring, and growing. I got the opportunity to work with technologies like Flutter, Firebase, Kubernetes, and many more, gaining valuable hands-on experience. GDG helped me step out of my comfort zone, connect with like-minded developers, and grow my technical skills and confidence. It's been an amazing journey of learning, building, and discovering new possibilities.",
-    "quote": "",
-    "color": "red",
-    "photo": "assets/stories/cmwqej7bg000001s6o86illo1.jpg"
-  },
-  {
     "name": "Varshita P",
     "batch": "2024-2026",
     "now": "System Engineer, Infosys | Training",
     "before": "I was that person who was curious about tech. Had a million questions and wanted to explore new things but didn't always know where to start. My comfort zone was pretty comfortable.. and stepping out of it... Well.. that was a different story.. totally..",
     "after": "I've become more confident. Started exploring new technologies. Met amazing like minded people. Learned that growth happens when you step out.. show up.. and get involved. From learning new things to making memories, sharing ideas, and being part of an amazing community, GDG has been quite a journey! And honestly, that just felt like the beginning of something good!!",
     "quote": "",
-    "color": "yellow",
+    "color": "red",
     "photo": "assets/stories/cmwqm8wm2000001s6t7h92lin.jpg"
+  },
+  {
+    "name": "santhosh srikar",
+    "batch": "",
+    "now": "3rd Year B.Tech CSE Student",
+    "before": "Before joining Google Developer Groups (GDG), I was someone who was genuinely interested in technology and always wanted to explore different domains, learn new technologies, and understand how things worked. However, I often lacked the right guidance, opportunities, and practical exposure. I had the enthusiasm to learn, but I didn't always know where to start or how to move forward.",
+    "after": "After joining Google Developer Groups, my journey has been filled with learning, exploring, and growing. I got the opportunity to work with technologies like Flutter, Firebase, Kubernetes, and many more, gaining valuable hands-on experience. GDG helped me step out of my comfort zone, connect with like-minded developers, and grow my technical skills and confidence. It's been an amazing journey of learning, building, and discovering new possibilities.",
+    "quote": "",
+    "color": "yellow",
+    "photo": "assets/stories/cmwqej7bg000001s6o86illo1.jpg"
   }
 ]
