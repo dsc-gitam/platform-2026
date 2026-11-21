@@ -92,6 +92,44 @@
     return url;
   }
 
+
+  // ---------- photo cropper: drag to position, zoom, then save a 480px square JPEG data URL; resolves null when cancelled ----------
+  function cropPhoto(file, size = 480) {
+    return new Promise(async (resolve, reject) => {
+      let bmp; try { bmp = await createImageBitmap(file); } catch (e) { reject(e); return; }
+      const V = Math.min(320, window.innerWidth - 64), min = V / Math.min(bmp.width, bmp.height);
+      let sc = min, ox = (V - bmp.width * sc) / 2, oy = (V - bmp.height * sc) / 2;
+      const ov = document.createElement('div'); ov.className = 'crop-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Crop your photo');
+      ov.innerHTML = `<div class="crop-box"><h3>Crop your photo</h3><p class="crop-hint">Drag to move. Use the slider to zoom. The circle is how it will appear.</p>
+        <div class="crop-view" style="width:${V}px;height:${V}px"><canvas width="${V}" height="${V}"></canvas><i class="crop-ring"></i></div>
+        <label class="crop-zoom">Zoom <input type="range" min="1" max="4" step="0.01" value="1" aria-label="Zoom"></label>
+        <div class="crop-actions"><button type="button" class="btn btn-ghost btn-sm" data-c="cancel">Cancel</button><button type="button" class="btn btn-blue btn-sm" data-c="ok">Use photo</button></div></div>`;
+      document.body.appendChild(ov);
+      const cv = ov.querySelector('canvas'), ctx = cv.getContext('2d'), range = ov.querySelector('input');
+      const clamp = () => { ox = Math.min(0, Math.max(V - bmp.width * sc, ox)); oy = Math.min(0, Math.max(V - bmp.height * sc, oy)); };
+      const draw = () => { clamp(); ctx.clearRect(0, 0, V, V); ctx.drawImage(bmp, ox, oy, bmp.width * sc, bmp.height * sc); };
+      const zoom = (z, cx = V / 2, cy = V / 2) => { const n = min * z, k = n / sc; ox = cx - (cx - ox) * k; oy = cy - (cy - oy) * k; sc = n; draw(); };
+      let drag = null;
+      cv.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, ox, oy }; cv.setPointerCapture(e.pointerId); });
+      cv.addEventListener('pointermove', (e) => { if (!drag) return; ox = drag.ox + e.clientX - drag.x; oy = drag.oy + e.clientY - drag.y; draw(); });
+      cv.addEventListener('pointerup', () => { drag = null; }); cv.addEventListener('pointercancel', () => { drag = null; });
+      cv.addEventListener('wheel', (e) => { e.preventDefault(); const z = Math.min(4, Math.max(1, sc / min * (e.deltaY < 0 ? 1.08 : 0.92))); range.value = z; zoom(z, e.offsetX, e.offsetY); }, { passive: false });
+      range.addEventListener('input', () => zoom(+range.value));
+      const done = (val) => { document.removeEventListener('keydown', onKey); ov.remove(); bmp.close && bmp.close(); resolve(val); };
+      const onKey = (e) => { if (e.key === 'Escape') done(null); };
+      document.addEventListener('keydown', onKey);
+      ov.querySelector('[data-c=cancel]').addEventListener('click', () => done(null));
+      ov.querySelector('[data-c=ok]').addEventListener('click', () => {
+        const c = document.createElement('canvas'); c.width = c.height = size; const side = V / sc;
+        c.getContext('2d').drawImage(bmp, -ox / sc, -oy / sc, side, side, 0, 0, size, size);
+        let q = 0.88, url = c.toDataURL('image/jpeg', q);
+        while (url.length * 0.75 > 240000 && q > 0.4) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
+        done(url);
+      });
+      draw(); ov.querySelector('[data-c=ok]').focus();
+    });
+  }
+
   // ---------- submit (backend API, form endpoint or local fallback) ----------
   async function submitData(kind, data) {
     if (CFG.apiBase) {
@@ -218,6 +256,6 @@
     }));
   }
 
-  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, resizePhoto, busy, _authResolve: authResolve };
+  window.GDG = { $, $$, store, toast, openModal, closeModal, closeDrawer, submitData, downloadICS, loadScript, qrSvg, esc, authReady, resizePhoto, cropPhoto, busy, _authResolve: authResolve };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

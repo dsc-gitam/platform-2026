@@ -45,7 +45,10 @@ export async function buildFiles(): Promise<RepoFile[]> {
   files.push({ path: 'src/data/generated/team.json', content: json(team) });
 
   // Stories: approved + featured
-  const stories = await db.application.findMany({ where: { type: 'STORY', status: 'APPROVED', featured: true }, orderBy: { reviewedAt: 'asc' } });
+  const storyRowsRaw = await db.application.findMany({ where: { type: 'STORY', status: 'APPROVED', featured: true }, orderBy: { reviewedAt: 'asc' } });
+  // Admin-chosen order (data._order) first; stories without one keep the order they were approved in.
+  const rank = (a: { data: unknown }) => { const o = Number((a.data as Record<string, unknown>)?._order); return Number.isFinite(o) ? o : 1e9; };
+  const stories = [...storyRowsRaw].sort((a, b) => rank(a) - rank(b));
   const storyRows = stories.map((st, i) => {
     const d = asObj(st.data);
     let photo = '';

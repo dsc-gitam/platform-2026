@@ -166,6 +166,17 @@ admin.get('/applications/:id/photo', requirePerm('requests:read'), async (c) => 
 
 const ROLE_TITLES: Record<string, string> = { tech: 'Technical', design: 'Design & Media', research: 'Research & Onboarding', docs: 'Documentation & Reports', photo: 'Photography & Media' };
 
+// Reorder featured stories: the body lists story ids in the order they should appear.
+admin.post('/stories/order', requirePerm('requests:review'), async (c) => {
+  const ids = ((await c.req.json().catch(() => ({}))).ids ?? []) as unknown[];
+  const list = ids.filter((x): x is string => typeof x === 'string').slice(0, 200);
+  const apps = await db.application.findMany({ where: { id: { in: list }, type: 'STORY' }, select: { id: true, data: true } });
+  const byId = new Map(apps.map((a) => [a.id, a.data as Record<string, unknown>]));
+  await db.$transaction(list.filter((id) => byId.has(id)).map((id, i) => db.application.update({ where: { id }, data: { data: { ...byId.get(id), _order: i } as Prisma.InputJsonObject } })));
+  await queuePublish('story order by ' + userOf(c).name);
+  return c.json({ ok: true });
+});
+
 admin.patch('/applications/:id', requirePerm('requests:review'), async (c) => {
   const me = userOf(c); const b = await c.req.json().catch(() => ({}));
   const app = await db.application.findUnique({ where: { id: c.req.param('id') } });

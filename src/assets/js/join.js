@@ -25,7 +25,7 @@
     const hidden = document.getElementById(inp.dataset.photoFor), prev = inp.closest('.photo-pick').querySelector('.photo-prev');
     const f = inp.files[0]; hidden.value = ''; prev.style.backgroundImage = 'none';
     if (!f) return;
-    try { const url = await window.GDG.resizePhoto(f); hidden.value = url; prev.style.backgroundImage = `url(${url})`; }
+    try { const url = await window.GDG.cropPhoto(f); if (!url) { inp.value = ''; return; } hidden.value = url; prev.style.backgroundImage = `url(${url})`; }
     catch { window.GDG.toast('That image could not be read. Try a different photo.'); }
   }));
 

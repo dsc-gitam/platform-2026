@@ -245,13 +245,22 @@
     $$('[data-type]', el).forEach((b) => b.addEventListener('click', () => { reqType = b.dataset.type; requests(el); }));
     $$('[data-status]', el).forEach((b) => b.addEventListener('click', () => { reqStatus = b.dataset.status; requests(el); }));
     const r = await api('GET', `/applications?type=${reqType}${reqStatus ? '&status=' + reqStatus : ''}`); if (!r.ok) return;
-    const list = r.data.applications; const box = $('#req-list', el);
+    let list = r.data.applications; const box = $('#req-list', el);
+    // Approved stories: show the featured ones in the order they appear on the site, with up/down controls
+    const ordered = reqType === 'STORY' && reqStatus === 'APPROVED';
+    if (ordered) { const k = (a) => (a.featured ? (typeof a.data?._order === 'number' ? a.data._order : 1e8) : 1e9); list = [...list].sort((x, y) => k(x) - k(y) || new Date(x.reviewedAt) - new Date(y.reviewedAt)); }
+    const liveIds = list.filter((a) => a.featured).map((a) => a.id);
     box.innerHTML = list.length ? list.map((a) => `<article class="a-req" data-id="${a.id}"><header><div style="display:flex;gap:12px;align-items:center">${a.hasPhoto ? `<img class="a-photo" data-photo="${a.id}" alt="" width="64" height="64">` : ''}<div><b>${esc(a.name)}</b> <small>${esc(a.email)}</small><br><small>${esc(fmt(a.createdAt))}</small></div></div>
       <div><span class="chip ${a.status === 'APPROVED' ? 'green' : a.status === 'REJECTED' ? 'red' : 'yellow'}">${a.status.toLowerCase()}</span>${a.featured ? ' <span class="chip blue">featured</span>' : ''}${a.user?.showOnSite ? ' <span class="chip green">on site</span>' : ''}</div></header>
-      <dl>${Object.entries(a.data || {}).filter(([k]) => !['name', 'email', 'honeypot'].includes(k)).map(([k, v]) => `<dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
-      ${can('requests:review') && a.type !== 'MEMBER' ? `<div class="a-actions">${a.type === 'STORY' ? `<button class="btn btn-blue btn-sm" data-act="feature">Approve & feature on site</button><button class="btn btn-ghost btn-sm" data-act="edit">Edit text</button>` : (a.type === 'CORE' || a.type === 'VOLUNTEER') ? `<button class="btn btn-blue btn-sm" data-act="team">Approve & add to team page</button><button class="btn btn-ghost btn-sm" data-act="approve">Approve only</button>` : '<button class="btn btn-blue btn-sm" data-act="approve">Approve</button>'}<button class="btn btn-sm danger" data-act="reject">Reject</button></div>` : ''}</article>`).join('') : '<div class="card"><p style="margin:0">Nothing here.</p></div>';
+      <dl>${Object.entries(a.data || {}).filter(([k]) => !['name', 'email', 'honeypot'].includes(k) && !k.startsWith('_')).map(([k, v]) => `<dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      ${can('requests:review') && a.type !== 'MEMBER' ? `<div class="a-actions">${a.type === 'STORY' ? `<button class="btn btn-blue btn-sm" data-act="feature">Approve & feature on site</button><button class="btn btn-ghost btn-sm" data-act="edit">Edit text</button>` : (a.type === 'CORE' || a.type === 'VOLUNTEER') ? `<button class="btn btn-blue btn-sm" data-act="team">Approve & add to team page</button><button class="btn btn-ghost btn-sm" data-act="approve">Approve only</button>` : '<button class="btn btn-blue btn-sm" data-act="approve">Approve</button>'}<button class="btn btn-sm danger" data-act="reject">Reject</button>${ordered && a.featured ? `<span class="a-move"><button class="btn btn-ghost btn-sm" data-move="-1" aria-label="Move up"${liveIds[0] === a.id ? ' disabled' : ''}>↑ Up</button><button class="btn btn-ghost btn-sm" data-move="1" aria-label="Move down"${liveIds[liveIds.length - 1] === a.id ? ' disabled' : ''}>↓ Down</button></span>` : ''}</div>` : ''}</article>`).join('') : '<div class="card"><p style="margin:0">Nothing here.</p></div>';
     const byId = Object.fromEntries(list.map((a) => [a.id, a]));
     $$('img[data-photo]', box).forEach(async (img) => { img.src = await auth.blobUrl(`/admin/applications/${img.dataset.photo}/photo`); });
+    $$('[data-move]', box).forEach((b) => b.addEventListener('click', async () => {
+      const id = b.closest('.a-req').dataset.id, i = liveIds.indexOf(id), j = i + +b.dataset.move; if (i < 0 || j < 0 || j >= liveIds.length) return;
+      const next = [...liveIds]; [next[i], next[j]] = [next[j], next[i]];
+      const r2 = await api('POST', '/stories/order', { ids: next }); if (r2.ok) { toast('Order saved. Publishing; the site redeploys in a few minutes.'); requests(el); }
+    }));
     $$('[data-act]', box).forEach((b) => b.addEventListener('click', () => reviewAct(byId[b.closest('.a-req').dataset.id], b.dataset.act, el)));
   }
   async function patch(a, body, el, msg) {
@@ -269,7 +278,7 @@
         <button class="btn btn-blue" type="submit">Save & feature</button></form>`, (m, close) => {
         const prev = $('#ph-prev', m);
         if (a.hasPhoto) auth.blobUrl(`/admin/applications/${a.id}/photo`).then((u) => { prev.style.backgroundImage = `url(${u})`; });
-        $('#ph-file', m).addEventListener('change', async (e) => { const f = e.target.files[0]; $('#ph-data', m).value = ''; if (!f) return; try { const url = await G.resizePhoto(f); $('#ph-data', m).value = url; prev.style.backgroundImage = `url(${url})`; } catch { toast('That image could not be read'); } });
+        $('#ph-file', m).addEventListener('change', async (e) => { const f = e.target.files[0]; $('#ph-data', m).value = ''; if (!f) return; try { const url = await G.cropPhoto(f); if (!url) { e.target.value = ''; return; } $('#ph-data', m).value = url; prev.style.backgroundImage = `url(${url})`; } catch { toast('That image could not be read'); } });
         $('#st-form', m).addEventListener('submit', async (e) => {
           e.preventDefault(); const fd = new FormData(e.target); const data = {}; fd.forEach((v, k) => { if (typeof v === 'string' && ['before', 'after', 'now', 'batch', 'quote'].includes(k)) data[k] = v; });
           const photo = $('#ph-data', m).value; const removePhoto = !!($('#ph-remove', m) && $('#ph-remove', m).checked);
